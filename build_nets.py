@@ -4,11 +4,11 @@ import argparse
 import scipy.sparse as sp
 
 parser = argparse.ArgumentParser(
-                    prog='Thin film Data Analyzer - Clusters')
+                    prog='Thin film Data Analyzer - Event frames network generation')
 
 parser.add_argument('--field', type=float, default=0.13) 
 parser.add_argument('--dt', type=int, default=10)
-parser.add_argument('--basename', default="raw_data/file_field")
+parser.add_argument('--basename', default="data/file_field")
 
 args = parser.parse_args()
 filename = args.basename + "%1.2f_events.pkl" % args.field

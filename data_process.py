@@ -19,7 +19,7 @@ parser = argparse.ArgumentParser(
                     prog='Thin film Data Analyzer')
 
 parser.add_argument('--field', type=float, default=0.13) 
-parser.add_argument('--basename', default="raw_data/file_field")
+parser.add_argument('--basename', default="data/file_field")
 parser.add_argument('--n_th', type=int, default=2**9) 
 
 args = parser.parse_args()

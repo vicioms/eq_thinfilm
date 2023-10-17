@@ -11,7 +11,7 @@ parser = argparse.ArgumentParser(
 parser.add_argument('--field', type=float, default=0.13) 
 parser.add_argument('--dt', type=int, default=10)
 parser.add_argument('--ds', type=int, default=2)
-parser.add_argument('--basename', default="raw_data/file_field")
+parser.add_argument('--basename', default="data/file_field")
 
 args = parser.parse_args()
 sparse_net_filename = args.basename + "%1.2f_net_dt=%i.npz" % (args.field, args.dt)
