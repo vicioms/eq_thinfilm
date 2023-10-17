@@ -26,8 +26,8 @@ clusters = []
 comps = nx.connected_components(net)
 for comp in comps:
     clusters.append(np.sort(list(comp)))
-
-
+print("Number of clusters:", len(clusters))
+cl_sizes = []
 for cluster in clusters:
     if(len(cluster) == 1 and cluster[0] not in xs):
         continue
@@ -39,13 +39,15 @@ for cluster in clusters:
             y_c.append(ys[c])
     x_c = np.concatenate(x_c)
     y_c = np.concatenate(y_c)
-    
-
-#cl_sizes = np.array([len(c) for c in clusters])
-#hist, edges = np.histogram(cl_sizes, bins=np.logspace(0.5,np.log10(np.max(cl_sizes)),20),density=True )
-#plt.scatter(edges[:-1],hist)
-#plt.plot(edges, edges**(-1.26))
-#plt.plot(edges, edges**(-1.11))
-#plt.xscale('log')
-#plt.yscale('log')
-#plt.show()
+    cl_sizes.append(len(x_c))
+cl_sizes = np.array(cl_sizes)
+plt.plot(cl_sizes)
+plt.yscale('log')
+plt.show()
+hist, edges = np.histogram(cl_sizes, bins=np.logspace(0,1.1*np.log10(np.max(cl_sizes)),30),density=True )
+plt.scatter(edges[:-1],hist)
+plt.plot(edges, 0.1*edges**(-1.26))
+plt.plot(edges, 0.1*edges**(-1.11))
+plt.xscale('log')
+plt.yscale('log')
+plt.show()
