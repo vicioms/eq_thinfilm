@@ -5,6 +5,8 @@ import argparse
 import pandas as pd
 from scipy.spatial import ConvexHull
 import pickle as pkl
+import os
+
 
 def segment_no_events(data, no_event_val=-1):
     no_events_regions = [r.astype('int') for r in measure.find_contours(data, no_event_val)]
@@ -70,22 +72,31 @@ for eq in inner_hull.equations:
     eq_mask = np.dot(eq[:-1], pts) + eq[-1] <= 1e-12
     inner_mask[ii.flatten(),jj.flatten()] *= eq_mask
     
-temp_inner = np.zeros_like(data)
-temp_inner[inner_mask] = 1
-event_mask = data > - 1
-interface_dict = {}
-for t in range(0, data.max()+1):
-    if(t%500 == 0):
-        print(t)
-    temp = np.copy(temp_inner)
-    temp[event_mask*(data<=t)] = 1
-    regions = measure.find_contours(temp)
-    r_sizes = [len(r) for r in regions]
-    largest_r = regions[np.argmax(r_sizes)].astype('int')
-    interface_dict[t] = largest_r
     
-with open(args.basename +  ("%1.2f" % args.field) + "_intdict.pkl",'wb') as file:
-    pkl.dump(interface_dict, file)
+intdict_filename = args.basename +  ("%1.2f" % args.field) + "_intdict.pkl"
+
+if(os.path.exists(intdict_filename)):
+    print("Interface dictionary already exists.")
+    with open(intdict_filename,'rb') as file:
+        interface_dict = pkl.load(file)
+else:
+    print("Interface dictionary does not exist. Starting... (it might take a while)")
+    temp_inner = np.zeros_like(data)
+    temp_inner[inner_mask] = 1
+    event_mask = data > - 1
+    interface_dict = {}
+    for t in range(0, data.max()+1):
+        if(t%500 == 0):
+            print("frame: ", t)
+        temp = np.copy(temp_inner)
+        temp[event_mask*(data<=t)] = 1
+        regions = measure.find_contours(temp)
+        r_sizes = [len(r) for r in regions]
+        largest_r = regions[np.argmax(r_sizes)].astype('int')
+        interface_dict[t] = largest_r
+
+    with open(intdict_filename,'wb') as file:
+        pkl.dump(interface_dict, file)
 
 exit()
 
