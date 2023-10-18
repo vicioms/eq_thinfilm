@@ -52,15 +52,7 @@ for frame, rows in data_df.groupby('frame'):
     ys[frame] = rows.col.values
 with open(args.basename +  ("%1.2f" % args.field) + "_events.pkl",'wb') as file:
     pkl.dump([xs, ys], file)
-    
-    
-    
 
-
-
-exit()
-
-# interface reconstruction
 
 
 pts = np.vstack([ii.flatten(), jj.flatten()])
@@ -71,14 +63,73 @@ outer_mask = np.ones((n_rows, n_cols), dtype=bool)
 for eq in outer_hull.equations:
     eq_mask = np.dot(eq[:-1], pts) + eq[-1] <= 1e-12
     outer_mask[ii.flatten(),jj.flatten()] *= eq_mask
+outer_mask  = ~outer_mask
+inner_hull = ConvexHull(inner_region)
+inner_mask = np.ones((n_rows, n_cols), dtype=bool)
+for eq in inner_hull.equations:
+    eq_mask = np.dot(eq[:-1], pts) + eq[-1] <= 1e-12
+    inner_mask[ii.flatten(),jj.flatten()] *= eq_mask
+    
+temp_inner = np.zeros_like(data)
+temp_inner[inner_mask] = 1
+event_mask = data > - 1
+interface_dict = {}
+for t in range(0, data.max()+1):
+    if(t%500 == 0):
+        print(t)
+    temp = np.copy(temp_inner)
+    temp[event_mask*(data<=t)] = 1
+    regions = measure.find_contours(temp)
+    r_sizes = [len(r) for r in regions]
+    largest_r = regions[np.argmax(r_sizes)].astype('int')
+    interface_dict[t] = largest_r
+    
+with open(args.basename +  ("%1.2f" % args.field) + "_intdict.pkl",'wb') as file:
+    pkl.dump(interface_dict, file)
 
+exit()
+
+
+# interface reconstruction
+
+pts = np.vstack([ii.flatten(), jj.flatten()])
+
+
+outer_hull = ConvexHull(outer_region)
+outer_mask = np.ones((n_rows, n_cols), dtype=bool)
+for eq in outer_hull.equations:
+    eq_mask = np.dot(eq[:-1], pts) + eq[-1] <= 1e-12
+    outer_mask[ii.flatten(),jj.flatten()] *= eq_mask
+outer_mask  = ~outer_mask
 inner_hull = ConvexHull(inner_region)
 inner_mask = np.ones((n_rows, n_cols), dtype=bool)
 for eq in inner_hull.equations:
     eq_mask = np.dot(eq[:-1], pts) + eq[-1] <= 1e-12
     inner_mask[ii.flatten(),jj.flatten()] *= eq_mask
 
-no_crown_mask = ~(outer_mask*(1-inner_mask))
+
+masked_data = np.copy(data).astype('float')
+masked_data[inner_mask] = 0
+masked_data[outer_mask] = np.infty
+
+frames = np.sort(list(xs.keys()))
+frames = frames[frames>=0]
+non_bg_mask = data != -1 + inner_mask
+for frame in frames:
+    data_next = np.zeros_like(masked_data)
+    mask = (masked_data <= frame)*non_bg_mask
+    data_next[mask] = 1
+    if(frame % 1000 == 0):
+        plt.imshow(data_next)
+        plt.show()
+
+
+
+
+
+
+
+
 
 
 

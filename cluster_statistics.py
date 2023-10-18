@@ -74,7 +74,7 @@ df_growth['linear'] = cl_growth[:,1]
 df_growth['area'] = cl_growth[:,2]
 df_growth['area_sq'] = cl_growth[:,2]**2
 groups_mean = df_growth.groupby('timeIdx').mean()
-plt.plot(groups_mean['area_sq']/ groups_mean['area'])
+plt.plot(np.arange(1, len(groups_mean)+1), groups_mean['area_sq']/ groups_mean['area'])
 plt.xscale('log')
 plt.show()
 
