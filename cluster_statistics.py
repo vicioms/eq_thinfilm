@@ -76,6 +76,7 @@ df_growth['area_sq'] = cl_growth[:,2]**2
 groups_mean = df_growth.groupby('timeIdx').mean()
 plt.plot(np.arange(1, len(groups_mean)+1), groups_mean['area_sq']/ groups_mean['area'])
 plt.xscale('log')
+plt.yscale('log')
 plt.show()
 
 #hist, edges = np.histogram(cl_sizes, density=True, bins=np.logspace(0.2,1.1*np.log10(np.max(cl_sizes)),25) )

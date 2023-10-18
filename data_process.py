@@ -97,7 +97,28 @@ else:
 
     with open(intdict_filename,'wb') as file:
         pkl.dump(interface_dict, file)
+        
+        
+theta_new = np.linspace(-np.pi, np.pi, args.n_th)
+interface_data_interp = []
+for t, h in interface_dict.items():
+    theta = np.arctan2(h[:, 0] - center[0], h[:, 1]-center[1])
+    rho = np.sqrt((h[:, 0] - center[0])**2+(h[:, 1]-center[1])**2)
+    rho_new =  np.interp(theta_new, theta, rho, period=np.pi*2)
+    interface_data_interp.append(rho_new)
+interface_data_interp = np.array(interface_data_interp)
 
+interface = [np.copy(interface_data_interp[0])]
+for t in range(1, interface_data_interp.shape[0]):
+    new_interface = np.copy(interface_data_interp[t])
+    mask_receeded = new_interface-interface[-1] < 0
+    new_interface[mask_receeded] = interface[-1][mask_receeded]
+    interface.append(new_interface)
+    #print("Fixed sites: ", mask_receeded.sum())
+interface = np.array(interface)
+
+intf_filename = args.basename +  ("%1.2f" % args.field) + "_intf.npy"
+np.save(intf_filename, interface)
 exit()
 
 
