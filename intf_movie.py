@@ -23,20 +23,26 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 import matplotlib.animation as animation
+import matplotlib.cm as cm
 
 fig, ax = plt.subplots()
-ax.set_ylim(-25,25)
+#ax.set_ylim(-5,5)
+ax.set_ylim(50, 300)
 x = np.linspace(-np.pi, np.pi, interface.shape[1])
-line, = ax.plot(x, interface[0]-interface[0].mean(), color='black')
-
+line2, = ax.plot(x, interface[1], color='red')
+line, = ax.plot(x, interface[0], color='black')
+cmap = cm.get_cmap('jet')
+max_frames = 50000
 
 def animate(i):
-    line.set_ydata(interface[i,:]-interface[i,:].mean())  # update the data.
-    return line,
+    line2.set_ydata(interface[i+1,:])  # update the data.
+    line.set_ydata(interface[max(i-100,0),:])
+    #line.set_color(cmap(i/max_frames))
+    return line,line2
 
 
 ani = animation.FuncAnimation(
-    fig, animate, interval=2, blit=True, save_count=50)
+    fig, animate, interval=1, blit=True, frames=max_frames)
 
 # To save the animation, use e.g.
 #
