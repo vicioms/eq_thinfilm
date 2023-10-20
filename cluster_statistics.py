@@ -52,16 +52,22 @@ for cluster in clusters:
     y_c = []
     linear_stats = []
     total_pixels = 0
+    first_cluster_time = None
+    end_cluster_time = -1
     for c in cluster:
         if(c in xs):
+            end_cluster_time = c
+            if(first_cluster_time is None):
+                first_cluster_time = c
             total_pixels += len(xs[c])
             x_c.append(xs[c])
             y_c.append(ys[c])
-            linear_stats.append((c, cluster_length(np.concatenate(x_c), np.concatenate(y_c)), total_pixels))
+            linear_stats.append((c, cluster_length(np.concatenate(x_c), np.concatenate(y_c)), total_pixels, first_cluster_time, end_cluster_time))
     if(len(x_c)==0):
         continue
     linear_stats = np.array(linear_stats)
     linear_stats[:, 0] -= linear_stats[0,0]
+    linear_stats[:, -1] = end_cluster_time
     cl_growth.append(linear_stats)
     x_c = np.concatenate(x_c)
     y_c = np.concatenate(y_c)
@@ -73,13 +79,16 @@ df_growth['timeIdx'] = cl_growth[:,0]
 df_growth['linear'] = cl_growth[:,1]
 df_growth['area'] = cl_growth[:,2]
 df_growth['area_sq'] = cl_growth[:,2]**2
+df_growth['cStart'] = cl_growth[:,3]
+df_growth['cEnd'] = cl_growth[:,4]
+#df_growth = df_growth[df_growth['cEnd']<20000]
 groups_mean = df_growth.groupby('timeIdx').mean()
 ln_t = np.log(np.arange(1, len(groups_mean)+1))
 S_t = groups_mean['area_sq']/ groups_mean['area']
-plt.plot(ln_t, S_t/S_t[0])
+plt.plot(ln_t, groups_mean['area'])
 #plt.plot(ln_t, 5*ln_t**3)
 #plt.plot(ln_t, 5*ln_t**2.8)
-plt.plot(ln_t, 0.5*ln_t**2)
+plt.plot(ln_t, 1e1*ln_t**2)
 #plt.plot(np.arange(2, len(groups_mean)+1), 1/np.log(1/np.arange(2, len(groups_mean)+1)**1.7))
 plt.xscale('log')
 plt.yscale('log')
