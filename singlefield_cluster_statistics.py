@@ -3,6 +3,7 @@ import networkx as nx
 import pickle as pkl
 import argparse
 import scipy.sparse as sp
+import scipy.optimize as opt
 import matplotlib.pyplot as plt
 from numba import njit
 import pandas as pd
@@ -102,13 +103,14 @@ for dt, df in dfs.items():
     t = np.arange(1, len(groups_mean)+1)
     ln_t = np.log(t)
     S_t = groups_mean['area_sq']/ groups_mean['area']
-    plt.plot(ln_t, S_t, label="$dt=%i$" % dt)
-plt.plot(ln_t,1e1*ln_t**2, color='black', ls='dashed', label="$S \sim (ln t)^2 $")
+    ln_S_t = np.log(S_t)
+    plt.plot(t, 1/S_t, label="$dt=%i$" % dt)
+#plt.plot(t, 500/np.log(100/t)**(2.0))
+#plt.plot(ln_t,1e1*ln_t**2, color='black', ls='dashed', label="$S \sim (ln t)^2 $")
 plt.xticks(fontsize=15)
 plt.yticks(fontsize=15)
-plt.xscale('log')
-plt.yscale('log')
-plt.xlabel("$\ln t$", fontsize=15)
-plt.ylabel("$S(t)$", fontsize=15)
+#plt.yscale('log')
+#plt.xlabel("$\ln t$", fontsize=15)
+#plt.ylabel("$S(t)$", fontsize=15)
 plt.legend(fontsize=15)
 plt.show()
