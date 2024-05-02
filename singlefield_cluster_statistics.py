@@ -94,23 +94,32 @@ for dt in dts:
     df_growth['area_cube'] = cl_growth[:,2]**3
     df_growth['cStart'] = cl_growth[:,3]
     df_growth['cEnd'] = cl_growth[:,4]
-    #df_growth = df_growth[df_growth['cEnd']<20000]
+    df_growth = df_growth[df_growth['cEnd']>30000]
     #groups_mean = df_growth.groupby('timeIdx').mean()
     dfs[dt] = df_growth
+for T in [2000]:
+    for dt, df in dfs.items():
+        groups_mean = df.groupby('timeIdx').mean()
+        t = np.arange(1, len(groups_mean)+1)
+        print(t.max())
+        ln_t = np.log(t)
+        S_t = groups_mean['area_cube']/ groups_mean['area_sq']
+    
+        plt.plot(np.log(T/t), S_t, label="$dt=%i$" % dt)
+    plt.plot(np.log(T/t),2e3*(np.log(T/t)**(-2.82)), ls='dashed', c='black', label="$\ln (\\tau_\\alpha/\\tau)^{-\\nu (1+\zeta)}$" )
+    #plt.plot(np.log(T/t),250*(np.log(T/t)**(-1.5)), ls='dashed', c='grey', label="$\ln (\\tau_\\alpha/\\tau)^{-\\nu}$" )
 
-for dt, df in dfs.items():
-    groups_mean = df.groupby('timeIdx').mean()
-    t = np.arange(1, len(groups_mean)+1)
-    ln_t = np.log(t)
-    S_t = groups_mean['area_sq']/ groups_mean['area']
-    ln_S_t = np.log(S_t)
-    plt.plot(t, 1/S_t, label="$dt=%i$" % dt)
-#plt.plot(t, 500/np.log(100/t)**(2.0))
-#plt.plot(ln_t,1e1*ln_t**2, color='black', ls='dashed', label="$S \sim (ln t)^2 $")
-plt.xticks(fontsize=15)
-plt.yticks(fontsize=15)
-#plt.yscale('log')
-#plt.xlabel("$\ln t$", fontsize=15)
-#plt.ylabel("$S(t)$", fontsize=15)
-plt.legend(fontsize=15)
-plt.show()
+    #plt.plot(ln_t,1e1*ln_t**2, color='black', ls='dashed', label="$S \sim (ln t)^2 $")
+    plt.xticks(fontsize=15)
+    plt.yticks(fontsize=15)
+    plt.xscale('log')
+    #plt.xlim(1e-1, plt.gca().get_xlim()[1])
+    plt.yscale('log')
+    #plt.yscale('log')
+    plt.xlabel("$\ln (\\tau_\\alpha/\\tau)$", fontsize=15)
+    plt.ylabel("$S(\\tau)$", fontsize=15)
+    plt.legend(fontsize=15)
+    plt.title("$\\tau_\\alpha=%i$ frames ~ $%.1f$ seconds" % (T, T*200/1000))
+    plt.tight_layout()
+    plt.savefig("s_growth_%i.pdf" % T)
+    plt.show()

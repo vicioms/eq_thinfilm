@@ -1,0 +1,25 @@
+{
+    "files.associations": {
+        "limits": "cpp",
+        "vector": "cpp",
+        "map": "cpp",
+        "new": "cpp",
+        "functional": "cpp",
+        "list": "cpp",
+        "string": "cpp",
+        "unordered_map": "cpp",
+        "iostream": "cpp",
+        "ostream": "cpp",
+        "set": "cpp",
+        "__hash_table": "cpp",
+        "__split_buffer": "cpp",
+        "__tree": "cpp",
+        "atomic": "cpp",
+        "ios": "cpp",
+        "system_error": "cpp",
+        "locale": "cpp",
+        "iomanip": "cpp",
+        "iosfwd": "cpp"
+    },
+    "julia.environmentPath": "/Users/schimmenti/Desktop/eq_thinfilm"
+}
