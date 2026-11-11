@@ -6,20 +6,21 @@
 # script skips (L, a, seed) already present in any results*.jsonl, so
 # timed-out jobs can simply be resubmitted.
 #
-#   sbatch slurm_fss.sh
+#   cd bubble_sim && mkdir -p logs && sbatch slurm_fss.sh
 #   python fss_analyze.py            # once (some of) the shards are done
 #
-# Adapt the partition / account / modules to your cluster.
+# (logs/ must exist before sbatch: SLURM opens the output file before the
+#  script runs.)
 
 #SBATCH --job-name=bubble_fss
+#SBATCH --partition=graphic
 #SBATCH --array=0-15                 # NSHARDS = 16 (keep in sync below)
 #SBATCH --gres=gpu:1
-#SBATCH --cpus-per-task=2
-#SBATCH --mem=8G
-#SBATCH --time=24:00:00
+#SBATCH --constraint="[a100|h200]"
+#SBATCH --cpus-per-task=4
+#SBATCH --mem=64G
+#SBATCH --time=4-00:00:00
 #SBATCH --output=logs/fss_%A_%a.out
-##SBATCH --partition=gpu
-##SBATCH --account=XXX
 
 set -euo pipefail
 NSHARDS=16
