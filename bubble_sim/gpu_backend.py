@@ -24,6 +24,13 @@ from __future__ import annotations
 import math
 
 import numpy as np
+
+# Older numba-cuda releases register an overload for np.row_stack, which NumPy
+# 2.4 removed; the kernel compilation then fails with AttributeError. Restore
+# the alias (it was always identical to vstack) before numba.cuda loads it.
+if not hasattr(np, "row_stack"):
+    np.row_stack = np.vstack
+
 from numba import cuda
 
 
