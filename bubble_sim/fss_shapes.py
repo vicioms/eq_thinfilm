@@ -123,21 +123,31 @@ def bubble_Sq(R):
     return q[:, 2:], S[:, 2:]
 
 
-def arc_Sq(R, centres_deg, half_width_deg=30.0):
-    """Periodogram of R(theta) on arcs centred on the given angles (Hann window,
-    linear detrending). Returns q-grid (per unit arc length, in units of the
-    mean arc radius of each sample) and S averaged over arcs; computed per
-    sample, then interpolated on a common q grid."""
+def low_modes(R, nmax=2):
+    """Per-sample Fourier modes n <= nmax of R(theta): mean radius, centre
+    offset and the elliptic deformation, i.e. the bubble's overall shape."""
+    c = np.fft.rfft(R, axis=1)
+    c[:, nmax + 1:] = 0
+    return np.fft.irfft(c, n=R.shape[1], axis=1)
+
+
+def arc_Sq(R, centres_deg, half_width_deg=30.0, nmax_shape=2):
+    """Periodogram of the wall roughness on arcs centred on the given angles.
+    Each bubble's own shape (Fourier modes n <= nmax_shape of R(theta)) is
+    subtracted first, so that the curvature of an elongated bubble does not
+    leak into the arcs near its tips; then linear detrending and a Hann window
+    on each arc. q is per unit arc length (local mean radius of each arc).
+    The removed modes have q <= nmax_shape / R, below the arcs' lowest mode."""
     nth = R.shape[1]
+    dR = R - low_modes(R, nmax_shape)
     hw = int(round(half_width_deg / 360 * nth))
     j = np.arange(-hw, hw + 1)
     win = np.hanning(len(j))
     S_all, q_all = [], []
     for c in centres_deg:
         idx = (int(round(c / 360 * nth)) + j) % nth
-        seg = R[:, idx]
-        Rloc = seg.mean(1, keepdims=True)
-        s = Rloc * (2 * np.pi * j / nth)[None, :]               # arc length
+        seg = dR[:, idx]
+        Rloc = R[:, idx].mean(1, keepdims=True)
         ds = Rloc * 2 * np.pi / nth
         # linear detrending (per sample)
         A = np.c_[np.ones_like(j), j].astype(float)
@@ -202,6 +212,7 @@ def plot(d, w):
     fig = plt.figure(figsize=(2.3 * (nshow + 2), 2.3 * len(As) + 0.6))
     gs = fig.add_gridspec(len(As), nshow + 2)
     for i, a in enumerate(As):
+        pmax = 0.0
         for s in range(nshow):
             ax = fig.add_subplot(gs[i, s])
             m = masks.get((Lmax, a, s))
@@ -241,9 +252,12 @@ def plot(d, w):
                 continue
             p = (S["mult"][k] > 1).mean(0)
             nb = 32
+            pmax = max(pmax, p.reshape(nb, -1).mean(1).max())
             p = p.reshape(nb, -1).mean(1); t = th.reshape(nb, -1).mean(1)
             ax.plot(np.r_[t, t[:1]], np.r_[p, p[:1]], color=lcol[L], lw=1)
-        ax.plot([np.radians(tb)] * 2, [0, ax.get_ylim()[1]], color="C3", lw=1)
+        top = np.ceil(pmax * 20) / 20
+        ax.set_ylim(0, top); ax.set_yticks([top / 2, top]); ax.set_rlabel_position(100)
+        ax.plot([np.radians(tb)] * 2, [0, top], color="C3", lw=1)
         ax.tick_params(labelsize=6)
         if i == 0:
             ax.set_title("P(overhang | θ)", fontsize=9)
