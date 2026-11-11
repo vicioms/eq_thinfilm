@@ -26,8 +26,9 @@ set -euo pipefail
 NSHARDS=16
 
 # --- environment (edit) ------------------------------------------------------
-# module load cuda/12.4
-# source ~/miniforge3/etc/profile.d/conda.sh && conda activate bubble
+module load cuda/12.8
+source /home/schimmenti/miniconda3/etc/profile.d/conda.sh
+conda activate torchcompile
 # needs: numpy scipy matplotlib numba numba-cuda  (pip install numba-cuda)
 # ---------------------------------------------------------------------------
 
