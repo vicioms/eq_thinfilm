@@ -59,7 +59,7 @@ def run_task(task):
                   h_start=opts["h_start"], dh=opts["dh"], n_bisect=opts["n_bisect"], seed=seed)
     t0 = time.time()
     tries = []
-    for _ in range(8):           # adapt h_start if the initial bubble collapses / escapes
+    for _ in range(12):          # adapt h_start if the initial bubble collapses / escapes
         res = bd.run_depinning(p, verbose=False, backend=opts["backend"], keep_snapshots=False,
                                device=_GPU)
         tries.append((p.h_start, res["status_init"]))
