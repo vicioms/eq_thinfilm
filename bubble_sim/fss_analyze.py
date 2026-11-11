@@ -12,13 +12,15 @@ Per (anisotropy a, size L):
         |Q| = | < eps exp(2 i theta) > |         (any common axis)
   * fraction of multivalued angles (overhangs / pinch-offs) and u_o / L
 
-Writes runs/fss/summary.csv and runs/fss/fss_summary.png.
+Writes runs/fss/summary.csv and runs/fss/fss_summary.png, then (if shapes.npz or
+configs/ exist) bubbles.png and Sq.png via fss_shapes.py.
 """
 from __future__ import annotations
 
 import argparse
 import json
 import os
+import sys
 
 import numpy as np
 
@@ -140,7 +142,9 @@ def main():
         ax2 = ax.twinx()
         ax2.plot(aa, [fits[a]["hinf"] for a in aa], "s-", color="C3", label=r"$h_\infty$")
         ax2.set_ylabel(r"$h_\infty$", color="C3")
-        ax.set_xlabel("anisotropy a"); ax.set_ylabel(r"$\nu$"); ax.legend(fontsize=7, loc="upper left")
+        h1, l1 = ax.get_legend_handles_labels(); h2, l2 = ax2.get_legend_handles_labels()
+        ax.legend(h1 + h2, l1 + l2, fontsize=7, loc="center left")
+        ax.set_xlabel("anisotropy a"); ax.set_ylabel(r"$\nu$")
         ax.set_title("exponent and extrapolated threshold vs anisotropy")
 
     ax = axs[1, 0]
@@ -173,6 +177,15 @@ def main():
     out = os.path.join(args.dir, "fss_summary.png")
     fig.savefig(out, dpi=130)
     print("saved", out, "and summary.csv")
+
+    # bubble shapes and S(q): needs shapes.npz (fss_shapes.py extracts it from configs/)
+    import glob as _g
+    if os.path.exists(os.path.join(args.dir, "shapes.npz")) or _g.glob(os.path.join(args.dir, "configs", "*.npz")):
+        import fss_shapes
+        sys.argv = [sys.argv[0], "--dir", args.dir]
+        fss_shapes.main()
+    else:
+        print("no shapes.npz / configs: run `python fss_shapes.py --dir", args.dir, "--no-plot` where the scan ran")
 
 
 if __name__ == "__main__":

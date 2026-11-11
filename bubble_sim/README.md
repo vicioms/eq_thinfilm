@@ -43,6 +43,19 @@ go to `runs/fss/results*.jsonl` (+ critical configurations in
 `fss_analyze.py` makes `runs/fss/summary.csv` and `runs/fss/fss_summary.png`
 (⟨h_d⟩ vs 1/L, var(h_d) ~ L^(−2/ν), bubble elongation vs a, overhangs).
 
+`fss_shapes.py` looks at the critical bubbles themselves:
+`bubbles.png` (snapshots, mean shape ⟨R(θ)⟩/R_eff, overhang probability vs θ)
+and `Sq.png` (interface structure factor S(q) ~ q^−(1+2ζ), ζ vs a, and S(q)
+of edge vs screw arcs). The configurations are git-ignored, so on the cluster
+run
+
+```bash
+python fss_shapes.py --dir runs/fss_cpu --no-plot   # -> runs/fss_cpu/shapes.npz (tracked, few MB)
+```
+
+push `shapes.npz`, and plot anywhere with `python fss_shapes.py --dir runs/fss_cpu`
+(`fss_analyze.py` also does it when `shapes.npz` is there).
+
 ## GPU / cluster
 
 `gpu_backend.py` is a CUDA version of the relaxation (numba.cuda, one thread
