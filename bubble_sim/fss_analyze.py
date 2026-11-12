@@ -34,9 +34,20 @@ def bootstrap_var_err(x, n=500, rng=np.random.default_rng(0)):
     return float(np.std(v))
 
 
+def wls(A, y, sigma):
+    """Weighted least squares: returns (coefficients, covariance)."""
+    W = 1 / np.asarray(sigma) ** 2
+    M = A.T @ (A * W[:, None])
+    cov = np.linalg.inv(M)
+    return cov @ (A.T @ (W * y)), cov
+
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--dir", default=os.path.join(HERE, "runs", "fss"))
+    ap.add_argument("--lmin", type=int, default=512,
+                    help="fit <h_d> and var(h_d) only for L >= lmin (small bubbles still remember "
+                         "the initial circle and are dominated by the Laplace term)")
     args = ap.parse_args()
     import glob
     rows = [json.loads(l) for fn in sorted(glob.glob(os.path.join(args.dir, "results*.jsonl")))
@@ -83,20 +94,26 @@ def main():
               f"{s['Qb']:7.3f} {s['Qabs']:6.3f} {s['aspect_mean']:8.3f} {s['multival']:8.3f} {s['frac_with_overhang']:6.2f}")
     print()
     for a in As:
-        S = [s for s in summ if s["aniso"] == a and s["n"] > 2]
+        S = [s for s in summ if s["aniso"] == a and s["n"] > 2 and s["L"] >= args.lmin]
         if len(S) < 2:
             continue
         L = np.array([s["L"] for s in S], float)
+        # var(h_d) ~ L^slope: weighted least squares in log space (sigma = relative error)
         v = np.array([s["hd_var"] for s in S])
-        ve = np.array([s["hd_var_err"] for s in S])
-        wts = 1 / np.maximum(ve / v, 1e-3)                  # weights in log space
-        sl, ic = np.polyfit(np.log(L), np.log(v), 1, w=wts)
+        sv = np.maximum(np.array([s["hd_var_err"] for s in S]) / v, 1e-3)
+        (ic, sl), cv = wls(np.c_[np.ones_like(L), np.log(L)], np.log(v), sv)
         nu = -2 / sl
+        nu_err = 2 / sl ** 2 * np.sqrt(cv[1, 1])
+        # <h_d> = h_inf + B / L, weighted by the standard errors
         m = np.array([s["hd_mean"] for s in S])
-        A = np.c_[np.ones_like(L), 1 / L]
-        (hinf, B), *_ = np.linalg.lstsq(A, m, rcond=None)
-        fits[a] = dict(slope=sl, ic=ic, nu=nu, hinf=hinf, B=B)
-        print(f"a={a:4.2f}: var(h_d) ~ L^{sl:.2f}  -> nu = {nu:.2f};   <h_d> = {hinf:.4f} + {B:.2f}/L")
+        sm = np.array([s["hd_err"] for s in S])
+        (hinf, B), ch = wls(np.c_[np.ones_like(L), 1 / L], m, sm)
+        plateau = np.sum(m / sm ** 2) / np.sum(1 / sm ** 2)
+        fits[a] = dict(slope=sl, ic=ic, nu=nu, nu_err=nu_err, hinf=hinf, hinf_err=np.sqrt(ch[0, 0]), B=B,
+                       plateau=plateau, plateau_err=1 / np.sqrt(np.sum(1 / sm ** 2)), Lfit=L)
+        print(f"a={a:4.2f} (L>={args.lmin}): var(h_d) ~ L^{sl:.2f} -> nu = {nu:.2f} +- {nu_err:.2f};  "
+              f"<h_d> = {hinf:.5f}({np.sqrt(ch[0, 0]) * 1e5:.0f}) + {B:.2f}/L;  "
+              f"plateau {plateau:.5f}({fits[a]['plateau_err'] * 1e5:.0f})")
 
     import matplotlib
     matplotlib.use("Agg")
@@ -111,10 +128,11 @@ def main():
         L = np.array([s["L"] for s in S])
         ax.errorbar(1 / L, [s["hd_mean"] for s in S], [s["hd_err"] for s in S], fmt="o", color=cols[a], label=f"a={a}")
         if a in fits:
-            x = np.linspace(0, 1 / L.min() * 1.05, 50)
+            x = np.linspace(0, 1 / fits[a]["Lfit"].min() * 1.05, 50)
             ax.plot(x, fits[a]["hinf"] + fits[a]["B"] * x, "-", color=cols[a], lw=0.8)
+    ax.axvspan(0, 1 / args.lmin, color="0.93", zorder=-1)
     ax.set_xlabel("1/L"); ax.set_ylabel(r"$\langle h_d\rangle$"); ax.set_xlim(left=0); ax.legend(fontsize=8)
-    ax.set_title(r"mean depinning field, fit $h_\infty + B/L$")
+    ax.set_title(rf"mean depinning field, fit $h_\infty + B/L$ for $L\geq{args.lmin}$")
 
     ax = axs[0, 1]
     for a in As:
@@ -123,7 +141,8 @@ def main():
         ax.errorbar(L, [s["hd_var"] for s in S], [s["hd_var_err"] for s in S], fmt="o", color=cols[a],
                     label=f"a={a}" + (f", ν={fits[a]['nu']:.2f}" if a in fits else ""))
         if a in fits:
-            ax.plot(L, np.exp(fits[a]["ic"]) * L ** fits[a]["slope"], "-", color=cols[a], lw=0.8)
+            Lf = fits[a]["Lfit"]
+            ax.plot(Lf, np.exp(fits[a]["ic"]) * Lf ** fits[a]["slope"], "-", color=cols[a], lw=0.8)
     if Ls:
         L = np.array(Ls, float)
         for nu, ls in ((4 / 3, ":"), (1.76, "--")):
@@ -131,16 +150,21 @@ def main():
             y0 = np.mean([s["hd_var"] for s in ref])
             ax.plot(L, y0 * (L / L[0]) ** (-2 / nu), "k" + ls, lw=0.8, label=f"ν={nu:.2f}")
     ax.set_xscale("log"); ax.set_yscale("log"); ax.set_xlabel("L"); ax.set_ylabel(r"var($h_d$)")
-    ax.legend(fontsize=7); ax.set_title(r"sample-to-sample fluctuations, $\sim L^{-2/\nu}$")
+    ax.axvspan(args.lmin, max(Ls) * 1.1, color="0.93", zorder=-1)
+    ax.legend(fontsize=7); ax.set_title(rf"sample-to-sample fluctuations, $\sim L^{{-2/\nu}}$, fit $L\geq{args.lmin}$")
 
     ax = axs[0, 2]
     if fits:
         aa = sorted(fits)
-        ax.plot(aa, [fits[a]["nu"] for a in aa], "o-", label=r"$\nu$ from var($h_d$)")
+        ax.errorbar(aa, [fits[a]["nu"] for a in aa], [fits[a]["nu_err"] for a in aa], fmt="o-",
+                    label=r"$\nu$ from var($h_d$)")
         ax.axhline(4 / 3, color="k", ls=":", lw=0.8, label="qEW / white (1.33)")
         ax.axhline(1.76, color="k", ls="--", lw=0.8, label="letter, correlated (1.76)")
         ax2 = ax.twinx()
-        ax2.plot(aa, [fits[a]["hinf"] for a in aa], "s-", color="C3", label=r"$h_\infty$")
+        ax2.errorbar(aa, [fits[a]["hinf"] for a in aa], [fits[a]["hinf_err"] for a in aa], fmt="s-",
+                     color="C3", label=r"$h_\infty$ (fit)")
+        ax2.errorbar(aa, [fits[a]["plateau"] for a in aa], [fits[a]["plateau_err"] for a in aa], fmt="^--",
+                     color="C1", label=rf"plateau, mean over $L\geq{args.lmin}$")
         ax2.set_ylabel(r"$h_\infty$", color="C3")
         h1, l1 = ax.get_legend_handles_labels(); h2, l2 = ax2.get_legend_handles_labels()
         ax.legend(h1 + h2, l1 + l2, fontsize=7, loc="center left")
