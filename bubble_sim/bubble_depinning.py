@@ -396,22 +396,25 @@ def analyse(phi, n_theta=1024):
     rmax = min(xc, yc, L - 1 - xc, L - 1 - yc)
     rs = np.arange(0, rmax, 0.25)
     th = np.linspace(0, 2 * np.pi, n_theta, endpoint=False)
-    X = xc + np.outer(np.cos(th), rs)
-    Y = yc + np.outer(np.sin(th), rs)
-    vals = map_coordinates(phi, [Y.ravel(), X.ravel()], order=1, mode="wrap").reshape(X.shape)
-    s = np.sign(vals)
     R_mean = np.full(n_theta, np.nan)
     mult = np.zeros(n_theta, dtype=int)
     var = np.zeros(n_theta)
-    for k in range(n_theta):
-        idx = np.nonzero(s[k, :-1] * s[k, 1:] < 0)[0]
-        if len(idx) == 0:
-            continue
-        v0, v1 = vals[k, idx], vals[k, idx + 1]
-        rc = rs[idx] + (rs[idx + 1] - rs[idx]) * v0 / (v0 - v1)    # linear interpolation
-        mult[k] = len(rc)
-        R_mean[k] = rc.mean()                                      # Eq. (9) analogue
-        var[k] = rc.var()                                          # Eq. (11) analogue
+    for c0 in range(0, n_theta, 512):               # in chunks: L = 4096 has ~10^8 ray points
+        t = th[c0:c0 + 512]
+        X = xc + np.outer(np.cos(t), rs)
+        Y = yc + np.outer(np.sin(t), rs)
+        vals = map_coordinates(phi, [Y.ravel(), X.ravel()], order=1, mode="wrap").reshape(X.shape)
+        s = np.sign(vals)
+        for kk in range(len(t)):
+            idx = np.nonzero(s[kk, :-1] * s[kk, 1:] < 0)[0]
+            if len(idx) == 0:
+                continue
+            v0, v1 = vals[kk, idx], vals[kk, idx + 1]
+            rc = rs[idx] + (rs[idx + 1] - rs[idx]) * v0 / (v0 - v1)    # linear interpolation
+            k = c0 + kk
+            mult[k] = len(rc)
+            R_mean[k] = rc.mean()                                      # Eq. (9) analogue
+            var[k] = rc.var()                                          # Eq. (11) analogue
     ok = mult > 0
     Rm = np.where(ok, R_mean, np.nanmean(R_mean))
     dR = Rm - Rm.mean()

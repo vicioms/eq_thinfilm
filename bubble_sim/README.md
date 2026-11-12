@@ -66,7 +66,8 @@ CPU code.
 ```bash
 python bubble_depinning.py --backend cuda --gpu 0 --L 1024 --R0 170   # single run
 python fss_scan.py --backend cuda --gpus 4 --L 512 1024 --samples 512:32 1024:16   # 4 GPUs, one node
-sbatch slurm_fss.sh                                                    # job array, 1 GPU per task
+sbatch slurm_fss.sh                                                    # job array, 1 GPU per task, R0 = L/6
+sbatch slurm_fss.sh 32                                                 # same with fixed R0 = 32
 python test_gpu_backend.py                                             # GPU vs CPU check (on the GPU node)
 ```
 

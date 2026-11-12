@@ -49,6 +49,7 @@ def n_theta(L):
 
 
 N_MASKS = 6                # masks stored per (a, L)
+MASK_MAX = 1024            # stored masks are subsampled to at most this size
 ZETA_REF = {"qEW (1.25)": 1.25, "letter (1.43)": 2 - 1 / 1.76}
 CFG_RE = re.compile(r"L(\d+)_a([0-9.]+)_s(\d+)\.npz$")
 
@@ -71,7 +72,8 @@ def _extract_one(fn):
                R_theta=an["R_theta"].astype(np.float32),
                mult=np.minimum(an["mult"], 127).astype(np.int8))
     if seed < N_MASKS:
-        out["mask"] = np.packbits(bd.bubble_mask(phi))
+        st = max(1, L // MASK_MAX)
+        out["mask"] = np.packbits(bd.bubble_mask(phi)[::st, ::st])
     return out
 
 
@@ -118,7 +120,8 @@ def load_shapes(d):
     for k in z.files:
         if k.startswith("mask_"):
             L, a, s = re.match(r"mask_L(\d+)_a([0-9.]+)_s(\d+)", k).groups()
-            masks[(int(L), float(a), int(s))] = np.unpackbits(z[k])[: int(L) ** 2].reshape(int(L), int(L)).astype(bool)
+            n = int(L) // max(1, int(L) // MASK_MAX)
+            masks[(int(L), float(a), int(s))] = np.unpackbits(z[k])[: n ** 2].reshape(n, n).astype(bool)
     return S, masks
 
 
@@ -258,7 +261,8 @@ def plot(d, w):
             m = masks.get((Lmax, a, s))
             if m is None:
                 ax.axis("off"); continue
-            ax.imshow(m, cmap="Greys", origin="lower", interpolation="nearest", vmin=0, vmax=1.6)
+            ax.imshow(m, cmap="Greys", origin="lower", interpolation="nearest", vmin=0, vmax=1.6,
+                      extent=(-0.5, Lmax - 0.5, -0.5, Lmax - 0.5))          # lattice units
             k = np.nonzero(sel(a, Lmax) & (S["seed"] == s))[0]
             if len(k):
                 k = k[0]
@@ -269,7 +273,7 @@ def plot(d, w):
             ax.set_xticks([]); ax.set_yticks([])
             if s == 0:
                 ax.set_ylabel(f"a = {a}", fontsize=10)
-            L0 = m.shape[0]
+            L0 = Lmax
             ax.annotate("", xy=(0.12 * L0 + 0.12 * L0 * np.cos(np.radians(tb)), 0.1 * L0 + 0.12 * L0 * np.sin(np.radians(tb))),
                         xytext=(0.12 * L0, 0.1 * L0), arrowprops=dict(arrowstyle="->", color="C3", lw=1.2))
         # mean shape (b fixed -> no alignment needed)
