@@ -5,7 +5,9 @@ Batch scan of bubble depinning: anisotropy a x system size L x disorder samples.
 Each task runs the quasi-static protocol of bubble_depinning.py with the
 dislocation noise (random-field coupling) and stores one JSON line with h_d and
 the shape of the critical bubble. The initial radius scales with the box,
-R0 = L * r0_frac, so that bubbles of all sizes are geometrically similar.
+R0 = L * r0_frac (geometrically similar bubbles), or a fixed radius --r0 in
+lattice units. Note that bubble expansion is unstable (the Laplace pressure
+falls as R grows), so the critical bubble stays close to R0 whatever R0 is.
 
 Backends
   cpu  : tasks run in parallel processes, one numba thread each (--workers).
@@ -55,7 +57,7 @@ def run_task(task):
 
     L, a, seed, opts = task["L"], task["aniso"], task["seed"], task["opts"]
     p = bd.Params(L=L, noise="dislocation", coupling="field", Delta=opts["Delta"], w=opts["w"],
-                  burgers_angle=opts["burgers_angle"], aniso=a, R0=L * opts["r0_frac"],
+                  burgers_angle=opts["burgers_angle"], aniso=a, R0=opts["r0"] or L * opts["r0_frac"],
                   h_start=opts["h_start"], dh=opts["dh"], n_bisect=opts["n_bisect"], seed=seed)
     t0 = time.time()
     tries = []
@@ -98,6 +100,8 @@ def main():
     ap.add_argument("--w", type=float, default=3.0)
     ap.add_argument("--burgers-angle", type=float, default=0.0)
     ap.add_argument("--r0-frac", type=float, default=1 / 6)
+    ap.add_argument("--r0", type=float, default=None,
+                    help="fixed initial radius in lattice units (overrides --r0-frac)")
     ap.add_argument("--h-start", type=float, default=0.0)
     ap.add_argument("--h-step", type=float, default=0.01, help="h_start correction on collapse")
     ap.add_argument("--dh", type=float, default=0.002)
@@ -123,7 +127,7 @@ def main():
                 r = json.loads(line)
                 done.add((r["L"], r["aniso"], r["seed"]))
 
-    opts = dict(Delta=args.Delta, w=args.w, burgers_angle=args.burgers_angle, r0_frac=args.r0_frac,
+    opts = dict(Delta=args.Delta, w=args.w, burgers_angle=args.burgers_angle, r0_frac=args.r0_frac, r0=args.r0,
                 h_start=args.h_start, h_step=args.h_step, dh=args.dh, n_bisect=args.n_bisect,
                 save_configs=not args.no_configs, outdir=args.outdir, backend=args.backend)
     # large L first so that the slow tasks do not end up alone at the end

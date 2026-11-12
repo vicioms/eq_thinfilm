@@ -37,7 +37,7 @@ instead of the quasi-static ramp.
 
 `fss_scan.py` runs anisotropy a × size L × disorder samples (dislocation
 noise; `--aniso a` interpolates from isotropic, a = 0, to the letter's
-spectrum, a = 1, at fixed radial spectrum and variance). `R0 = L/6`. Results
+spectrum, a = 1, at fixed radial spectrum and variance). `R0 = L/6` (`--r0` sets a fixed radius instead). Results
 go to `runs/fss/results*.jsonl` (+ critical configurations in
 `runs/fss/configs/`); restarting skips finished samples.
 `fss_analyze.py` makes `runs/fss/summary.csv` and `runs/fss/fss_summary.png`
@@ -46,7 +46,8 @@ go to `runs/fss/results*.jsonl` (+ critical configurations in
 `fss_shapes.py` looks at the critical bubbles themselves:
 `bubbles.png` (snapshots, mean shape ⟨R(θ)⟩/R_eff, overhang probability vs θ)
 and `Sq.png` (interface structure factor S(q) ~ q^−(1+2ζ), ζ vs a, and S(q)
-of edge vs screw arcs). The configurations are git-ignored, so on the cluster
+of edge vs screw arcs). The number of rays grows with L (≥ 2 per lattice unit
+of wall: 1024 up to L = 256, 8192 at L = 2048). The configurations are git-ignored, so on the cluster
 run
 
 ```bash

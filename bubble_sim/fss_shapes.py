@@ -6,7 +6,7 @@ Two stages:
 
 1. extract  (needs <dir>/configs/*.npz, i.e. run it where the scan ran)
    For every critical configuration: rays from the bubble centre give R(theta)
-   on n_theta angles (mean of the phi = 0 crossings) and the number of crossings
+   on n_theta(L) angles (>= 2 rays per lattice unit of wall) (mean of the phi = 0 crossings) and the number of crossings
    per ray (> 1 = overhang). A few bubble masks per (a, L) are kept for display.
    Everything goes to <dir>/shapes.npz (a few MB; tracked by git, unlike the
    configs), so the plots can be made on a laptop after `git pull`.
@@ -39,7 +39,15 @@ from concurrent.futures import ProcessPoolExecutor
 import numpy as np
 
 HERE = os.path.dirname(os.path.abspath(__file__))
-N_THETA = 1024
+N_THETA_MIN = 1024
+
+
+def n_theta(L):
+    """Rays per bubble: >= 2 per lattice unit of wall at the typical critical
+    radius R ~ L/4 (2 pi L/4 * 2 = pi L), rounded up to a power of 2."""
+    return max(N_THETA_MIN, 2 ** int(np.ceil(np.log2(np.pi * L))))
+
+
 N_MASKS = 6                # masks stored per (a, L)
 ZETA_REF = {"qEW (1.25)": 1.25, "letter (1.43)": 2 - 1 / 1.76}
 CFG_RE = re.compile(r"L(\d+)_a([0-9.]+)_s(\d+)\.npz$")
@@ -55,7 +63,7 @@ def _extract_one(fn):
     L, a, seed = int(L), float(a), int(seed)
     z = np.load(fn)
     phi = z["phi_c"].astype(np.float64)
-    an = bd.analyse(phi, n_theta=N_THETA)
+    an = bd.analyse(phi, n_theta=n_theta(L))
     if an is None:
         return None
     out = dict(L=L, aniso=a, seed=seed, h_d=float(z["h_d"]), R_eff=an["R_eff"],
@@ -77,8 +85,9 @@ def extract(d, workers):
     rows.sort(key=lambda r: (r["aniso"], r["L"], r["seed"]))
     out = {k: np.array([r[k] for r in rows]) for k in
            ("L", "aniso", "seed", "h_d", "R_eff", "xc", "yc", "aspect", "orientation_deg")}
-    out["R_theta"] = np.stack([r["R_theta"] for r in rows])
-    out["mult"] = np.stack([r["mult"] for r in rows])
+    for L in sorted({r["L"] for r in rows}):          # ray count depends on L
+        out[f"R_theta_L{L}"] = np.stack([r["R_theta"] for r in rows if r["L"] == L])
+        out[f"mult_L{L}"] = np.stack([r["mult"] for r in rows if r["L"] == L])
     out["n_configs"] = len(files)
     for r in rows:
         if "mask" in r:
@@ -90,7 +99,21 @@ def extract(d, workers):
 
 def load_shapes(d):
     z = np.load(os.path.join(d, "shapes.npz"))
-    S = {k: z[k] for k in z.files if not k.startswith("mask_")}
+    S = {k: z[k] for k in z.files if not k.startswith(("mask_", "R_theta", "mult"))}
+    # per-sample ray arrays as object arrays (their length depends on L);
+    # old files store one (n_samples, 1024) array
+    n = len(S["L"])
+    for key in ("R_theta", "mult"):
+        obj = np.empty(n, dtype=object)
+        if key in z.files:
+            for i, row in enumerate(z[key]):
+                obj[i] = row
+        else:
+            for L in np.unique(S["L"]):
+                idx = np.nonzero(S["L"] == L)[0]
+                for i, row in zip(idx, z[f"{key}_L{L}"]):
+                    obj[i] = row
+        S[key] = obj
     masks = {}
     for k in z.files:
         if k.startswith("mask_"):
@@ -102,15 +125,32 @@ def load_shapes(d):
 # ---------------------------------------------------------------------------
 # 2. structure factors
 # ---------------------------------------------------------------------------
+class Rays:
+    """Per-sample rays; R[i] is one sample's array, R[mask] stacks the selected
+    samples (which must share L, i.e. the ray count) into a 2-D array."""
+    def __init__(self, obj):
+        self.obj = obj
+
+    def __getitem__(self, k):
+        x = self.obj[k]
+        return np.stack(list(x)) if isinstance(x, np.ndarray) and x.dtype == object else x
+
+
+def th_of(n):
+    return np.linspace(0, 2 * np.pi, n, endpoint=False)
+
+
 def fill_gaps(R):
     """Rays without a crossing (R = nan, rare) -> periodic linear interpolation."""
-    R = R.copy()
+    R = [row.astype(float) for row in R]
     for row in R:
         bad = np.isnan(row)
         if bad.any() and not bad.all():
             th = np.arange(len(row))
             row[bad] = np.interp(th[bad], th[~bad], row[~bad], period=len(row))
-    return R
+    obj = np.empty(len(R), dtype=object)
+    obj[:] = R
+    return obj
 
 
 def bubble_Sq(R):
@@ -193,7 +233,8 @@ def plot(d, w):
     from matplotlib import cm
 
     S, masks = load_shapes(d)
-    R = fill_gaps(S["R_theta"].astype(float))
+    R = Rays(fill_gaps(S["R_theta"]))
+    MULT = Rays(S["mult"])
     Ls = sorted(set(S["L"].tolist())); As = sorted(set(S["aniso"].tolist()))
     Lmax = Ls[-1]
     tb = 0.0                                          # burgers angle (fss_scan default)
@@ -203,7 +244,6 @@ def plot(d, w):
         tb = rows[0].get("burgers_angle", 0.0)
     acol = {a: cm.viridis(i / max(1, len(As) - 1)) for i, a in enumerate(As)}
     lcol = {L: cm.plasma(i / max(1, len(Ls) - 1) * 0.85) for i, L in enumerate(Ls)}
-    th = np.linspace(0, 2 * np.pi, R.shape[1], endpoint=False)
     sel = lambda a=None, L=None: (((S["aniso"] == a) if a is not None else True)
                                   & ((S["L"] == L) if L is not None else True))
 
@@ -222,6 +262,7 @@ def plot(d, w):
             k = np.nonzero(sel(a, Lmax) & (S["seed"] == s))[0]
             if len(k):
                 k = k[0]
+                th = th_of(len(R[k]))
                 ax.plot(S["xc"][k] + R[k] * np.cos(th), S["yc"][k] + R[k] * np.sin(th), "-",
                         color=acol[a], lw=0.6)
                 ax.set_title(f"h_d={S['h_d'][k]:.4f}", fontsize=7)
@@ -238,6 +279,7 @@ def plot(d, w):
             if k.sum() == 0:
                 continue
             r = (R[k] / S["R_eff"][k, None]).mean(0)
+            th = th_of(len(r))
             ax.plot(np.r_[th, th[:1]], np.r_[r, r[:1]], color=lcol[L], lw=1, label=f"L={L}")
         ax.plot([np.radians(tb)] * 2, [0, 1.3], color="C3", lw=1)
         ax.set_ylim(0, 1.35); ax.set_yticks([0.5, 1]); ax.tick_params(labelsize=6)
@@ -250,7 +292,8 @@ def plot(d, w):
             k = sel(a, L)
             if k.sum() == 0:
                 continue
-            p = (S["mult"][k] > 1).mean(0)
+            p = (MULT[k] > 1).mean(0)
+            th = th_of(len(p))
             nb = 32
             pmax = max(pmax, p.reshape(nb, -1).mean(1).max())
             p = p.reshape(nb, -1).mean(1); t = th.reshape(nb, -1).mean(1)
