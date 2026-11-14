@@ -70,6 +70,14 @@ C["area"][i]               # signed areas: > 0 encloses φ > 0, < 0 a hole
 C["contours"][i][C["main"][i]]   # the bubble wall
 ```
 
+`fss_contours.py --dir runs/fss_D0.04` analyses those walls directly (no polar
+projection): turning-angle spectrum S_ψ(q) ~ q^(1−2ζ) (valid with overhangs and
+for ζ > 1), winding structure function, divider dimension, KFR-style overhang
+statistics (ρ, u_o, wall length per overhang), wall-orientation distribution and
+support function relative to b, and edge/screw-resolved slope fluctuations.
+`--selftest` checks the estimators on synthetic walls. Results and discussion:
+`runs/fss_D0.04/contour_analysis.md`.
+
 ## GPU / cluster
 
 `gpu_backend.py` is a CUDA version of the relaxation (numba.cuda, one thread
