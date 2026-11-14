@@ -31,8 +31,7 @@ set -euo pipefail
 NSHARDS=16
 
 # --- environment (edit) ------------------------------------------------------
-source /home/schimmenti/miniconda3/etc/profile.d/conda.sh
-conda activate torchcompile
+source /data/biophys/schimmenti/uv_dir/mhn/bin/activate
 # needs: numpy scipy matplotlib numba
 # ---------------------------------------------------------------------------
 

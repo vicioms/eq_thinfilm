@@ -36,7 +36,7 @@
 #SBATCH --constraint="[a100|h200]"
 #SBATCH --cpus-per-task=4
 #SBATCH --mem=64G
-#SBATCH --time=4-00:00:00
+#SBATCH --time=1-00:00:00
 #SBATCH --output=logs/fss_%A_%a.out
 
 set -euo pipefail
@@ -54,8 +54,7 @@ echo "output: $OUT  R0: ${R0:-L/6}"
 
 # --- environment (edit) ------------------------------------------------------
 module load cuda/12.8
-source /home/schimmenti/miniconda3/etc/profile.d/conda.sh
-conda activate torchcompile
+source /data/biophys/schimmenti/uv_dir/mhn/bin/activate
 # needs: numpy scipy matplotlib numba numba-cuda  (pip install numba-cuda)
 # ---------------------------------------------------------------------------
 
