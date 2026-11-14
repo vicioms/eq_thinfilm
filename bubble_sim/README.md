@@ -57,6 +57,19 @@ python fss_shapes.py --dir runs/fss_cpu --no-plot   # -> runs/fss_cpu/shapes.npz
 push `shapes.npz`, and plot anywhere with `python fss_shapes.py --dir runs/fss_cpu`
 (`fss_analyze.py` also does it when `shapes.npz` is there).
 
+R(θ) is single-valued (mean of the crossings along a ray). For the actual
+interfaces, overhangs and pinch-off loops included, add `--contours`: it writes
+`contours.npz` (tracked, ~1.5 bytes per vertex, 1/8-site resolution) with
+every φ = 0 level line of every critical configuration. Load it with
+
+```python
+from fss_shapes import load_contours
+C = load_contours("runs/fss_D0.04")
+C["contours"][i]           # list of (n, 2) arrays (x, y) for sample i (C["L"][i], C["aniso"][i], C["seed"][i])
+C["area"][i]               # signed areas: > 0 encloses φ > 0, < 0 a hole
+C["contours"][i][C["main"][i]]   # the bubble wall
+```
+
 ## GPU / cluster
 
 `gpu_backend.py` is a CUDA version of the relaxation (numba.cuda, one thread

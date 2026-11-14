@@ -6,8 +6,8 @@
 #   sbatch slurm_fss.sh 32     # fixed R0 = 32  -> runs/fss_D0.04_R32
 #
 # then, on the cluster, for each output directory:
-#   python fss_shapes.py --dir runs/fss_D0.04 --no-plot --workers 8
-#   git add runs/fss_D0.04/shapes.npz runs/fss_D0.04/results_shard*.jsonl
+#   python fss_shapes.py --dir runs/fss_D0.04 --contours --no-plot --workers 8
+#   git add runs/fss_D0.04/shapes.npz runs/fss_D0.04/contours.npz runs/fss_D0.04/results_shard*.jsonl
 #
 # Every array task runs a disjoint slice (--shard) of the same deterministic
 # task list and writes $OUT/results_shard<ID>.jsonl. (L, a, seed) already in

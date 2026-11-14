@@ -26,6 +26,18 @@ Two stages:
 
    python fss_shapes.py --dir runs/fss_cpu              # extract if needed, then plot
    python fss_shapes.py --dir runs/fss_cpu --extract    # force re-extraction
+   python fss_shapes.py --dir runs/fss_cpu --contours --no-plot   # + contours.npz
+
+3. contours (--contours, needs configs/ like stage 1)
+   The full phi = 0 level set of every critical configuration (marching
+   squares, contourpy), overhangs and pinch-off loops included, written to
+   <dir>/contours.npz. Read it with load_contours(d):
+       C = load_contours(d);  C["L"], C["aniso"], C["seed"], C["h_d"]  per sample
+       C["contours"][i]  -> list of (n, 2) float arrays (x, y) in lattice units
+       C["area"][i]      -> signed area of each: > 0 encloses phi > 0, < 0 a hole
+       C["main"][i]      -> index of the bubble wall (largest positive area)
+   Vertices are rounded to 1/CONTOUR_SCALE lattice units and stored as the
+   first vertex (uint16) plus int8 steps between consecutive vertices.
 """
 from __future__ import annotations
 
@@ -97,6 +109,78 @@ def extract(d, workers):
     fn = os.path.join(d, "shapes.npz")
     np.savez_compressed(fn, **out)
     print(f"saved {fn} ({os.path.getsize(fn) / 1e6:.1f} MB, {len(rows)} bubbles)")
+
+
+CONTOUR_SCALE = 8          # stored contour resolution: 1/8 lattice unit
+
+
+def _contours_one(fn):
+    import contourpy
+    L, a, seed = CFG_RE.search(fn).groups()
+    z = np.load(fn)
+    phi = z["phi_c"].astype(np.float64)
+    lines = contourpy.contour_generator(z=phi).lines(0.0)
+    out = []
+    for c in lines:
+        if len(c) < 4:
+            continue
+        x, y = c[:, 0], c[:, 1]
+        A = 0.5 * float(np.sum(x * np.roll(y, -1) - np.roll(x, -1) * y))   # shoelace
+        # which side is phi > 0? sample phi half a site to the left of a few segments
+        k = np.linspace(0, len(c) - 2, min(9, len(c) - 1)).astype(int)
+        t = c[k + 1] - c[k]
+        nrm = np.c_[-t[:, 1], t[:, 0]] / np.maximum(np.hypot(*t.T), 1e-12)[:, None]
+        q = 0.5 * (c[k] + c[k + 1]) + 0.5 * nrm
+        qi = np.clip(np.rint(q).astype(int), 0, np.array(phi.shape[::-1]) - 1)
+        left_pos = np.sign(np.sum(np.sign(phi[qi[:, 1], qi[:, 0]]))) or 1.0
+        # CCW (A > 0) has its interior on the left
+        out.append((np.rint(c * CONTOUR_SCALE).astype(np.uint16), abs(A) * np.sign(A) * left_pos))
+    return dict(L=int(L), aniso=float(a), seed=int(seed), h_d=float(z["h_d"]), contours=out)
+
+
+def extract_contours(d, workers):
+    files = sorted(glob.glob(os.path.join(d, "configs", "*.npz")))
+    if not files:
+        sys.exit(f"no configurations in {d}/configs: run the extraction where the scan ran")
+    print(f"extracting phi = 0 contours of {len(files)} configurations ...")
+    with ProcessPoolExecutor(workers) as ex:
+        rows = list(ex.map(_contours_one, files, chunksize=4))
+    rows.sort(key=lambda r: (r["aniso"], r["L"], r["seed"]))
+    out = {k: np.array([r[k] for r in rows]) for k in ("L", "aniso", "seed", "h_d")}
+    cs = [c for r in rows for c in r["contours"]]
+    # first vertex + int8 steps (marching-squares steps are <= sqrt 2 sites)
+    out["start"] = np.array([c[0][0] for c in cs], np.uint16).reshape(-1, 2)
+    steps = [np.diff(c[0].astype(np.int32), axis=0) for c in cs]
+    st = np.concatenate(steps) if cs else np.zeros((0, 2), np.int32)
+    assert np.abs(st).max(initial=0) < 128, "contour step too long for int8"
+    out["steps"] = st.astype(np.int8)
+    out["offsets"] = np.r_[0, np.cumsum([len(x) for x in steps])].astype(np.int64)
+    out["area"] = np.array([c[1] for c in cs], np.float32)
+    out["sample"] = np.repeat(np.arange(len(rows)), [len(r["contours"]) for r in rows]).astype(np.int32)
+    out["scale"] = CONTOUR_SCALE
+    out["n_configs"] = len(files)
+    fn = os.path.join(d, "contours.npz")
+    np.savez_compressed(fn, **out)
+    print(f"saved {fn} ({os.path.getsize(fn) / 1e6:.1f} MB, {len(cs)} contours, {len(st) + len(cs)} vertices)")
+
+
+def load_contours(d):
+    """Per-sample phi = 0 contours written by extract_contours (see the docstring)."""
+    z = np.load(os.path.join(d, "contours.npz"))
+    C = {k: z[k] for k in ("L", "aniso", "seed", "h_d")}
+    sc = float(z["scale"])
+    start, steps = z["start"].astype(np.int64), z["steps"].astype(np.int64)
+    off, area, smp = z["offsets"], z["area"], z["sample"]
+    n = len(C["L"])
+    C["contours"] = [[] for _ in range(n)]
+    C["area"] = [[] for _ in range(n)]
+    for j, i in enumerate(smp):
+        xy = np.vstack([start[j], start[j] + np.cumsum(steps[off[j]:off[j + 1]], axis=0)])
+        C["contours"][i].append(xy / sc)
+        C["area"][i].append(float(area[j]))
+    C["area"] = [np.array(a) for a in C["area"]]
+    C["main"] = [int(np.argmax(a)) if len(a) else -1 for a in C["area"]]
+    return C
 
 
 def load_shapes(d):
@@ -393,6 +477,8 @@ def main():
     ap.add_argument("--extract", action="store_true", help="force re-extraction from configs/")
     ap.add_argument("--no-plot", action="store_true", help="only extract (e.g. on the cluster)")
     ap.add_argument("--workers", type=int, default=os.cpu_count())
+    ap.add_argument("--contours", action="store_true",
+                    help="also write contours.npz (full phi = 0 level sets; needs configs/)")
     ap.add_argument("--w", type=float, default=3.0, help="noise correlation length (sets the fit window)")
     args = ap.parse_args()
     fn = os.path.join(args.dir, "shapes.npz")
@@ -400,6 +486,8 @@ def main():
     stale = os.path.exists(fn) and n_cfg and int(np.load(fn)["n_configs"]) != n_cfg
     if args.extract or not os.path.exists(fn) or stale:
         extract(args.dir, args.workers)
+    if args.contours:
+        extract_contours(args.dir, args.workers)
     if not args.no_plot:
         plot(args.dir, args.w)
 
