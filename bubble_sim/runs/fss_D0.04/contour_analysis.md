@@ -100,3 +100,47 @@ All numbers: `contour_report.txt`.
 - **Error bars at L = 4096:** they come from 32 samples per a; L = 2048 has 64.
 - **ℓ_ov at another Δ:** it is measured only at Δ = 0.04, so the Δ^(−2.2) scaling of ℓ_o can't be tested.
 - **Edge-only and screw-only exponents:** ζ for each wall class isn't measured. At a = 1, screw wall is only 4% of the length (tips), too little for a spectrum.
+
+## a = 0: is it quenched Edwards-Wilkinson (qEW)?
+
+Script: `qew_a0.py`. Figure: `qew_a0.png`. Numbers: `qew_a0.txt`. Errors come from bootstrapping over disorder samples.
+
+**Targets.** qEW in d = 1 at depinning has ζ = 1.25 and ν = 1/(2 − ζ) = 4/3 (statistical tilt symmetry). KFR's large-scale invasion-percolation-like regime has the same ν = 4/3 but ζ = 1 (self-similar). So ζ, not ν, tells the two apart.
+
+**Noise caveat.** Even at a = 0 the noise is not KFR's white noise. Its spectrum is ∝ |k| e^(−k²w²), which vanishes at k = 0.
+- Along the wall, the force correlations are short-range: the integrated force on a straight segment grows like √ℓ.
+- Across the wall, the force correlator Δ(u) integrates to zero (random-bond-like) and has a u⁻² tail.
+- Random-bond and random-field disorder are expected to share the qEW fixed point at depinning, but the u⁻² tail makes this a check, not a given.
+
+**ζ.**
+- **Compensated plot:** q^1.5 S_ψ(q) is flat from q ≈ 0.02 to 0.13 for L = 2048 and 4096, nearly a decade. Its upper end is the noise core w = 3; its lower end is q_ov = 2π/ℓ_ov.
+  - L = 4096: ζ = 1.263 ± 0.015 for q_ov < q < 0.1, and 1.260 ± 0.026 for 0.02 < q < 0.07.
+  - L = 2048: ζ = 1.217 ± 0.016 for q_ov < q < 0.1.
+- **Fit-window scan:** every window with q_lo ≥ 0.015 and q_hi = 0.07–0.14 gives 1.21–1.30.
+- **Combined:** ζ = 1.24 ± 0.02 (stat) ± 0.03 (window), which agrees with qEW.
+- **Fitting below q_ov lowers the exponent.** The whole n ≥ 12 window gives 1.18–1.22. With an explicit cut-off model, A q^(1−2ζ) exp(−(q/q_c)²) up to q = 0.3, it gives 1.16–1.17, because the window then includes the large-scale regime.
+
+**Above ℓ_ov ≈ 340 there is a crossover.**
+- For q < q_ov the compensated spectrum falls. A fit from n ≥ 6 up to q_ov gives ζ_eff = 1.07 at L = 4096 and 1.09 at L = 2048.
+- The two sizes agree on the same q range, so this is not a finite-size effect.
+- This is KFR's scenario: qEW below the overhang length, and a lower effective exponent above it.
+- At L = 4096 the regime above ℓ_ov spans only a factor ~3 in scale. That is too short to say whether ζ → 1 (invasion percolation).
+- The divider dimension stays ≈ 1.1, so there is no sign yet of a fractal, percolation-like hull.
+
+**ν.**
+- var(h_d) ~ L^(−2/ν) gives ν = 1.31 ± 0.09 for L ≥ 512, consistent with 4/3.
+- The estimate depends on the fit range: 1.19 ± 0.05 for L ≥ 256 (small L still remembers the start) and 1.19 ± 0.13 for L ≥ 1024.
+- Pairs of successive L give 1.65 ± 0.42, 1.33 ± 0.40 and 1.07 ± 0.31, so the variance alone can't pin ν better than ±0.1.
+
+**Scaling relation.** 1/(2 − ζ) = 1.28–1.36 for ζ = 1.22–1.26, which matches the measured ν = 1.31 ± 0.09.
+
+**Shape of the h_d distribution.**
+- Skewness falls from +0.76 ± 0.13 (L = 128) and +0.45 ± 0.16 (L = 256) to values consistent with 0 for L ≥ 512 (+0.23 ± 0.17, −0.14 ± 0.24, −0.14 ± 0.44, −0.22 ± 0.23).
+- The rescaled CDFs collapse for L ≥ 512.
+- That is consistent with one fixed point once the wall has left the start. With 32–64 samples at the largest L this is only a consistency check.
+
+**Verdict for a = 0.**
+- Between the noise core (~10 sites) and the overhang length ℓ_ov ≈ 340, the walls are qEW: ζ = 1.24 ± 0.04, ν = 1.31 ± 0.09, and the two satisfy ν = 1/(2 − ζ).
+- At larger scales the effective roughness exponent drops to ≈ 1.08, as KFR describe. The asymptotic large-scale class is not reached at L ≤ 4096.
+
+**Next, for a > 0.** Testing whether wall ∥ b and wall ⊥ b fall in different classes needs walls of each orientation over long lengths. In the bubbles, screw wall is only 4% of the length at a = 1 and sits at the tips. A flat-wall geometry with the wall along or across b (KFR-like strip) is the clean test.

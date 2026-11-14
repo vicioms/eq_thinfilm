@@ -78,6 +78,10 @@ support function relative to b, and edge/screw-resolved slope fluctuations.
 `--selftest` checks the estimators on synthetic walls. Results and discussion:
 `runs/fss_D0.04/contour_analysis.md`.
 
+`qew_a0.py --dir runs/fss_D0.04 [--a 0]` tests the isotropic case against qEW:
+compensated S_ψ, fit-window scan with bootstrap errors, ν from var(h_d), the
+relation ν = 1/(2−ζ), and the collapse of the h_d distribution.
+
 ## GPU / cluster
 
 `gpu_backend.py` is a CUDA version of the relaxation (numba.cuda, one thread
