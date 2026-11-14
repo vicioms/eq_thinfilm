@@ -4,7 +4,19 @@ Analyse runs/fss/results*.jsonl produced by fss_scan.py (all shards).
 
 Per (anisotropy a, size L):
   * <h_d>, var(h_d)          -> var(h_d) ~ L^(-2/nu)  (fit per a)
-  * <h_d>(L)                 -> h_d(L) = h_inf + B / L  (bubble: Laplace pressure ~ 1/R_c ~ 1/L)
+  * <h_d>(L)                 -> h_d(L) = h_ref + C ln(L / L_max)   (fit L >= lmin)
+        <h_d> is not monotonic in L: the Laplace term ~ 1/R0 lowers it at small L,
+        but at large L it grows again (the wall has to cross the strongest pinning
+        region on its way to the border, and that grows with the swept area). An
+        extrapolation h_inf + B/L is therefore not meaningful; we report the local
+        drift C = d<h_d>/d ln L, the fitted value h_ref at the largest L, the
+        minimum of <h_d> over L, and chi^2/dof of both models.
+  * threshold                -> <h_d> = h_c + B/L - A L^(-1/nu)   (fit L >= lmin-hc)
+        B/L: Laplace pressure of a bubble of radius ~ L/6 (raises h_d at small L);
+        -A L^(-1/nu): usual finite-size shift of the sample threshold in an L x L box
+        (h_d is set by the strongest barrier the wall must cross; approaches h_c from
+        below). nu is fixed to the var(h_d) fit; the systematic error on h_c is half
+        the spread of h_c over nu +- its error.
   * shape anisotropy of the critical bubble:
         eps = (aspect - 1) / (aspect + 1),  theta = long-axis orientation
         Q_b = < eps cos 2(theta - theta_exp) >   theta_exp = burgers_angle + 90
@@ -48,6 +60,8 @@ def main():
     ap.add_argument("--lmin", type=int, default=512,
                     help="fit <h_d> and var(h_d) only for L >= lmin (small bubbles still remember "
                          "the initial circle and are dominated by the Laplace term)")
+    ap.add_argument("--lmin-hc", type=int, default=256,
+                    help="fit <h_d> = h_c + B/L - A L^(-1/nu) for L >= lmin-hc")
     args = ap.parse_args()
     import glob
     rows = [json.loads(l) for fn in sorted(glob.glob(os.path.join(args.dir, "results*.jsonl")))
@@ -104,16 +118,46 @@ def main():
         (ic, sl), cv = wls(np.c_[np.ones_like(L), np.log(L)], np.log(v), sv)
         nu = -2 / sl
         nu_err = 2 / sl ** 2 * np.sqrt(cv[1, 1])
-        # <h_d> = h_inf + B / L, weighted by the standard errors
+        # <h_d> = h_ref + C ln(L / L_max), weighted by the standard errors
         m = np.array([s["hd_mean"] for s in S])
         sm = np.array([s["hd_err"] for s in S])
-        (hinf, B), ch = wls(np.c_[np.ones_like(L), 1 / L], m, sm)
-        plateau = np.sum(m / sm ** 2) / np.sum(1 / sm ** 2)
-        fits[a] = dict(slope=sl, ic=ic, nu=nu, nu_err=nu_err, hinf=hinf, hinf_err=np.sqrt(ch[0, 0]), B=B,
-                       plateau=plateau, plateau_err=1 / np.sqrt(np.sum(1 / sm ** 2)), Lfit=L)
+        Lref = L.max()
+        A_log = np.c_[np.ones_like(L), np.log(L / Lref)]
+        (href, C), ch = wls(A_log, m, sm)
+        dof = max(1, len(L) - 2)
+        chi2_log = float(np.sum(((m - A_log @ [href, C]) / sm) ** 2)) / dof
+        A_inv = np.c_[np.ones_like(L), 1 / L]
+        c_inv, _ = wls(A_inv, m, sm)
+        chi2_inv = float(np.sum(((m - A_inv @ c_inv) / sm) ** 2)) / dof
+        Sall = [s for s in summ if s["aniso"] == a]
+        # <h_d> = h_c + B/L - A L^(-1/nu), nu fixed from var(h_d)
+        H = [s for s in Sall if s["n"] > 2 and s["L"] >= args.lmin_hc]
+        LH = np.array([s["L"] for s in H], float)
+        mH = np.array([s["hd_mean"] for s in H]); sH = np.array([s["hd_err"] for s in H])
+
+        def hc_fit(nu_):
+            A_ = np.c_[np.ones_like(LH), 1 / LH, -LH ** (-1 / nu_)]
+            c_, C_ = wls(A_, mH, sH)
+            return c_, C_, float(np.sum(((mH - A_ @ c_) / sH) ** 2)) / max(1, len(LH) - 3)
+
+        hc = dict(hc=np.nan, hc_err=np.nan, hc_syst=np.nan, hcB=np.nan, hcA=np.nan, chi2_hc=np.nan, Lhc=LH)
+        if len(LH) >= 4 and nu > 0:
+            c3, C3, chi3 = hc_fit(nu)
+            alt = [hc_fit(max(0.5, nu + d))[0][0] for d in (-nu_err, nu_err)]
+            hc.update(hc=c3[0], hc_err=np.sqrt(C3[0, 0]), hc_syst=0.5 * abs(alt[1] - alt[0]),
+                      hcB=c3[1], hcA=c3[2], chi2_hc=chi3)
+        imin = int(np.argmin([s["hd_mean"] for s in Sall]))
+        fits[a] = dict(slope=sl, ic=ic, nu=nu, nu_err=nu_err, href=href, href_err=np.sqrt(ch[0, 0]),
+                       C=C, C_err=np.sqrt(ch[1, 1]), Lref=Lref, chi2_log=chi2_log, chi2_inv=chi2_inv,
+                       hmin=Sall[imin]["hd_mean"], hmin_err=Sall[imin]["hd_err"], Lmin_h=Sall[imin]["L"], Lfit=L,
+                       **hc)
         print(f"a={a:4.2f} (L>={args.lmin}): var(h_d) ~ L^{sl:.2f} -> nu = {nu:.2f} +- {nu_err:.2f};  "
-              f"<h_d> = {hinf:.5f}({np.sqrt(ch[0, 0]) * 1e5:.0f}) + {B:.2f}/L;  "
-              f"plateau {plateau:.5f}({fits[a]['plateau_err'] * 1e5:.0f})")
+              f"<h_d> = {href:.5f}({np.sqrt(ch[0, 0]) * 1e5:.0f}) + {C * 1e4:+.2f}({np.sqrt(ch[1, 1]) * 1e4:.2f})e-4 "
+              f"ln(L/{Lref:.0f})  chi2/dof {chi2_log:.1f} (h_inf+B/L: {chi2_inv:.1f});  "
+              f"min <h_d> {fits[a]['hmin']:.5f} at L={fits[a]['Lmin_h']}")
+        if np.isfinite(hc["hc"]):
+            print(f"        (L>={args.lmin_hc}, nu={nu:.2f}): h_c = {hc['hc']:.5f} +- {hc['hc_err']:.5f} (stat) "
+                  f"+- {hc['hc_syst']:.5f} (nu)   B={hc['hcB']:.2f}  A={hc['hcA']:.3f}  chi2/dof {hc['chi2_hc']:.1f}")
 
     import matplotlib
     matplotlib.use("Agg")
@@ -126,13 +170,16 @@ def main():
     for a in As:
         S = [s for s in summ if s["aniso"] == a]
         L = np.array([s["L"] for s in S])
-        ax.errorbar(1 / L, [s["hd_mean"] for s in S], [s["hd_err"] for s in S], fmt="o", color=cols[a], label=f"a={a}")
-        if a in fits:
-            x = np.linspace(0, 1 / fits[a]["Lfit"].min() * 1.05, 50)
-            ax.plot(x, fits[a]["hinf"] + fits[a]["B"] * x, "-", color=cols[a], lw=0.8)
-    ax.axvspan(0, 1 / args.lmin, color="0.93", zorder=-1)
-    ax.set_xlabel("1/L"); ax.set_ylabel(r"$\langle h_d\rangle$"); ax.set_xlim(left=0); ax.legend(fontsize=8)
-    ax.set_title(rf"mean depinning field, fit $h_\infty + B/L$ for $L\geq{args.lmin}$")
+        f = fits.get(a)
+        ax.errorbar(L, [s["hd_mean"] for s in S], [s["hd_err"] for s in S], fmt="o", color=cols[a],
+                    label=f"a={a}" + (f", C={f['C'] * 1e4:+.1f}±{f['C_err'] * 1e4:.1f}e-4" if f else ""))
+        if f and np.isfinite(f["hc"]):
+            x = np.geomspace(f["Lhc"].min() / 1.1, f["Lhc"].max() * 1.1, 80)
+            ax.plot(x, f["hc"] + f["hcB"] / x - f["hcA"] * x ** (-1 / f["nu"]), "-", color=cols[a], lw=0.8)
+            ax.axhline(f["hc"], color=cols[a], ls=":", lw=0.7)
+    ax.axvspan(args.lmin_hc, max(Ls) * 1.1, color="0.93", zorder=-1)
+    ax.set_xscale("log"); ax.set_xlabel("L"); ax.set_ylabel(r"$\langle h_d\rangle$"); ax.legend(fontsize=7)
+    ax.set_title(rf"$\langle h_d\rangle = h_c + B/L - A L^{{-1/\nu}}$, $L\geq{args.lmin_hc}$ (dotted: $h_c$)", fontsize=10)
 
     ax = axs[0, 1]
     for a in As:
@@ -161,15 +208,16 @@ def main():
         ax.axhline(4 / 3, color="k", ls=":", lw=0.8, label="qEW / white (1.33)")
         ax.axhline(1.76, color="k", ls="--", lw=0.8, label="letter, correlated (1.76)")
         ax2 = ax.twinx()
-        ax2.errorbar(aa, [fits[a]["hinf"] for a in aa], [fits[a]["hinf_err"] for a in aa], fmt="s-",
-                     color="C3", label=r"$h_\infty$ (fit)")
-        ax2.errorbar(aa, [fits[a]["plateau"] for a in aa], [fits[a]["plateau_err"] for a in aa], fmt="^--",
-                     color="C1", label=rf"plateau, mean over $L\geq{args.lmin}$")
-        ax2.set_ylabel(r"$h_\infty$", color="C3")
+        ax2.errorbar(aa, [fits[a]["hc"] for a in aa],
+                     [np.hypot(fits[a]["hc_err"], fits[a]["hc_syst"]) for a in aa], fmt="s-",
+                     color="C3", label=r"$h_c$ (stat $\oplus$ $\nu$ syst)")
+        ax2.errorbar(aa, [fits[a]["hmin"] for a in aa], [fits[a]["hmin_err"] for a in aa], fmt="^--",
+                     color="C1", label=r"min over L of $\langle h_d\rangle$")
+        ax2.set_ylabel(r"$\langle h_d\rangle$", color="C3")
         h1, l1 = ax.get_legend_handles_labels(); h2, l2 = ax2.get_legend_handles_labels()
         ax.legend(h1 + h2, l1 + l2, fontsize=7, loc="center left")
         ax.set_xlabel("anisotropy a"); ax.set_ylabel(r"$\nu$")
-        ax.set_title("exponent and extrapolated threshold vs anisotropy")
+        ax.set_title("exponent and threshold vs anisotropy")
 
     ax = axs[1, 0]
     for L in Ls:

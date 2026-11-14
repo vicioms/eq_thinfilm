@@ -41,7 +41,7 @@ spectrum, a = 1, at fixed radial spectrum and variance). `R0 = L/6` (`--r0` sets
 go to `runs/fss/results*.jsonl` (+ critical configurations in
 `runs/fss/configs/`); restarting skips finished samples.
 `fss_analyze.py` makes `runs/fss/summary.csv` and `runs/fss/fss_summary.png`
-(⟨h_d⟩ vs 1/L, var(h_d) ~ L^(−2/ν), bubble elongation vs a, overhangs).
+(⟨h_d⟩ vs L with its drift d⟨h_d⟩/d ln L — not monotonic, so no 1/L extrapolation —, var(h_d) ~ L^(−2/ν), bubble elongation vs a, overhangs).
 
 `fss_shapes.py` looks at the critical bubbles themselves:
 `bubbles.png` (snapshots, mean shape ⟨R(θ)⟩/R_eff, overhang probability vs θ)
