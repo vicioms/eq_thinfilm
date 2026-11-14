@@ -1,0 +1,58 @@
+zeta per kind of side (bootstrap over bubbles).
+  iu: intrinsic integrated-slope height S_u;  ip: intrinsic slope spectrum S_psi;  c: Cartesian mean-crossing profile
+  A: 2 pi 6/len < q < 0.1;  B: q_ov = 0.0185 < q < 0.1
+  edge  L= 1024 a=0.00: sides= 256 arc=   602  iu A nan±nan  iu B nan±nan  ip B nan±nan  | c B nan±nan (multi 0.031)
+  edge  L= 1024 a=0.25: sides= 256 arc=   682  iu A 1.214±0.093  iu B 1.214±0.093  ip B 1.196±0.089  | c B nan±nan (multi 0.030)
+  edge  L= 1024 a=0.50: sides= 256 arc=   750  iu A 1.103±0.081  iu B 1.103±0.077  ip B 1.066±0.070  | c B nan±nan (multi 0.022)
+  edge  L= 1024 a=0.75: sides= 255 arc=   796  iu A 1.038±0.081  iu B 1.038±0.082  ip B 0.995±0.079  | c B nan±nan (multi 0.022)
+  edge  L= 1024 a=1.00: sides= 255 arc=   837  iu A 1.184±0.072  iu B 1.184±0.075  ip B 1.165±0.077  | c B nan±nan (multi 0.015)
+  edge  L= 2048 a=0.00: sides= 128 arc=  1316  iu A 1.336±0.044  iu B 1.336±0.048  ip B 1.299±0.046  | c B 0.998±0.141 (multi 0.062)
+  edge  L= 2048 a=0.25: sides= 128 arc=  1520  iu A 1.224±0.038  iu B 1.224±0.042  ip B 1.209±0.036  | c B 0.835±0.070 (multi 0.065)
+  edge  L= 2048 a=0.50: sides= 128 arc=  1628  iu A 1.098±0.035  iu B 1.098±0.035  ip B 1.086±0.033  | c B 0.727±0.061 (multi 0.047)
+  edge  L= 2048 a=0.75: sides= 127 arc=  1718  iu A 0.966±0.033  iu B 0.966±0.035  ip B 0.962±0.034  | c B 0.763±0.048 (multi 0.053)
+  edge  L= 2048 a=1.00: sides= 127 arc=  1839  iu A 0.941±0.038  iu B 0.941±0.041  ip B 0.943±0.039  | c B 0.699±0.044 (multi 0.038)
+  edge  L= 4096 a=0.00: sides=  64 arc=  2714  iu A 1.241±0.030  iu B 1.326±0.041  ip B 1.315±0.042  | c B 0.632±0.079 (multi 0.111)
+  edge  L= 4096 a=0.25: sides=  64 arc=  3416  iu A 1.134±0.024  iu B 1.180±0.030  ip B 1.175±0.028  | c B 0.539±0.039 (multi 0.124)
+  edge  L= 4096 a=0.50: sides=  63 arc=  3663  iu A 1.090±0.031  iu B 1.153±0.036  ip B 1.147±0.035  | c B 0.629±0.034 (multi 0.122)
+  edge  L= 4096 a=0.75: sides=  64 arc=  3912  iu A 1.014±0.034  iu B 1.033±0.025  ip B 1.035±0.025  | c B 0.684±0.033 (multi 0.101)
+  edge  L= 4096 a=1.00: sides=  64 arc=  3816  iu A 0.988±0.032  iu B 0.975±0.040  ip B 0.974±0.038  | c B 0.631±0.038 (multi 0.109)
+  screw L= 1024 a=0.00: sides= 256 arc=   567  iu A nan±nan  iu B nan±nan  ip B nan±nan  | c B nan±nan (multi 0.026)
+  screw L= 1024 a=0.25: sides= 256 arc=   438  iu A nan±nan  iu B nan±nan  ip B nan±nan  | c B nan±nan (multi 0.020)
+  screw L= 1024 a=0.50: sides= 252 arc=   320  iu A nan±nan  iu B nan±nan  ip B nan±nan  | c B nan±nan (multi 0.014)
+  screw L= 1024 a=0.75: sides= 244 arc=   255  iu A nan±nan  iu B nan±nan  ip B nan±nan  | c B nan±nan (multi 0.011)
+  screw L= 1024 a=1.00: sides= 220 arc=   201  iu A nan±nan  iu B nan±nan  ip B nan±nan  | c B nan±nan (multi 0.008)
+  screw L= 2048 a=0.00: sides= 128 arc=  1430  iu A 1.281±0.034  iu B 1.281±0.036  ip B 1.257±0.034  | c B 0.899±0.075 (multi 0.060)
+  screw L= 2048 a=0.25: sides= 127 arc=   908  iu A 1.223±0.076  iu B 1.223±0.073  ip B 1.168±0.071  | c B nan±nan (multi 0.050)
+  screw L= 2048 a=0.50: sides= 128 arc=   657  iu A nan±nan  iu B nan±nan  ip B nan±nan  | c B nan±nan (multi 0.036)
+  screw L= 2048 a=0.75: sides= 127 arc=   516  iu A nan±nan  iu B nan±nan  ip B nan±nan  | c B nan±nan (multi 0.042)
+  screw L= 2048 a=1.00: sides= 126 arc=   405  iu A nan±nan  iu B nan±nan  ip B nan±nan  | c B nan±nan (multi 0.035)
+  screw L= 4096 a=0.00: sides=  64 arc=  3225  iu A 1.231±0.022  iu B 1.231±0.031  ip B 1.227±0.026  | c B 0.718±0.052 (multi 0.114)
+  screw L= 4096 a=0.25: sides=  64 arc=  2082  iu A 1.261±0.037  iu B 1.261±0.040  ip B 1.233±0.042  | c B 0.759±0.161 (multi 0.108)
+  screw L= 4096 a=0.50: sides=  64 arc=  1460  iu A 1.287±0.053  iu B 1.287±0.054  ip B 1.273±0.055  | c B nan±nan (multi 0.101)
+  screw L= 4096 a=0.75: sides=  64 arc=  1113  iu A 1.219±0.053  iu B 1.219±0.052  ip B 1.151±0.059  | c B nan±nan (multi 0.087)
+  screw L= 4096 a=1.00: sides=  64 arc=  1015  iu A 1.390±0.113  iu B 1.390±0.107  ip B 1.358±0.116  | c B nan±nan (multi 0.090)
+
+S_psi(screw)/S_psi(edge), 0.03<q<0.1, L=1024: a=0.0: 1.04  a=0.25: 1.24  a=0.5: 1.41  a=0.75: 1.66  a=1.0: 1.83
+S_psi(screw)/S_psi(edge), 0.03<q<0.1, L=2048: a=0.0: 0.98  a=0.25: 1.06  a=0.5: 1.48  a=0.75: 1.59  a=1.0: 1.91
+S_psi(screw)/S_psi(edge), 0.03<q<0.1, L=4096: a=0.0: 1.03  a=0.25: 1.16  a=0.5: 1.20  a=0.75: 1.11  a=1.0: 1.42
+travel edge  L= 1024 a=0.25: d =    69.6  zeta(B) = 1.214 ± 0.093
+travel edge  L= 1024 a=0.50: d =    39.2  zeta(B) = 1.103 ± 0.077
+travel edge  L= 1024 a=0.75: d =    23.0  zeta(B) = 1.038 ± 0.082
+travel edge  L= 1024 a=1.00: d =    14.7  zeta(B) = 1.184 ± 0.075
+travel edge  L= 2048 a=0.00: d =   262.2  zeta(B) = 1.336 ± 0.048
+travel edge  L= 2048 a=0.25: d =   142.3  zeta(B) = 1.224 ± 0.042
+travel edge  L= 2048 a=0.50: d =    67.6  zeta(B) = 1.098 ± 0.035
+travel edge  L= 2048 a=0.75: d =    35.2  zeta(B) = 0.966 ± 0.035
+travel edge  L= 2048 a=1.00: d =    21.5  zeta(B) = 0.941 ± 0.041
+travel edge  L= 4096 a=0.00: d =   529.0  zeta(B) = 1.326 ± 0.041
+travel edge  L= 4096 a=0.25: d =   237.0  zeta(B) = 1.180 ± 0.030
+travel edge  L= 4096 a=0.50: d =   101.0  zeta(B) = 1.153 ± 0.036
+travel edge  L= 4096 a=0.75: d =    52.7  zeta(B) = 1.033 ± 0.025
+travel edge  L= 4096 a=1.00: d =    34.2  zeta(B) = 0.975 ± 0.040
+travel screw L= 2048 a=0.00: d =   235.6  zeta(B) = 1.281 ± 0.036
+travel screw L= 2048 a=0.25: d =   305.2  zeta(B) = 1.223 ± 0.073
+travel screw L= 4096 a=0.00: d =   400.9  zeta(B) = 1.231 ± 0.031
+travel screw L= 4096 a=0.25: d =   654.7  zeta(B) = 1.261 ± 0.040
+travel screw L= 4096 a=0.50: d =   739.1  zeta(B) = 1.287 ± 0.054
+travel screw L= 4096 a=0.75: d =   895.4  zeta(B) = 1.219 ± 0.052
+travel screw L= 4096 a=1.00: d =   903.7  zeta(B) = 1.390 ± 0.107

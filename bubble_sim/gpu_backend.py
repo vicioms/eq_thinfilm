@@ -98,15 +98,19 @@ def _sweep_kernel(phi, r, g, Jx, Jy, h, eps0, forward_only, color, measure, maxd
 
 
 @cuda.jit
-def _flags_kernel(phi, margin, flags):
-    """flags[0] = 1 if phi > 0 in the border band, flags[1] = 1 if phi > 0 anywhere."""
+def _flags_kernel(phi, margin, flat, flags):
+    """flags[0] = 1 if phi > 0 in the border band (flat geometry: the top band
+    only), flags[1] = 1 if phi > 0 anywhere."""
     j, i = cuda.grid(2)
     Ly, Lx = phi.shape
     if i >= Ly or j >= Lx:
         return
     if phi[i, j] > 0.0:
         flags[1] = 1
-        if i < margin or i >= Ly - margin or j < margin or j >= Lx - margin:
+        if flat:
+            if i >= Ly - margin:
+                flags[0] = 1
+        elif i < margin or i >= Ly - margin or j < margin or j >= Lx - margin:
             flags[0] = 1
 
 
@@ -152,7 +156,7 @@ class CUDABackend:
 
     def _flags(self, phi):
         self.flags.copy_to_device(self._z2)
-        _flags_kernel[self.grid_full, self.block](phi, self.p.margin, self.flags)
+        _flags_kernel[self.grid_full, self.block](phi, self.p.margin, self.p.geometry == "flat", self.flags)
         f = self.flags.copy_to_host()
         return bool(f[0]), bool(f[1])
 
@@ -172,7 +176,7 @@ class CUDABackend:
             border, positive = self._flags(phi)
             if not positive:
                 return "collapsed", s + 1
-            if border and touches_border(phi.copy_to_host(), p.margin):
+            if border and touches_border(phi.copy_to_host(), p.margin, p.geometry):
                 return "depinned", s + 1
             if m < p.tol:
                 return "pinned", s + 1

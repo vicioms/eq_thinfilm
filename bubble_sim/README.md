@@ -82,6 +82,11 @@ support function relative to b, and edge/screw-resolved slope fluctuations.
 compensated S_ψ, fit-window scan with bootstrap errors, ν from var(h_d), the
 relation ν = 1/(2−ζ), and the collapse of the h_d distribution.
 
+`sides.py --dir runs/fss_D0.04` cuts each bubble into its edge sides (normal ∥ b)
+and screw sides (normal ⊥ b) and measures ζ on each along its own contour arc
+(the Cartesian x(y) / y(x) projection is kept for comparison), together with how
+far each side advanced from the initial circle.
+
 ## GPU / cluster
 
 `gpu_backend.py` is a CUDA version of the relaxation (numba.cuda, one thread
@@ -103,3 +108,27 @@ CUDA toolkit. Use an fp64-capable GPU (A100/H100/V100). Small systems
 With `--shard i --nshards n` each job-array task runs a disjoint slice of the
 same task list and writes `results_shard<i>.jsonl`; `fss_analyze.py` merges
 all shards. Resubmitting skips finished samples.
+
+## Flat walls (wall along or across b)
+
+`--geometry flat` replaces the bubble by a straight wall along x at height
+0.1 L (+1 below, −1 above), periodic in x and open in y (bottom rows pinned to
++1). It is pushed up and depins when it reaches the top band, as in the
+Kolton–Ferrero–Rosso strip. `--burgers-angle` sets the wall direction: 0 is a
+screw wall (line ∥ b), 90 an edge wall (line ⊥ b, normal ∥ b, the hard direction).
+This is the clean test of qEW (ζ = 1.25, ν = 4/3) vs qKPZ (ζ = 0.63, ν = 1.73)
+for each orientation, which the bubbles cannot do.
+
+```bash
+python bubble_depinning.py --geometry flat --burgers-angle 90 --L 256 --Delta 0.04 --coupling field
+sbatch slurm_fss_flat.sh 0          # screw walls  -> runs/flat_D0.04_b0
+sbatch slurm_fss_flat.sh 90         # edge walls   -> runs/flat_D0.04_b90
+python fss_flat.py --dir runs/flat_D0.04_b90 --extract       # on the cluster -> walls.npz
+python fss_flat.py --dirs runs/flat_D0.04_b0 runs/flat_D0.04_b90
+```
+
+`fss_flat.py` measures ζ intrinsically from the wall's tangent angle (and from
+the KFR mean-crossing profile u(x) for comparison), the local exponent, ζ split
+by how far the wall travelled before its last pinning (memory check), and ν from
+var(h_d). The critical (last pinned) wall can sit close to its start in some
+samples; the travel is stored for every sample.

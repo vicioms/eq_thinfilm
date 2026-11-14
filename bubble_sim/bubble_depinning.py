@@ -58,6 +58,14 @@ Protocol:
   4. Depinning = the domain wall reaches the system boundary (no metastable
      state inside the box). h_d is then refined by bisection.
 
+Flat-wall geometry (--geometry flat): instead of a bubble, a straight wall
+along x at height y0 = y0_frac * L, +1 below, -1 above, periodic in x and cut
+in y (the y bonds across the box edge are removed, so there is a single wall).
+The wall is pushed upwards and depins when the phi > 0 domain attached to the
+bottom reaches the top band (the KFR geometry, with our border criterion). The
+wall direction relative to b is set by --burgers-angle: 0 -> wall line || b
+(screw wall, normal _|_ b), 90 -> wall line _|_ b (edge wall, normal || b).
+
 There is also a plain explicit-Euler "dynamics" mode at constant h (like
 Fig. 8 of the paper) to look at bubble growth.
 
@@ -68,6 +76,7 @@ Usage examples
   python bubble_depinning.py --check-noise                    # compare noise with SM Eqs. 12-13
   python bubble_depinning.py --noise white                    # isotropic, uncorrelated (Kolton et al.)
   python bubble_depinning.py --noise gaussian --xi-x 8 --xi-y 1   # Gaussian anisotropic correlations
+  python bubble_depinning.py --geometry flat --burgers-angle 90 --L 256   # flat edge wall
   python bubble_depinning.py --xi-x inf --xi-y 0              # columnar disorder along x
   python bubble_depinning.py --xi-x 6 --xi-y 1 --theta 30     # rotated anisotropy
   python bubble_depinning.py --dJx 0.6 --dJy 0.0              # anisotropic bond disorder
@@ -112,6 +121,9 @@ class Params:
     # bond (coupling) disorder
     dJx: float = 0.0             # J_x = cx (1 + dJx * eta), eta ~ U[-1,1]
     dJy: float = 0.0
+    # geometry: "bubble" (circular domain) or "flat" (straight wall along x)
+    geometry: str = "bubble"
+    y0_frac: float = 0.1         # flat: initial wall height / L
     # initial bubble
     R0: float = 30.0
     R0x: float | None = None     # if given, elliptic initial bubble
@@ -228,6 +240,10 @@ def make_disorder(p: Params, rng):
         r, g = p.Delta * f, zero                                  # Gaussian, std Delta
     Jx = p.cx * (1 + p.dJx * rng.uniform(-1, 1, size=(L, L)))
     Jy = p.cy * (1 + p.dJy * rng.uniform(-1, 1, size=(L, L)))
+    if p.geometry == "flat":
+        Jy[-1, :] = 0.0          # cut the bonds between row L-1 and row 0: open in y, one wall
+        g = g.copy()
+        g[:2, :] += 1.0          # pin the bottom rows to +1 so the wall cannot leave through the bottom
     return r.astype(np.float64), g.astype(np.float64), Jx.astype(np.float64), Jy.astype(np.float64)
 
 
@@ -238,6 +254,8 @@ def bubble(p: Params):
     L = p.L
     delta = math.sqrt(0.5 * (p.cx + p.cy) / p.eps0)       # wall width
     y, x = np.mgrid[0:L, 0:L].astype(float)
+    if p.geometry == "flat":
+        return np.tanh((p.y0_frac * L - y) / (math.sqrt(2) * delta))
     xc = yc = (L - 1) / 2
     Rx = p.R0x if p.R0x is not None else p.R0
     Ry = p.R0y if p.R0y is not None else p.R0
@@ -346,7 +364,22 @@ def bubble_mask(phi):
     return lab == sizes.argmax()
 
 
-def touches_border(phi, margin):
+def wall_mask(phi):
+    """Flat geometry: the phi > 0 domain attached to the bottom row."""
+    lab, n = label(phi > 0)
+    if n == 0:
+        return np.zeros(phi.shape, bool)
+    ids = np.unique(lab[0][lab[0] > 0])
+    return np.isin(lab, ids)
+
+
+def domain_mask(phi, geometry="bubble"):
+    return wall_mask(phi) if geometry == "flat" else bubble_mask(phi)
+
+
+def touches_border(phi, margin, geometry="bubble"):
+    if geometry == "flat":                       # the wall reached the top band
+        return bool(wall_mask(phi)[-margin:].any())
     m = bubble_mask(phi)
     return bool(m[:margin].any() or m[-margin:].any() or m[:, :margin].any() or m[:, -margin:].any())
 
@@ -363,11 +396,11 @@ def relax(phi, r, g, Jx, Jy, h, p: Params, forward_only, check_every=50):
         if max(m0, m1) < p.tol:
             if phi.max() < 0:
                 return "collapsed", s + 1
-            if touches_border(phi, p.margin):
+            if touches_border(phi, p.margin, p.geometry):
                 return "depinned", s + 1
             return "pinned", s + 1
         if s % check_every == 0:
-            if touches_border(phi, p.margin):
+            if touches_border(phi, p.margin, p.geometry):
                 return "depinned", s + 1
             if phi.max() < 0:
                 return "collapsed", s + 1
@@ -427,6 +460,35 @@ def analyse(phi, n_theta=1024):
                 theta=th, R_theta=R_mean, mult=mult, S_n=Sq)
 
 
+def analyse_flat(phi):
+    """Flat geometry: wall height profile u(x) = mean of the phi = 0 crossings in
+    each column (KFR Eq. 9) of the domain attached to the bottom, with the
+    crossing multiplicity (> 1: overhang) and u_o (KFR Eq. 11)."""
+    L = phi.shape[1]
+    m = wall_mask(phi)
+    if not m.any():
+        return None
+    f = np.where(m, phi, -np.abs(phi))
+    s = np.sign(f)
+    u = np.full(L, np.nan)
+    mult = np.zeros(L, int)
+    var = np.zeros(L)
+    for j in range(L):
+        col = f[:, j]
+        idx = np.nonzero(s[:-1, j] * s[1:, j] < 0)[0]
+        if len(idx) == 0:
+            continue
+        v0, v1 = col[idx], col[idx + 1]
+        yc = idx + v0 / (v0 - v1)
+        mult[j] = len(yc)
+        u[j] = yc.mean()
+        var[j] = yc.var()
+    ok = mult > 0
+    return dict(area=int(m.sum()), mean_height=float(np.nanmean(u)), width=float(np.nanstd(u)),
+                frac_multivalued=float((mult > 1).mean()), u_o=float(np.sqrt(var[ok].mean())) if ok.any() else np.nan,
+                u=u, mult=mult)
+
+
 # ---------------------------------------------------------------------------
 # Backends: where phi lives and how it is relaxed
 # ---------------------------------------------------------------------------
@@ -474,13 +536,13 @@ def run_depinning(p: Params, verbose=True, backend="cpu", keep_snapshots=True, d
     status, ns = be.relax(phi, p.h_start, forward_only=False)
     phi_h = be.get(phi)
     if verbose:
-        print(f"[init] h={p.h_start:.5f}  {status} after {ns} sweeps  area={bubble_mask(phi_h).sum()}")
+        print(f"[init] h={p.h_start:.5f}  {status} after {ns} sweeps  area={domain_mask(phi_h, p.geometry).sum()}")
     if status != "pinned":
         return dict(params=p, status_init=status, r=r, g=g, Jx=Jx, Jy=Jy, phi=phi_h,
                     h=np.array([]), area=np.array([]), dphi=np.array([]),
                     snapshots=[], h_d=np.nan, phi_c=phi_h)
 
-    hs, areas, dphis = [p.h_start], [bubble_mask(phi_h).sum()], [0.0]
+    hs, areas, dphis = [p.h_start], [domain_mask(phi_h, p.geometry).sum()], [0.0]
     snaps = [(p.h_start, phi_h)] if keep_snapshots else []
     h = p.h_start
     h_fail = None
@@ -492,7 +554,7 @@ def run_depinning(p: Params, verbose=True, backend="cpu", keep_snapshots=True, d
             dphis.append(be.mean_diff(trial, phi))     # Eq. (4)
             phi = trial; h = h_new
             phi_h = be.get(phi)
-            hs.append(h); areas.append(bubble_mask(phi_h).sum())
+            hs.append(h); areas.append(domain_mask(phi_h, p.geometry).sum())
             if keep_snapshots:
                 snaps.append((h, phi_h))
             if verbose:
@@ -545,8 +607,8 @@ def run_dynamics(p: Params, h, verbose=True):
         if n % every == 0:
             frames.append((n * dt, phi.copy()))
             if verbose:
-                print(f"  t={n*dt:8.2f}  area={bubble_mask(phi).sum()}")
-            if touches_border(phi, p.margin):
+                print(f"  t={n*dt:8.2f}  area={domain_mask(phi, p.geometry).sum()}")
+            if touches_border(phi, p.margin, p.geometry):
                 if verbose:
                     print("  wall reached the border, stopping")
                 break
@@ -652,6 +714,26 @@ def plot_depinning(res, out_png):
     ax2.plot(res["h"][1:], res["dphi"][1:], "C1.", ms=3)
     ax2.set_ylabel(r"$\langle\Delta\phi\rangle$ per step", color="C1")
 
+    if p.geometry == "flat":
+        a = analyse_flat(res["phi_c"])
+        if a is not None:
+            ax = fig.add_subplot(gs[1, 1])
+            ax.plot(a["u"], lw=0.8)
+            mv = a["mult"] > 1
+            ax.plot(np.nonzero(mv)[0], a["u"][mv], "r.", ms=2, label="multivalued")
+            ax.set_xlabel("x"); ax.set_ylabel("u(x) (mean crossing)")
+            ax.set_title(f"wall profile: width={a['width']:.1f}, multivalued frac={a['frac_multivalued']:.3f}", fontsize=9)
+            ax.legend(fontsize=7)
+            ax = fig.add_subplot(gs[1, 2])
+            uu = np.nan_to_num(a["u"] - np.nanmean(a["u"]))
+            Sq = np.abs(np.fft.rfft(uu)) ** 2 / len(uu)
+            q = 2 * np.pi * np.arange(len(Sq)) / len(uu)
+            ax.loglog(q[1:], Sq[1:], ".", ms=3)
+            ax.set_xlabel("q"); ax.set_ylabel("S(q)"); ax.set_title("structure factor of u(x)")
+        fig.tight_layout()
+        fig.savefig(out_png, dpi=130)
+        plt.close(fig)
+        return a
     a = analyse(res["phi_c"])
     if a is not None:
         ax = fig.add_subplot(gs[1, 1], projection="polar")
@@ -740,6 +822,8 @@ def main():
         return
     if p.dJx >= 1 or p.dJy >= 1:
         raise SystemExit("Need dJx, dJy < 1 so that couplings stay positive.")
+    if p.geometry not in ("bubble", "flat"):
+        raise SystemExit("--geometry must be bubble or flat.")
 
     print("Parameters:", asdict(p))
     if args.mode == "dynamics":
@@ -763,7 +847,10 @@ def main():
                         snap_h=np.array([s[0] for s in res["snapshots"]]),
                         snap_phi=np.array([s[1] for s in res["snapshots"]], dtype=np.float32),
                         params=str(asdict(p)))
-    if a is not None:
+    if a is not None and p.geometry == "flat":
+        print(f"critical wall: mean height={a['mean_height']:.1f}  width={a['width']:.2f}  "
+              f"multivalued frac={a['frac_multivalued']:.3f}  u_o={a['u_o']:.2f}")
+    elif a is not None:
         print(f"critical bubble: R_eff={a['R_eff']:.1f}  aspect={a['aspect']:.3f}  "
               f"orientation={a['orientation_deg']:.1f} deg  multivalued frac={a['frac_multivalued']:.3f}  "
               f"u_o={a['u_o']:.2f}")

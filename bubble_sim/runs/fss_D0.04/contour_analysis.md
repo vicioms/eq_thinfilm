@@ -144,3 +144,90 @@ Script: `qew_a0.py`. Figure: `qew_a0.png`. Numbers: `qew_a0.txt`. Errors come fr
 - At larger scales the effective roughness exponent drops to ≈ 1.08, as KFR describe. The asymptotic large-scale class is not reached at L ≤ 4096.
 
 **Next, for a > 0.** Testing whether wall ∥ b and wall ⊥ b fall in different classes needs walls of each orientation over long lengths. In the bubbles, screw wall is only 4% of the length at a = 1 and sits at the tips. A flat-wall geometry with the wall along or across b (KFR-like strip) is the clean test.
+
+## a > 0: edge and screw sides taken separately
+
+Script: `sides.py`. Figure: `sides.png`. Numbers: `sides.txt`. Bubbles with L ≥ 1024.
+
+**Cutting the bubble into sides.**
+- On the wall smoothed over P/20, take the run of wall around the extreme point in each direction ±x, ±y whose normal is within 45° of that direction.
+- **Edge sides:** left and right, normal ∥ b (wall line ⊥ b).
+- **Screw sides:** top and bottom, normal ⊥ b (wall line ∥ b).
+- At a = 0 the two kinds are equivalent, which makes a = 0 the control.
+
+**Two estimators on each side.**
+1. **Cartesian, KFR-style:** x(y) or y(x) as the mean of the crossings with the lattice rows or columns (KFR Eq. 9).
+   - It fails. On these super-rough walls 4–12% of the lattice lines cross the same side more than once, so the profile jumps.
+   - It gives ζ ≈ 0.54–1.0 at every a, the same artifact as the polar R(θ). Shown only as crosses in the ζ panel.
+2. **Intrinsic (used):** along the side's own arc of contour.
+   - Take the turning angle minus that of the smoothed shape, and its integral u(s). Fit S_u ~ q^−(1+2ζ) and S_ψ ~ q^(1−2ζ).
+   - Each side gets a Hann window and a detrend; ζ is fitted over q_ov < q < 0.1.
+   - **Synthetic profiles** with a curved mean shape: input ζ = 1, 1.25, 1.43 comes back within ±0.05.
+   - **Subtraction scale:** changing the subtracted shape from P/20 to 256 or 128 moves ζ by at most 0.07 (screw sides, a = 1).
+
+**Result (window q_ov < q < 0.1):**
+
+| side | L | a = 0 | 0.25 | 0.5 | 0.75 | 1 |
+|---|---|---|---|---|---|---|
+| edge | 2048 | 1.34(5) | 1.22(4) | 1.10(4) | 0.97(4) | 0.94(4) |
+| edge | 4096 | 1.33(4) | 1.18(3) | 1.15(4) | 1.03(3) | 0.98(4) |
+| screw | 4096 | 1.23(3) | 1.26(4) | 1.29(5) | 1.22(5) | 1.39(11) |
+| advance, edge (L = 4096) | | 529 | 237 | 101 | 53 | 34 |
+| advance, screw (L = 4096) | | 401 | 655 | 739 | 895 | 904 |
+
+"Advance" is how far the middle of each side moved along its normal from the initial circle.
+
+**What it looks like.**
+- The edge sides drift from ≈ 1.3 down to ≈ 0.95 as a grows.
+- The screw sides stay at 1.22–1.29 for a ≤ 0.75, and reach 1.39 ± 0.11 at a = 1. That is compatible with both 1.25 and 1.43.
+- Small-scale slope fluctuations (below 16 sites) are 2× larger on screw sides at a = 1.
+
+**Why this is not yet evidence for two universality classes.**
+- **The edge sides with small ζ are the ones that barely moved.** At a = 1 they advanced only 34 sites (L = 4096) and 22 sites (L = 2048), against 400–900 for screw sides and ~530 for walls at a = 0.
+- **Their spectra show it.** They are depleted at low q and close to the a = 0 spectrum at high q (top-left panel). That is the signature of long-wavelength modes that never developed, not of a different power law.
+- **ζ follows the advance, not a.** Plotted against the advance (last panel), all edge and screw points fall roughly on one curve: ζ ≈ 0.95 at d ≈ 30, rising to ≈ 1.25–1.3 for d ≳ 200.
+  - Points with the same advance but different a agree: a = 0.75 at L = 2048 (d = 35) gives 0.97 ± 0.04, and a = 1 at L = 4096 (d = 34) gives 0.98 ± 0.04.
+  - At fixed a, ζ grows with L because the advance does.
+  - The largest deviation from a single curve is 0.16 at d ≈ 250 (2.8σ).
+- **The bubble cannot fix this.** At large a it escapes along b⊥ before the edge sides move, so in this geometry the edge walls never reach a steady critical state at the scales q < 0.1.
+
+**What would settle it.** Flat walls in a strip, as in KFR, with the wall either along b or across b (rotate b by 90° rather than the box). Each started far behind and taken to depinning after travelling a distance of order L. Both orientations would then have a history long enough for every scale fitted.
+
+## Do the edge sides follow qKPZ?
+
+Script: `kpz_edge.py`. Figure: `kpz_edge.png`. Numbers: `kpz_edge.txt`. L = 2048 and 4096.
+
+**Why qKPZ is expected.** Tang, Kardar & Dhar, PRL 74, 920 (1995) ([cond-mat/9409002](https://arxiv.org/abs/cond-mat/9409002)):
+- In an anisotropic medium the threshold depends on the tilt of the wall.
+- Expanding around the *hard* direction, where the threshold is largest, gives an s² term that "remains finite as v → 0". That is a KPZ term λ(∇u)² surviving at depinning.
+- This puts the wall in the directed-percolation-depinning (qKPZ) class: ζ ≈ 0.63, ν = ν∥ ≈ 1.73, z = 1, v(F_c, s) ∝ |s| and F_c(s) − F_c(0) ∝ −|s|^(1/ν(1−ζ)).
+- The tilt test v = v0 + λm² of Amaral, Barabási & Stanley, PRL 73, 62 (1994) ([cond-mat/9403089](https://arxiv.org/abs/cond-mat/9403089)) shows λ diverging at threshold for DP-type models and vanishing for qEW-type ones.
+- In Mukerjee, Bonachela, Muñoz & Wiese ([arXiv:2207.08341](https://arxiv.org/abs/2207.08341)), the positive sign of λv gives qKPZ, while the negative sign "spontaneously" generates facets.
+- **In our system** the edge orientation (normal ∥ b) is the hard direction: edge wall is strongly pinned and screw wall runs. Positive qKPZ is therefore the natural expectation for the edge sides.
+- The ν ≈ 1.76 behind the "letter (1.43)" reference line is close to the DP value ν∥ ≈ 1.73. That fits a qKPZ reading of the letter, but I have not checked it against the letter.
+
+**Three tests, and what the bubbles show.**
+
+1. **Large-scale exponent.**
+   - The local ζ_eff(q) of the edge sides at a = 1 (L = 4096) sits on a plateau ≈ 1.0 for 0.007 < q < 0.07 (scales ~90–900 sites). Values are 0.96–1.05 ± 0.06–0.12, with 0.77 ± 0.14 at the lowest q.
+   - At a = 0.75 it drifts from 1.15 down to 0.85, then 0.61 ± 0.15 at the lowest q.
+   - There is no clear plateau at 0.63, but the lowest points are compatible with a drift towards it.
+   - The screw sides stay at 1.2–1.45, and the a = 0 controls at 1.1–1.35.
+2. **Up–down asymmetry.**
+   - A KPZ term breaks u → −u. I measured the skewness of the wall's excess curvature, smoothed over 4–32 sites.
+   - It is negative everywhere: −0.1 at σ = 4 and −0.15 to −0.25 at σ = 16. That holds for the a = 0 control too, since driven critical walls have sharp inward cusps and rounded bulges.
+   - On edge sides it is not different from the control at any a: −0.15 ± 0.03 at a = 1 against −0.19 ± 0.02 at a = 0 (σ = 16, L = 4096).
+   - The screw sides turn positive at large σ for a = 1, but that is the convex tips leaking in.
+3. **Kink at the hard direction.**
+   - A cusp v ∝ |s| would make a facet along the hard direction in the grown shape (kinetic Wulff construction), so the support function would rise linearly, h(φ) − h(0) ∝ |φ|.
+   - Measured on 1440 directions, the exponent over 1°–15° is p = 1.9–2.2 ± 0.2 for every a > 0. That is a smooth shape, not a facet.
+
+**Verdict: the bubbles cannot test qKPZ on the edge sides.** The data show no qKPZ signature, but there is a structural reason they could not:
+- **The edge walls never reach their own threshold.** The bubble depins when the weakest orientation (the screw tips) runs to the border. At that field the edge walls are still below their own, higher threshold. They advanced only 34 sites (a = 1, L = 4096).
+- **So they are subcritical pinned walls**, not critical configurations. Their roughness at large scales need not be that of either critical class. The plateau at ζ ≈ 1 and the smooth shape describe that subcritical state.
+- **The screw walls are the critical ones at large a**, and they stay close to qEW. The pointed tips at a = 1 are suggestive of the facets of the negative-λ case (easy direction), but I can't separate that from geometry here.
+
+**The test that can decide.** Flat walls in a strip (KFR geometry), oriented along or across b, each driven to its own threshold. Then measure:
+- ζ (qKPZ 0.63 vs qEW 1.25);
+- ν from var(h_c) (1.73 vs 1.33);
+- the tilt dependence of the threshold, F_c(s) − F_c(0) ∝ −|s|^1.57 vs analytic, obtained by tilting b by small angles.
