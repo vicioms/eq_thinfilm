@@ -112,8 +112,11 @@ all shards. Resubmitting skips finished samples.
 ## Flat walls (wall along or across b)
 
 `--geometry flat` replaces the bubble by a straight wall along x at height
-0.1 L (+1 below, −1 above), periodic in x and open in y (bottom rows pinned to
-+1). It is pushed up and depins when it reaches the top band, as in the
+0.1 Ly (+1 below, −1 above), periodic in x and open in y (bottom rows pinned to
++1). The box is L along the wall and Ly = aspect · L along the motion
+(`--aspect`, default 2), so the wall travels well beyond its own width (ζ > 1)
+before depinning. The box never rotates: `--burgers-angle` rotates b in the
+noise spectrum only. It is pushed up and depins when it reaches the top band, as in the
 Kolton–Ferrero–Rosso strip. `--burgers-angle` sets the wall direction: 0 is a
 screw wall (line ∥ b), 90 an edge wall (line ⊥ b, normal ∥ b, the hard direction).
 This is the clean test of qEW (ζ = 1.25, ν = 4/3) vs qKPZ (ζ = 0.63, ν = 1.73)
@@ -121,10 +124,11 @@ for each orientation, which the bubbles cannot do.
 
 ```bash
 python bubble_depinning.py --geometry flat --burgers-angle 90 --L 256 --Delta 0.04 --coupling field
-sbatch slurm_fss_flat.sh 0          # screw walls  -> runs/flat_D0.04_b0
-sbatch slurm_fss_flat.sh 90         # edge walls   -> runs/flat_D0.04_b90
-python fss_flat.py --dir runs/flat_D0.04_b90 --extract       # on the cluster -> walls.npz
-python fss_flat.py --dirs runs/flat_D0.04_b0 runs/flat_D0.04_b90
+sbatch slurm_fss_flat.sh 0          # screw walls  -> runs/flat_D0.04_b0_A2
+sbatch slurm_fss_flat.sh 90         # edge walls   -> runs/flat_D0.04_b90_A2
+sbatch slurm_fss_flat.sh 90 4       # same with a L x 4L box -> runs/flat_D0.04_b90_A4
+python fss_flat.py --dir runs/flat_D0.04_b90_A2 --extract    # on the cluster -> walls.npz
+python fss_flat.py --dirs runs/flat_D0.04_b0_A2 runs/flat_D0.04_b90_A2
 ```
 
 `fss_flat.py` measures ζ intrinsically from the wall's tangent angle (and from

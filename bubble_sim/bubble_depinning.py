@@ -59,8 +59,10 @@ Protocol:
      state inside the box). h_d is then refined by bisection.
 
 Flat-wall geometry (--geometry flat): instead of a bubble, a straight wall
-along x at height y0 = y0_frac * L, +1 below, -1 above, periodic in x and cut
+along x at height y0 = y0_frac * Ly, +1 below, -1 above, periodic in x and cut
 in y (the y bonds across the box edge are removed, so there is a single wall).
+The box is L along the wall and Ly = aspect * L (default 2, --aspect) in the
+direction of motion, so that the wall can travel far before depinning.
 The wall is pushed upwards and depins when the phi > 0 domain attached to the
 bottom reaches the top band (the KFR geometry, with our border criterion). The
 wall direction relative to b is set by --burgers-angle: 0 -> wall line || b
@@ -76,7 +78,8 @@ Usage examples
   python bubble_depinning.py --check-noise                    # compare noise with SM Eqs. 12-13
   python bubble_depinning.py --noise white                    # isotropic, uncorrelated (Kolton et al.)
   python bubble_depinning.py --noise gaussian --xi-x 8 --xi-y 1   # Gaussian anisotropic correlations
-  python bubble_depinning.py --geometry flat --burgers-angle 90 --L 256   # flat edge wall
+  python bubble_depinning.py --geometry flat --burgers-angle 90 --L 256   # flat edge wall, 256 x 512 box
+  python bubble_depinning.py --geometry flat --L 256 --aspect 4           # 256 x 1024 box
   python bubble_depinning.py --xi-x inf --xi-y 0              # columnar disorder along x
   python bubble_depinning.py --xi-x 6 --xi-y 1 --theta 30     # rotated anisotropy
   python bubble_depinning.py --dJx 0.6 --dJy 0.0              # anisotropic bond disorder
@@ -102,7 +105,7 @@ from scipy.special import erf
 # ---------------------------------------------------------------------------
 @dataclass
 class Params:
-    L: int = 256                 # linear size (must be even), Ly = Lx = L
+    L: int = 256                 # linear size (must be even): Lx = L; Ly = L (bubble) or aspect * L (flat)
     eps0: float = 1.0
     cx: float = 1.0              # mean elastic coupling on x-bonds
     cy: float = 1.0              # mean elastic coupling on y-bonds
@@ -123,7 +126,8 @@ class Params:
     dJy: float = 0.0
     # geometry: "bubble" (circular domain) or "flat" (straight wall along x)
     geometry: str = "bubble"
-    y0_frac: float = 0.1         # flat: initial wall height / L
+    y0_frac: float = 0.1         # flat: initial wall height / Ly
+    aspect: float = 2.0          # flat: box height Ly = aspect * L (rounded to even); L = wall length
     # initial bubble
     R0: float = 30.0
     R0x: float | None = None     # if given, elliptic initial bubble
@@ -142,10 +146,25 @@ class Params:
     tmax: float = 200.0
     n_frames: int = 10
 
+    @property
+    def Ly(self) -> int:
+        """Box size along y (rows): L for bubbles, aspect * L rounded to even for flat walls."""
+        return 2 * int(round(self.aspect * self.L / 2)) if self.geometry == "flat" else self.L
+
 
 # ---------------------------------------------------------------------------
 # Disorder
 # ---------------------------------------------------------------------------
+def _shape(L):
+    """(Ly, Lx) from an int (square box) or a (Ly, Lx) tuple."""
+    return (int(L), int(L)) if np.isscalar(L) else (int(L[0]), int(L[1]))
+
+
+def _kgrid(Ly, Lx):
+    """Wavevector grids ky, kx with array index [i=y, j=x]."""
+    return np.meshgrid(2 * np.pi * np.fft.fftfreq(Ly), 2 * np.pi * np.fft.fftfreq(Lx), indexing="ij")
+
+
 def anisotropic_gaussian_field(L, xi_x, xi_y, theta_deg, rng):
     """Unit-variance Gaussian field with anisotropic Gaussian correlations.
 
@@ -153,23 +172,23 @@ def anisotropic_gaussian_field(L, xi_x, xi_y, theta_deg, rng):
     coordinates (approx. correlation length xi along each principal axis).
     xi = 0 -> white along that axis; xi = inf -> perfectly correlated (columnar).
     """
+    Ly, Lx = _shape(L)
     inf_x, inf_y = math.isinf(xi_x), math.isinf(xi_y)
     if (inf_x or inf_y) and theta_deg % 180 != 0:
         raise ValueError("Infinite correlation length only supported with theta = 0 (mod 180).")
     if inf_x and inf_y:
-        return np.full((L, L), rng.standard_normal())
+        return np.full((Ly, Lx), rng.standard_normal())
     if inf_x:   # constant along x: each row (fixed y) is one value -> stripes along x
-        col = anisotropic_gaussian_field_1d(L, xi_y, rng)
-        return np.repeat(col[:, None], L, axis=1)
+        col = anisotropic_gaussian_field_1d(Ly, xi_y, rng)
+        return np.repeat(col[:, None], Lx, axis=1)
     if inf_y:   # constant along y
-        row = anisotropic_gaussian_field_1d(L, xi_x, rng)
-        return np.repeat(row[None, :], L, axis=0)
+        row = anisotropic_gaussian_field_1d(Lx, xi_x, rng)
+        return np.repeat(row[None, :], Ly, axis=0)
 
-    w = rng.standard_normal((L, L))
+    w = rng.standard_normal((Ly, Lx))
     if xi_x == 0 and xi_y == 0:
         return w
-    k = 2 * np.pi * np.fft.fftfreq(L)
-    ky, kx = np.meshgrid(k, k, indexing="ij")     # array index [i=y, j=x]
+    ky, kx = _kgrid(Ly, Lx)
     th = np.deg2rad(theta_deg)
     kpar = kx * np.cos(th) + ky * np.sin(th)      # along the rotated "x" axis
     kperp = -kx * np.sin(th) + ky * np.cos(th)
@@ -198,9 +217,9 @@ def dislocation_spectrum(L, w, beta_deg, aniso=1.0):
     average (isotropic, same radial spectrum and variance). Equivalently the
     field is sqrt((1+a)/2) f_b + sqrt((1-a)/2) f_bperp with f_b, f_bperp
     independent dislocation fields for b and b rotated by 90 degrees.
-    Array index [i=y, j=x]. Normalised so that the field has unit variance."""
-    k = 2 * np.pi * np.fft.fftfreq(L)
-    ky, kx = np.meshgrid(k, k, indexing="ij")
+    Array index [i=y, j=x]; L is an int (square) or (Ly, Lx).
+    Normalised so that the field has unit variance."""
+    ky, kx = _kgrid(*_shape(L))
     b = np.deg2rad(beta_deg)
     kk = np.hypot(kx, ky)
     kk[0, 0] = 1.0
@@ -216,20 +235,20 @@ def dislocation_noise(L, w, beta_deg, rng, aniso=1.0):
     FFT of real white noise gives Hermitian Gaussian amplitudes with <|W|^2> = N;
     multiplying by sqrt(S) is equivalent to the letter's SM Sec. 3 recipe."""
     S = dislocation_spectrum(L, w, beta_deg, aniso)
-    W = np.fft.fft2(rng.standard_normal((L, L)))
+    W = np.fft.fft2(rng.standard_normal(_shape(L)))
     return np.real(np.fft.ifft2(W * np.sqrt(S)))
 
 
 def make_disorder(p: Params, rng):
     """Returns r (random bond), g (random field), Jx, Jy."""
-    L = p.L
+    sh = (p.Ly, p.L)                                              # rows (y), columns (x)
     if p.noise == "dislocation":
-        f = dislocation_noise(L, p.w, p.burgers_angle, rng, p.aniso)
+        f = dislocation_noise(sh, p.w, p.burgers_angle, rng, p.aniso)
     elif p.noise == "gaussian":
-        f = anisotropic_gaussian_field(L, p.xi_x, p.xi_y, p.theta, rng)
+        f = anisotropic_gaussian_field(sh, p.xi_x, p.xi_y, p.theta, rng)
     else:
-        f = rng.uniform(-np.sqrt(3), np.sqrt(3), size=(L, L))     # unit variance
-    zero = np.zeros((L, L))
+        f = rng.uniform(-np.sqrt(3), np.sqrt(3), size=sh)         # unit variance
+    zero = np.zeros(sh)
     if p.coupling == "field":
         r, g = zero, p.Delta * f
     elif p.noise == "white":
@@ -238,8 +257,8 @@ def make_disorder(p: Params, rng):
         r, g = p.Delta * erf(f / np.sqrt(2)), zero                # uniform marginal, as before
     else:
         r, g = p.Delta * f, zero                                  # Gaussian, std Delta
-    Jx = p.cx * (1 + p.dJx * rng.uniform(-1, 1, size=(L, L)))
-    Jy = p.cy * (1 + p.dJy * rng.uniform(-1, 1, size=(L, L)))
+    Jx = p.cx * (1 + p.dJx * rng.uniform(-1, 1, size=sh))
+    Jy = p.cy * (1 + p.dJy * rng.uniform(-1, 1, size=sh))
     if p.geometry == "flat":
         Jy[-1, :] = 0.0          # cut the bonds between row L-1 and row 0: open in y, one wall
         g = g.copy()
@@ -253,9 +272,9 @@ def make_disorder(p: Params, rng):
 def bubble(p: Params):
     L = p.L
     delta = math.sqrt(0.5 * (p.cx + p.cy) / p.eps0)       # wall width
-    y, x = np.mgrid[0:L, 0:L].astype(float)
+    y, x = np.mgrid[0:p.Ly, 0:L].astype(float)
     if p.geometry == "flat":
-        return np.tanh((p.y0_frac * L - y) / (math.sqrt(2) * delta))
+        return np.tanh((p.y0_frac * p.Ly - y) / (math.sqrt(2) * delta))
     xc = yc = (L - 1) / 2
     Rx = p.R0x if p.R0x is not None else p.R0
     Ry = p.R0y if p.R0y is not None else p.R0
@@ -771,7 +790,7 @@ def plot_dynamics(res, out_png):
     colors = cm.viridis(np.linspace(0, 1, len(frames)))
     for (t, ph), col in zip(frames, colors):
         axs[1].contour(ph, levels=[0], colors=[col], linewidths=0.8, origin="lower")
-    axs[1].set_xlim(0, p.L); axs[1].set_ylim(0, p.L); axs[1].set_aspect("equal")
+    axs[1].set_xlim(0, p.L); axs[1].set_ylim(0, p.Ly); axs[1].set_aspect("equal")
     axs[1].set_title(f"bubble growth at h={res['h']} (dt={res['dt']:.3f}, equally spaced times)")
     for a in axs:
         a.set_xticks([]); a.set_yticks([])

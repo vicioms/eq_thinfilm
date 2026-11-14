@@ -2,9 +2,12 @@
 # Flat-wall depinning scan (KFR strip geometry) on a SLURM cluster, one GPU per array task.
 #
 #   cd bubble_sim && mkdir -p logs
-#   sbatch slurm_fss_flat.sh 0      # b along x: wall line || b  (screw wall) -> runs/flat_D0.04_b0
-#   sbatch slurm_fss_flat.sh 90     # b along y: wall line _|_ b (edge wall)  -> runs/flat_D0.04_b90
+#   sbatch slurm_fss_flat.sh 0      # b along x: wall line || b  (screw wall) -> runs/flat_D0.04_b0_A2
+#   sbatch slurm_fss_flat.sh 90     # b along y: wall line _|_ b (edge wall)  -> runs/flat_D0.04_b90_A2
+#   sbatch slurm_fss_flat.sh 90 4   # optional 2nd argument: aspect, box L x (aspect L), default 2
 #
+# The wall and the box never rotate (wall along x, motion along y); the angle
+# rotates b in the noise spectrum only.
 # Any other angle (e.g. 80, 85 for edge walls tilted by 10 or 5 deg) runs a = 1
 # only, for the tilt dependence of the threshold (Tang-Kardar-Dhar: around the
 # hard direction F_c(s) - F_c(0) ~ -|s|^1.57 for qKPZ).
@@ -13,16 +16,17 @@
 # realization for every angle, so a = 0 is run only with angle 0.
 #
 # then, on the cluster, for each output directory:
-#   python fss_flat.py --dir runs/flat_D0.04_b0 --extract --workers 8
-#   git add runs/flat_D0.04_b0/walls.npz runs/flat_D0.04_b0/results_shard*.jsonl
+#   python fss_flat.py --dir runs/flat_D0.04_b0_A2 --extract --workers 8
+#   git add runs/flat_D0.04_b0_A2/walls.npz runs/flat_D0.04_b0_A2/results_shard*.jsonl
 # and anywhere:
-#   python fss_flat.py --dirs runs/flat_D0.04_b0 runs/flat_D0.04_b90
+#   python fss_flat.py --dirs runs/flat_D0.04_b0_A2 runs/flat_D0.04_b90_A2
 #
-# Cost: not measured on the GPU yet. A flat wall sweeps ~4x the area of an
-# L/6 bubble before depinning, so expect ~4x the bubble times: roughly 2-3 min
-# at L = 256-512, ~5 min at 1024, ~15-20 min at 2048 per sample on an A100;
-# ~100 GPU-h for angle 0 (3 values of a), ~65 GPU-h for 90 (2 values of a).
-# Check the first log lines and adjust --samples / --time if needed.
+# Cost: not measured on the GPU yet. With aspect 2 the wall sweeps ~8x the
+# area of an L/6 bubble before depinning: very roughly 5 min at L = 256-512,
+# ~10 min at 1024, ~40 min at 2048 per sample on an A100; ~200 GPU-h for
+# angle 0 (3 values of a), ~130 GPU-h for 90 (2 values of a). Cost grows
+# about linearly with the aspect. Check the first log lines and adjust
+# --samples / --time if needed.
 # Restarting skips finished (L, a, seed).
 
 #SBATCH --job-name=flat_fss
@@ -38,14 +42,15 @@
 set -euo pipefail
 NSHARDS=16
 DELTA=0.04
-ANGLE=${1:?usage: sbatch slurm_fss_flat.sh <burgers angle: 0 | 90 | ...>}
-OUT=runs/flat_D${DELTA}_b${ANGLE}
+ANGLE=${1:?usage: sbatch slurm_fss_flat.sh <burgers angle: 0 | 90 | ...> [aspect]}
+ASPECT=${2:-2}
+OUT=runs/flat_D${DELTA}_b${ANGLE}_A${ASPECT}
 case "$ANGLE" in
     0)  ANISO=(0 0.5 1) ;;
     90) ANISO=(0.5 1) ;;
     *)  ANISO=(1) ;;
 esac
-echo "output: $OUT  burgers angle: $ANGLE  a: ${ANISO[*]}"
+echo "output: $OUT  burgers angle: $ANGLE  aspect: $ASPECT  a: ${ANISO[*]}"
 
 # --- environment (edit) ------------------------------------------------------
 module load cuda/12.8
@@ -58,7 +63,7 @@ mkdir -p logs
 nvidia-smi --query-gpu=name,memory.total --format=csv
 
 python fss_scan.py \
-    --geometry flat --y0-frac 0.1 \
+    --geometry flat --y0-frac 0.1 --aspect "$ASPECT" \
     --backend cuda --gpus 1 \
     --shard "$SLURM_ARRAY_TASK_ID" --nshards "$NSHARDS" \
     --outdir "$OUT" \

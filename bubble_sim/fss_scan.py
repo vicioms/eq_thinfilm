@@ -24,8 +24,9 @@ results*.jsonl of the output folder are skipped.
   python fss_scan.py --aniso 0 0.25 0.5 0.75 1 --L 64 128 256 --samples 64:48 128:32 256:16
   python fss_scan.py --backend cuda --gpus 4 --L 512 1024 --samples 512:32 1024:16
 
-Flat walls (--geometry flat): a straight wall along x starting at y0_frac * L,
-pushed up until it reaches the top band (see bubble_depinning.py). The wall
+Flat walls (--geometry flat): a straight wall along x starting at y0_frac * Ly,
+pushed up until it reaches the top band (see bubble_depinning.py). The box is
+L along the wall and Ly = aspect * L along the motion (--aspect, default 2). The wall
 orientation relative to b is --burgers-angle (0: wall line || b, screw wall;
 90: wall line _|_ b, edge wall). Each JSON line then holds the profile summary
 of the critical wall (mean height, width, overhang fraction, u_o) and the
@@ -67,7 +68,7 @@ def run_task(task):
     L, a, seed, opts = task["L"], task["aniso"], task["seed"], task["opts"]
     p = bd.Params(L=L, noise="dislocation", coupling="field", Delta=opts["Delta"], w=opts["w"],
                   burgers_angle=opts["burgers_angle"], aniso=a, R0=opts["r0"] or L * opts["r0_frac"],
-                  geometry=opts["geometry"], y0_frac=opts["y0_frac"],
+                  geometry=opts["geometry"], y0_frac=opts["y0_frac"], aspect=opts["aspect"],
                   h_start=opts["h_start"], dh=opts["dh"], n_bisect=opts["n_bisect"], seed=seed)
     t0 = time.time()
     tries = []
@@ -85,7 +86,7 @@ def run_task(task):
                 break
     out = dict(L=L, aniso=a, seed=seed, Delta=p.Delta, w=p.w, burgers_angle=p.burgers_angle,
                geometry=p.geometry, R0=p.R0 if p.geometry == "bubble" else None,
-               y0=p.y0_frac * L if p.geometry == "flat" else None, h_start=p.h_start, tries=tries, status=res["status_init"],
+               Ly=p.Ly, y0=p.y0_frac * p.Ly if p.geometry == "flat" else None, h_start=p.h_start, tries=tries, status=res["status_init"],
                time=time.time() - t0, backend=opts["backend"], gpu=_GPU)
     if res["status_init"] == "pinned":
         out.update(h_d=float(res["h_d"]), n_steps=len(res["h"]))
@@ -93,7 +94,7 @@ def run_task(task):
             an = bd.analyse_flat(res["phi_c"])
             if an is not None:
                 out.update({k: float(an[k]) for k in ("area", "mean_height", "width", "frac_multivalued", "u_o")})
-                out["travel"] = out["mean_height"] - p.y0_frac * L
+                out["travel"] = out["mean_height"] - p.y0_frac * p.Ly
         else:
             an = bd.analyse(res["phi_c"])
             if an is not None:
@@ -117,7 +118,8 @@ def main():
     ap.add_argument("--w", type=float, default=3.0)
     ap.add_argument("--burgers-angle", type=float, default=0.0)
     ap.add_argument("--geometry", choices=["bubble", "flat"], default="bubble")
-    ap.add_argument("--y0-frac", type=float, default=0.1, help="flat: initial wall height / L")
+    ap.add_argument("--y0-frac", type=float, default=0.1, help="flat: initial wall height / Ly")
+    ap.add_argument("--aspect", type=float, default=2.0, help="flat: box height Ly = aspect * L")
     ap.add_argument("--r0-frac", type=float, default=1 / 6)
     ap.add_argument("--r0", type=float, default=None,
                     help="fixed initial radius in lattice units (overrides --r0-frac)")
@@ -147,7 +149,7 @@ def main():
                 done.add((r["L"], r["aniso"], r["seed"]))
 
     opts = dict(Delta=args.Delta, w=args.w, burgers_angle=args.burgers_angle, r0_frac=args.r0_frac, r0=args.r0,
-                geometry=args.geometry, y0_frac=args.y0_frac,
+                geometry=args.geometry, y0_frac=args.y0_frac, aspect=args.aspect,
                 h_start=args.h_start, h_step=args.h_step, dh=args.dh, n_bisect=args.n_bisect,
                 save_configs=not args.no_configs, outdir=args.outdir, backend=args.backend)
     # large L first so that the slow tasks do not end up alone at the end

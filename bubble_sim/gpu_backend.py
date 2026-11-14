@@ -120,7 +120,7 @@ class CUDABackend:
     def __init__(self, r, g, Jx, Jy, p, block=(32, 8), check_every=32, device=None):
         if device is not None:
             cuda.select_device(device)
-        L = p.L
+        Ly, Lx = np.shape(r)            # rows (y), columns (x); Ly != Lx for flat walls
         self.p = p
         self.check_every = check_every
         self.r, self.g, self.Jx, self.Jy = (cuda.to_device(np.ascontiguousarray(a, dtype=np.float64))
@@ -130,8 +130,8 @@ class CUDABackend:
         self._z1 = np.zeros(1)
         self._z2 = np.zeros(2, np.int32)
         self.block = block
-        self.grid_half = ((L // 2 + block[0] - 1) // block[0], (L + block[1] - 1) // block[1])
-        self.grid_full = ((L + block[0] - 1) // block[0], (L + block[1] - 1) // block[1])
+        self.grid_half = ((Lx // 2 + block[0] - 1) // block[0], (Ly + block[1] - 1) // block[1])
+        self.grid_full = ((Lx + block[0] - 1) // block[0], (Ly + block[1] - 1) // block[1])
 
     # array helpers -------------------------------------------------------
     def put(self, a):
