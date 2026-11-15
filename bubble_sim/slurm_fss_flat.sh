@@ -21,12 +21,10 @@
 # and anywhere:
 #   python fss_flat.py --dirs runs/flat_D0.04_b0_A2 runs/flat_D0.04_b90_A2
 #
-# Cost: not measured on the GPU yet. With aspect 2 the wall sweeps ~8x the
-# area of an L/6 bubble before depinning: very roughly 5 min at L = 256-512,
-# ~10 min at 1024, ~40 min at 2048 per sample on an A100; ~200 GPU-h for
-# angle 0 (3 values of a), ~130 GPU-h for 90 (2 values of a). Cost grows
-# about linearly with the aspect. Check the first log lines and adjust
-# --samples / --time if needed.
+# Cost, measured (angle 0, aspect 2, first shards): ~30 s per sample at
+# L = 256, ~55 s at 512, ~85 s at 1024, ~11-13 min at 2048; about 36 GPU-h
+# for angle 0 (3 values of a) and ~25 GPU-h for 90 (2 values of a). Cost
+# grows about linearly with the aspect.
 # Restarting skips finished (L, a, seed).
 
 #SBATCH --job-name=flat_fss

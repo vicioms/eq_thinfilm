@@ -16,7 +16,9 @@ Critical flat walls (fss_scan.py --geometry flat): extraction and analysis.
        (periodic over one period), S_psi(q) = P |c_n|^2 ~ q^(1 - 2 zeta), valid
        through overhangs and for zeta > 1 (as fss_contours.py for bubbles);
      * Cartesian KFR profile: S_u(q) of u(x) ~ q^-(1 + 2 zeta), for comparison;
-     * local zeta_eff(q), zeta fits with bootstrap errors (window 2 pi 8/P .. 0.1);
+     * local zeta_eff(q), zeta fits with bootstrap errors (window 2 pi 2/P .. 0.1:
+       from the second mode of the wall up to the noise core; the periodic walls
+       show no low-mode depletion, zeta is the same from n >= 1 to n >= 8);
      * memory check: the same, split at the median distance travelled by the
        wall before it got pinned for the last time;
      * h_d: mean and var(h_d) ~ L^(-2/nu) (L >= lmin).
@@ -42,7 +44,7 @@ CFG_RE = re.compile(r"L(\d+)_a([0-9.]+)_s(\d+)\.npz$")
 Q_EDGES = np.geomspace(1e-3, 2.0, 34)
 QC = np.sqrt(Q_EDGES[1:] * Q_EDGES[:-1])
 Q_MAX = 0.1
-N_MIN = 8
+N_MIN = 2                      # lowest mode fitted (n = 1, the box-scale mode, left out)
 DS = 0.5
 B = 300
 RNG = np.random.default_rng(5)
@@ -179,16 +181,25 @@ def wall_spectra(curve, u, L, m=2):
 
 
 def fit(X, qlo, qhi, kind):
-    ok = (QC >= qlo) & (QC <= qhi)
-    X = X[np.all(np.isfinite(X[:, ok]), axis=1)] if ok.any() else X
-    if ok.sum() < 3 or len(X) < 4:
+    """Power-law fit of the sample-averaged binned spectrum over qlo <= q <= qhi.
+    Near the lowest modes a log bin can be empty for some walls (their mode
+    spacing 2 pi / P is wider than the bin), so each bin is averaged over the
+    walls that have it, and kept if at least half of them do."""
+    X = np.asarray(X)
+    if len(X) < 4:
+        return np.nan, np.nan
+    ok = (QC >= qlo) & (QC <= qhi) & (np.isfinite(X).sum(0) >= max(2, len(X) / 2))
+    if ok.sum() < 3:
         return np.nan, np.nan
 
     def one(Y):
-        sl = np.polyfit(np.log(QC[ok]), np.log(Y[:, ok].mean(0)), 1)[0]
+        m = np.nanmean(Y[:, ok], 0)
+        if not np.all(np.isfinite(m)):
+            return np.nan
+        sl = np.polyfit(np.log(QC[ok]), np.log(m), 1)[0]
         return (1 - sl) / 2 if kind == "psi" else -(1 + sl) / 2
     z0 = one(X)
-    return z0, np.std([one(X[RNG.integers(0, len(X), len(X))]) for _ in range(B)], ddof=1)
+    return z0, np.nanstd([one(X[RNG.integers(0, len(X), len(X))]) for _ in range(B)], ddof=1)
 
 
 # ---------------------------------------------------------------------------
@@ -256,7 +267,7 @@ def analyse(dirs, outdir, lmin):
         ax.set_title("local exponent", fontsize=10); ax.legend(fontsize=6, ncol=2)
         # zeta vs a: intrinsic, Cartesian, and split by travel
         ax = axs[row, 2]
-        out.append("  zeta (window 2 pi 8/P .. 0.1): intrinsic S_psi | Cartesian u(x) | intrinsic, travel < median / > median")
+        out.append("  zeta (window 2 pi 2/P .. 0.1): intrinsic S_psi | Cartesian u(x) | intrinsic, travel < median / > median")
         for L, ls in zip(Ls, (":", "-.", "--", "-")):
             zi, zc = [], []
             for a in As:
