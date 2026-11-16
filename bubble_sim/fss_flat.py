@@ -16,9 +16,13 @@ Critical flat walls (fss_scan.py --geometry flat): extraction and analysis.
        (periodic over one period), S_psi(q) = P |c_n|^2 ~ q^(1 - 2 zeta), valid
        through overhangs and for zeta > 1 (as fss_contours.py for bubbles);
      * Cartesian KFR profile: S_u(q) of u(x) ~ q^-(1 + 2 zeta), for comparison;
-     * local zeta_eff(q), zeta fits with bootstrap errors (window 2 pi 2/P .. 0.1:
-       from the second mode of the wall up to the noise core; the periodic walls
-       show no low-mode depletion, zeta is the same from n >= 1 to n >= 8);
+     * spectra pooled at fixed (L, a): the modes n >= 2 of all walls in one array,
+       binned in log q with bins merged until each holds >= one mode per wall
+       (class Pooled); bin position = mean log q of its modes; fits weighted by
+       sqrt(modes per bin), errors by bootstrap over walls with the same bins;
+     * local zeta_eff(q) (sliding factor-2 window), zeta fits (modes n >= 2 up to
+       --qmax, default 0.1, the noise core; the periodic walls show no low-mode
+       depletion, zeta is the same from n >= 1 to n >= 8);
      * memory check: the same, split at the median distance travelled by the
        wall before it got pinned for the last time;
      * h_d: mean and var(h_d) ~ L^(-2/nu) (L >= lmin).
@@ -43,8 +47,6 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, HERE)
 SCALE = 8
 CFG_RE = re.compile(r"L(\d+)_a([0-9.]+)_s(\d+)\.npz$")
-Q_EDGES = np.geomspace(1e-3, 2.0, 34)
-QC = np.sqrt(Q_EDGES[1:] * Q_EDGES[:-1])
 Q_MAX = 0.1
 N_MIN = 2                      # lowest mode fitted (n = 1, the box-scale mode, left out)
 DS = 0.5
@@ -215,15 +217,6 @@ def plot_walls(sets, outdir, n_show=4):
 # ---------------------------------------------------------------------------
 # spectra
 # ---------------------------------------------------------------------------
-def bin_log(q, S):
-    idx = np.digitize(q, Q_EDGES) - 1
-    ok = (idx >= 0) & (idx < len(QC))
-    s = np.bincount(idx[ok], S[ok], len(QC))
-    c = np.bincount(idx[ok], minlength=len(QC))
-    with np.errstate(invalid="ignore"):
-        return s / c
-
-
 def periodic_resample(curve, L, ds=DS):
     """Uniform arc-length resampling of one period of a wall that repeats with shift (L, 0)."""
     c = np.vstack([curve, curve[:1] + np.array([L, 0.0])])
@@ -236,43 +229,97 @@ def periodic_resample(curve, L, ds=DS):
 
 
 def wall_spectra(curve, u, L, m=2):
+    """Raw spectra of one wall, modes n >= 1 as (q, S, n): the tangent angle psi(s) along
+    the arc length, S = P |c_n|^2, and the KFR profile u(x), S = L |c_n|^2."""
     pts, P = periodic_resample(curve, L)
     n = len(pts)
     ext = np.vstack([pts[-m:] - [L, 0], pts, pts[:m] + [L, 0]])
     d = ext[2 * m:] - ext[:-2 * m]
     psi = np.unwrap(np.arctan2(d[:, 1], d[:, 0]))
-    dpsi = psi - psi.mean()
-    c = np.fft.rfft(dpsi) / n
-    q = 2 * np.pi * np.arange(len(c)) / P
-    Sp = bin_log(q[1:], P * np.abs(c[1:]) ** 2)
+    c = np.fft.rfft(psi - psi.mean()) / n
+    k = np.arange(1, len(c))
+    sp = (2 * np.pi * k / P, P * np.abs(c[1:]) ** 2, k)
     ok = np.isfinite(u)
     uu = np.interp(np.arange(L), np.nonzero(ok)[0], u[ok], period=L) if ok.sum() > 1 else np.zeros(L)
     cu = np.fft.rfft(uu - uu.mean()) / L
-    qu = 2 * np.pi * np.arange(len(cu)) / L
-    Su = bin_log(qu[1:], L * np.abs(cu[1:]) ** 2)
-    return Sp, Su, P
+    ku = np.arange(1, len(cu))
+    su = (2 * np.pi * ku / L, L * np.abs(cu[1:]) ** 2, ku)
+    return sp, su, P
 
 
-def fit(X, qlo, qhi, kind):
-    """Power-law fit of the sample-averaged binned spectrum over qlo <= q <= qhi.
-    Near the lowest modes a log bin can be empty for some walls (their mode
-    spacing 2 pi / P is wider than the bin), so each bin is averaged over the
-    walls that have it, and kept if at least half of them do."""
-    X = np.asarray(X)
-    if len(X) < 4:
-        return np.nan, np.nan
-    ok = (QC >= qlo) & (QC <= qhi) & (np.isfinite(X).sum(0) >= max(2, len(X) / 2))
+FINE = np.geomspace(1e-3, 3.0, 241)
+
+
+class Pooled:
+    """Spectrum of a set of walls at fixed L (and a): the modes n >= N_MIN of all walls in one
+    array, binned in log q. Adjacent fine bins are merged until each holds at least as many
+    modes as there are walls (about one mode per wall), so at low q, where the mode spacing
+    2 pi / P exceeds the bin width, no bin is left to the few walls whose P happens to put a
+    mode there; at high q the bins stay fine and hold many modes. Bin position = mean log q
+    of its modes. Errors: bootstrap over walls with the same bins."""
+
+    def __init__(self, spectra):
+        self.parts = [(q[k >= N_MIN], S[k >= N_MIN]) for q, S, k in spectra]
+        self.n = len(self.parts)
+        if self.n == 0:
+            self.qc = np.zeros(0); return
+        q = np.concatenate([p[0] for p in self.parts])
+        cnt = np.histogram(q, FINE)[0]
+        edges, acc = [FINE[0]], 0
+        for i, ci in enumerate(cnt):
+            acc += ci
+            if acc >= max(self.n, 8):
+                edges.append(FINE[i + 1]); acc = 0
+        if acc and len(edges) > 2:
+            edges[-1] = FINE[-1]
+        self.edges = np.array(edges)
+        i = np.digitize(q, self.edges) - 1
+        ok = (i >= 0) & (i < len(self.edges) - 1)
+        with np.errstate(invalid="ignore"):
+            self.qc = np.exp(np.bincount(i[ok], np.log(q[ok]), len(self.edges) - 1)
+                             / np.bincount(i[ok], minlength=len(self.edges) - 1))
+
+    def mean(self, idx=None):
+        parts = self.parts if idx is None else [self.parts[j] for j in idx]
+        q = np.concatenate([p[0] for p in parts]); S = np.concatenate([p[1] for p in parts])
+        i = np.digitize(q, self.edges) - 1
+        ok = (i >= 0) & (i < len(self.qc))
+        c = np.bincount(i[ok], minlength=len(self.qc))
+        with np.errstate(invalid="ignore", divide="ignore"):
+            return np.bincount(i[ok], S[ok], len(self.qc)) / c, c
+
+    def boot(self, nb):
+        return [self.mean(RNG.integers(0, self.n, self.n)) for _ in range(nb)]
+
+
+def _slope(qc, S, c, ok):
+    ok = ok & (c > 0) & np.isfinite(S) & (S > 0)
     if ok.sum() < 3:
-        return np.nan, np.nan
+        return np.nan
+    return np.polyfit(np.log(qc[ok]), np.log(S[ok]), 1, w=np.sqrt(c[ok]))[0]   # log-mean error ~ 1/sqrt(count)
 
-    def one(Y):
-        m = np.nanmean(Y[:, ok], 0)
-        if not np.all(np.isfinite(m)):
-            return np.nan
-        sl = np.polyfit(np.log(QC[ok]), np.log(m), 1)[0]
-        return (1 - sl) / 2 if kind == "psi" else -(1 + sl) / 2
-    z0 = one(X)
-    return z0, np.nanstd([one(X[RNG.integers(0, len(X), len(X))]) for _ in range(B)], ddof=1)
+
+def _zeta(sl, kind):
+    return (1 - sl) / 2 if kind == "psi" else -(1 + sl) / 2
+
+
+def fit(pool, qhi, kind):
+    """zeta from a weighted power-law fit of the pooled spectrum, modes n >= N_MIN up to qhi."""
+    if pool.n < 4:
+        return np.nan, np.nan
+    win = pool.qc <= qhi
+    z0 = _zeta(_slope(pool.qc, *pool.mean(), win), kind)
+    zb = [_zeta(_slope(pool.qc, S, c, win), kind) for S, c in pool.boot(B)]
+    return z0, np.nanstd(zb, ddof=1)
+
+
+def local_zeta(pool, kind, half=np.log(2) / 2, nb=100):
+    """zeta_eff(q): weighted fits over a sliding window of a factor 2 in q."""
+    lq = np.log(pool.qc)
+
+    def one(S, c):
+        return np.array([_zeta(_slope(pool.qc, S, c, np.abs(lq - l) <= half), "psi") for l in lq])
+    return one(*pool.mean()), np.nanstd([one(S, c) for S, c in pool.boot(nb)], 0)
 
 
 # ---------------------------------------------------------------------------
@@ -288,7 +335,7 @@ def analyse(dirs, outdir, lmin):
         ang = W["burgers_angle"]
         name = {0.0: "screw wall (line ∥ b)", 90.0: "edge wall (line ⊥ b)"}.get(ang, f"b at {ang}°")
         spec = [wall_spectra(c, u, int(L)) for c, u, L in zip(W["curve"], W["u"], W["L"])]
-        W["Sp"] = np.array([s[0] for s in spec]); W["Su"] = np.array([s[1] for s in spec])
+        W["sp"] = [s[0] for s in spec]; W["su"] = [s[1] for s in spec]
         W["P"] = np.array([s[2] for s in spec])
         W["multi"] = np.array([np.mean(m > 1) for m in W["mult"]])
         sets.append((name, W))
@@ -300,19 +347,26 @@ def analyse(dirs, outdir, lmin):
     fig, axs = plt.subplots(len(sets), 4, figsize=(21, 4.8 * len(sets)), squeeze=False)
     for row, (name, W) in enumerate(sets):
         sel = lambda L, a: (W["L"] == L) & (W["aniso"] == a)
+        pools = {}
+
+        def pool(L, a, kind="psi", mask=None):
+            m = sel(L, a) if mask is None else sel(L, a) & mask
+            key = (L, a, kind, None if mask is None else m.tobytes())
+            if key not in pools:
+                pools[key] = Pooled([W["sp" if kind == "psi" else "su"][i] for i in np.nonzero(m)[0]])
+            return pools[key]
         out.append(f"== {name}")
         # compensated intrinsic spectra at the largest L, all a
         ax = axs[row, 0]
         Lm = max(int(L) for L in W["L"])
         for a in As:
-            X = W["Sp"][sel(Lm, a)]
-            if len(X) < 2:
+            pl = pool(Lm, a)
+            if pl.n < 2:
                 continue
-            m = np.nanmean(X, 0); e = np.nanstd(X, 0) / np.sqrt(len(X))
-            Pm = W["P"][sel(Lm, a)].mean()
-            ok = QC > 2 * np.pi * 2 / Pm
-            ax.errorbar(QC[ok], (m * QC ** 1.5)[ok], (e * QC ** 1.5)[ok], fmt="o-", ms=3, lw=0.8,
-                        color=cm.viridis(As.index(a) / max(1, len(As) - 1)), label=f"a={a} (n={len(X)})")
+            m = pl.mean()[0]
+            e = np.nanstd([S for S, _ in pl.boot(100)], 0)
+            ax.errorbar(pl.qc, m * pl.qc ** 1.5, e * pl.qc ** 1.5, fmt="o-", ms=3, lw=0.8,
+                        color=cm.viridis(As.index(a) / max(1, len(As) - 1)), label=f"a={a} (n={pl.n})")
         ax.axvspan(Q_MAX, 2, color="0.93", zorder=-1)
         ax.set_xscale("log"); ax.set_yscale("log"); ax.set_xlabel("q (arc length)")
         ax.set_ylabel(r"$q^{1.5}S_\psi$ (flat: ζ=1.25; slope +0.6·2: ζ=0.63)")
@@ -321,19 +375,12 @@ def analyse(dirs, outdir, lmin):
         ax = axs[row, 1]
         for a, mk in ((As[0], "o"), (As[-1], "s")):
             for L in Ls:
-                X = W["Sp"][sel(L, a)]
-                if len(X) < 4:
+                pl = pool(L, a)
+                if pl.n < 4:
                     continue
-                Pm = W["P"][sel(L, a)].mean()
-                k = 2
-
-                def zl(Y):
-                    lS = np.log(np.nanmean(Y, 0))
-                    return (1 - (lS[2 * k:] - lS[:-2 * k]) / (np.log(QC[2 * k:]) - np.log(QC[:-2 * k]))) / 2
-                z0 = zl(X)
-                ze = np.nanstd([zl(X[RNG.integers(0, len(X), len(X))]) for _ in range(100)], 0)
-                ok = (QC[k:-k] > 2 * np.pi * 4 / Pm) & (QC[k:-k] < 0.3)
-                ax.errorbar(QC[k:-k][ok], z0[ok], ze[ok], fmt=mk + ("-" if a == As[-1] else ":"), color=cL[L],
+                z0, ze = local_zeta(pl, "psi")
+                ok = pl.qc < 0.3
+                ax.errorbar(pl.qc[ok], z0[ok], ze[ok], fmt=mk + ("-" if a == As[-1] else ":"), color=cL[L],
                             ms=3, lw=0.8, label=f"a={a}, L={L}")
         for zz, ls, lab in ((1.25, "--", "qEW"), (0.633, "-.", "qKPZ")):
             ax.axhline(zz, color="k", ls=ls, lw=0.7, label=lab)
@@ -346,18 +393,18 @@ def analyse(dirs, outdir, lmin):
         for L, ls in zip(Ls, (":", "-.", "--", "-")):
             zi, zc = [], []
             for a in As:
-                X = W["Sp"][sel(L, a)]
-                if len(X) < 4:
+                pl = pool(L, a)
+                if pl.n < 4:
                     zi.append((np.nan, np.nan)); zc.append((np.nan, np.nan)); continue
                 Pm = W["P"][sel(L, a)].mean()
-                z1 = fit(X, 2 * np.pi * N_MIN / Pm, Q_MAX, "psi")
-                z2 = fit(W["Su"][sel(L, a)], 2 * np.pi * N_MIN / L, Q_MAX, "u")
-                tr = W["travel"][sel(L, a)]
-                med = np.nanmedian(tr)
-                zlo = fit(X[tr < med], 2 * np.pi * N_MIN / Pm, Q_MAX, "psi")
-                zhi = fit(X[tr >= med], 2 * np.pi * N_MIN / Pm, Q_MAX, "psi")
+                z1 = fit(pl, Q_MAX, "psi")
+                z2 = fit(pool(L, a, "u"), Q_MAX, "u")
+                tr = W["travel"]
+                med = np.nanmedian(tr[sel(L, a)])
+                zlo = fit(pool(L, a, mask=tr < med), Q_MAX, "psi")
+                zhi = fit(pool(L, a, mask=tr >= med), Q_MAX, "psi")
                 zi.append(z1); zc.append(z2)
-                out.append(f"  L={L:5d} a={a:4.2f} n={len(X):4d}: {z1[0]:.3f}±{z1[1]:.3f} | {z2[0]:.3f}±{z2[1]:.3f} "
+                out.append(f"  L={L:5d} a={a:4.2f} n={pl.n:4d}: {z1[0]:.3f}±{z1[1]:.3f} | {z2[0]:.3f}±{z2[1]:.3f} "
                            f"(multi {np.mean(W['multi'][sel(L, a)]):.3f}) | travel<{med:.0f}: {zlo[0]:.3f}±{zlo[1]:.3f}"
                            f"  >: {zhi[0]:.3f}±{zhi[1]:.3f}   P/L={Pm / L:.3f}")
             z, ze = np.array(zi).T
