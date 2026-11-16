@@ -1,0 +1,61 @@
+runs: runs/fss_D0.04_R32
+  bubbles, R0 = 32: 6521 bubbles
+== roughness: bubbles, R0 = 32
+   zeta from pooled spectra, modes n >= 12 up to q = 0.1; intrinsic S_psi ~ q^(1-2 zeta) | profile (R(theta)) S ~ q^-(1+2 zeta) | intrinsic split at the median travel (memory)
+   a=0.00 L=  128 n= 416: intrinsic nan±nan | profile nan±nan | travel<4: nan±nan, >: nan±nan
+   a=0.00 L=  256 n= 427: intrinsic nan±nan | profile nan±nan | travel<14: nan±nan, >: nan±nan
+   a=0.00 L=  512 n= 240: intrinsic nan±nan | profile nan±nan | travel<23: nan±nan, >: nan±nan
+   a=0.00 L= 1024 n= 128: intrinsic nan±nan | profile nan±nan | travel<20: nan±nan, >: 1.306±0.186
+   a=0.00 L= 2048 n=  64: intrinsic nan±nan | profile nan±nan | travel<17: nan±nan, >: 1.545±0.125
+   a=0.00 L= 4096 n=  32: intrinsic 1.234±0.029 | profile 0.940±0.031 | travel<11: nan±nan, >: 1.216±0.208
+   a=0.25 L=  128 n= 416: intrinsic nan±nan | profile nan±nan | travel<4: nan±nan, >: nan±nan
+   a=0.25 L=  256 n= 426: intrinsic nan±nan | profile nan±nan | travel<15: nan±nan, >: nan±nan
+   a=0.25 L=  512 n= 240: intrinsic nan±nan | profile nan±nan | travel<21: nan±nan, >: nan±nan
+   a=0.25 L= 1024 n= 128: intrinsic nan±nan | profile nan±nan | travel<17: nan±nan, >: nan±nan
+   a=0.25 L= 2048 n=  64: intrinsic 1.133±0.115 | profile nan±nan | travel<19: nan±nan, >: 1.088±0.094
+   a=0.25 L= 4096 n=  32: intrinsic nan±nan | profile nan±nan | travel<11: nan±nan, >: 0.817±0.045
+   a=0.50 L=  128 n= 414: intrinsic nan±nan | profile nan±nan | travel<4: nan±nan, >: nan±nan
+   a=0.50 L=  256 n= 426: intrinsic nan±nan | profile nan±nan | travel<15: nan±nan, >: nan±nan
+   a=0.50 L=  512 n= 240: intrinsic nan±nan | profile nan±nan | travel<21: nan±nan, >: nan±nan
+   a=0.50 L= 1024 n= 128: intrinsic nan±nan | profile nan±nan | travel<23: nan±nan, >: nan±nan
+   a=0.50 L= 2048 n=  64: intrinsic 1.187±0.042 | profile 1.009±0.105 | travel<30: nan±nan, >: 1.192±0.036
+   a=0.50 L= 4096 n=  32: intrinsic nan±nan | profile nan±nan | travel<13: nan±nan, >: 1.194±0.332
+   a=0.75 L=  128 n= 414: intrinsic nan±nan | profile nan±nan | travel<3: nan±nan, >: nan±nan
+   a=0.75 L=  256 n= 426: intrinsic nan±nan | profile nan±nan | travel<15: nan±nan, >: nan±nan
+   a=0.75 L=  512 n= 240: intrinsic nan±nan | profile nan±nan | travel<22: nan±nan, >: nan±nan
+   a=0.75 L= 1024 n= 127: intrinsic nan±nan | profile nan±nan | travel<23: nan±nan, >: 1.215±0.208
+   a=0.75 L= 2048 n=  64: intrinsic 1.084±0.071 | profile nan±nan | travel<31: nan±nan, >: 1.093±0.063
+   a=0.75 L= 4096 n=  32: intrinsic 1.076±0.071 | profile 1.226±0.163 | travel<25: nan±nan, >: 1.061±0.048
+   a=1.00 L=  128 n= 411: intrinsic nan±nan | profile nan±nan | travel<3: nan±nan, >: nan±nan
+   a=1.00 L=  256 n= 427: intrinsic nan±nan | profile nan±nan | travel<15: nan±nan, >: nan±nan
+   a=1.00 L=  512 n= 240: intrinsic nan±nan | profile nan±nan | travel<25: nan±nan, >: nan±nan
+   a=1.00 L= 1024 n= 127: intrinsic nan±nan | profile nan±nan | travel<27: nan±nan, >: 1.124±0.189
+   a=1.00 L= 2048 n=  64: intrinsic 1.006±0.052 | profile nan±nan | travel<39: nan±nan, >: 0.997±0.053
+   a=1.00 L= 4096 n=  32: intrinsic 0.968±0.040 | profile 1.273±0.131 | travel<45: nan±nan, >: 0.971±0.044
+== threshold: bubbles, R0 = 32   (<h_d> = h_c + A L^(-1/nu) + B/L, L >= 256)
+   a=0.00: L=128: 0.02620±0.00024  L=256: 0.02865±0.00016  L=512: 0.02894±0.00021  L=1024: 0.02891±0.00024  L=2048: 0.02892±0.00037  L=4096: 0.02967±0.00054
+          nu(var) = 21.12±82.09;  h_c[qEW] = 0.02937±0.00071 (chi2/dof 0.7);  h_c[qKPZ] = 0.02946±0.00087 (chi2/dof 0.7);  h_c[free, 1/nu = 0.01±5.69] = 0.05135±12.35755 (chi2/dof 1.2)
+   a=0.25: L=128: 0.02584±0.00024  L=256: 0.02843±0.00017  L=512: 0.02862±0.00020  L=1024: 0.02872±0.00024  L=2048: 0.02917±0.00052  L=4096: 0.02899±0.00045
+          nu(var) = 24.66±266.99;  h_c[qEW] = 0.02925±0.00069 (chi2/dof 0.2);  h_c[qKPZ] = 0.02932±0.00083 (chi2/dof 0.2);  h_c[free, 1/nu = 0.37±8.12] = 0.02952±0.01201 (chi2/dof 0.3)
+   a=0.50: L=128: 0.02487±0.00024  L=256: 0.02804±0.00017  L=512: 0.02849±0.00021  L=1024: 0.02847±0.00022  L=2048: 0.02894±0.00055  L=4096: 0.02845±0.00040
+          nu(var) = 11.82±26.39;  h_c[qEW] = 0.02836±0.00064 (chi2/dof 0.3);  h_c[qKPZ] = 0.02828±0.00078 (chi2/dof 0.3);  h_c[free, 1/nu = 1.00±14.27] = 0.02842±0.00257 (chi2/dof 0.7)
+   a=0.75: L=128: 0.02386±0.00027  L=256: 0.02733±0.00017  L=512: 0.02807±0.00020  L=1024: 0.02840±0.00026  L=2048: 0.02899±0.00056  L=4096: 0.02803±0.00038
+          nu(var) = 11.68±23.44;  h_c[qEW] = 0.02800±0.00062 (chi2/dof 0.9);  h_c[qKPZ] = 0.02783±0.00075 (chi2/dof 0.9);  h_c[free, 1/nu = 0.00±4.93] = -2.20189±56353.12275 (chi2/dof 1.6)
+   a=1.00: L=128: 0.02237±0.00030  L=256: 0.02642±0.00020  L=512: 0.02737±0.00022  L=1024: 0.02799±0.00027  L=2048: 0.02869±0.00052  L=4096: 0.02821±0.00054
+          nu(var) = 18.58±307.89;  h_c[qEW] = 0.02878±0.00079 (chi2/dof 0.4);  h_c[qKPZ] = 0.02882±0.00096 (chi2/dof 0.4);  h_c[free, 1/nu = 1.00±13.56] = 0.02874±0.00112 (chi2/dof 0.8)
+== length: bubbles, R0 = 32   P ∝ R_eff^alpha (P / 2 pi R_eff; overhangs = fraction of rays crossing the wall more than once)
+   a=0.00: alpha = 1.085±0.003; local 1.07±0.09 1.06±0.04 1.06±0.03 1.09±0.03 1.07±0.04 1.13±0.06 1.10±0.10 1.04±0.15
+          R_eff=18: 1.046  R_eff=24: 1.067  R_eff=32: 1.084  R_eff=41: 1.102  R_eff=56: 1.135  R_eff=75: 1.158  R_eff=102: 1.204  R_eff=135: 1.240  R_eff=176: 1.254
+          overhangs: L=128: 0.000  L=256: 0.000  L=512: 0.001  L=1024: 0.002  L=2048: 0.003  L=4096: 0.004
+   a=0.25: alpha = 1.087±0.003; local 1.07±0.06 1.08±0.03 1.04±0.03 1.11±0.03 1.04±0.03 1.16±0.06 1.15±0.08 1.07±0.13
+          R_eff=21: 1.055  R_eff=27: 1.074  R_eff=34: 1.091  R_eff=42: 1.101  R_eff=53: 1.131  R_eff=68: 1.142  R_eff=84: 1.181  R_eff=106: 1.225  R_eff=132: 1.244
+          overhangs: L=128: 0.000  L=256: 0.000  L=512: 0.001  L=1024: 0.001  L=2048: 0.003  L=4096: 0.001
+   a=0.50: alpha = 1.118±0.004; local 1.05±0.11 1.07±0.05 1.06±0.03 1.12±0.03 1.10±0.04 1.10±0.06 1.22±0.07 1.04±0.10 1.22±0.16
+          R_eff=19: 1.056  R_eff=24: 1.070  R_eff=31: 1.087  R_eff=39: 1.101  R_eff=49: 1.133  R_eff=63: 1.162  R_eff=79: 1.189  R_eff=102: 1.260  R_eff=131: 1.274  R_eff=161: 1.333
+          overhangs: L=128: 0.000  L=256: 0.000  L=512: 0.001  L=1024: 0.002  L=2048: 0.007  L=4096: 0.003
+   a=0.75: alpha = 1.144±0.004; local 1.09±0.10 1.07±0.04 1.08±0.03 1.18±0.03 1.13±0.05 1.18±0.07 1.18±0.09 1.11±0.12
+          R_eff=20: 1.053  R_eff=25: 1.076  R_eff=33: 1.098  R_eff=41: 1.118  R_eff=54: 1.174  R_eff=69: 1.212  R_eff=91: 1.275  R_eff=119: 1.337  R_eff=160: 1.380
+          overhangs: L=128: 0.000  L=256: 0.000  L=512: 0.002  L=1024: 0.003  L=2048: 0.006  L=4096: 0.007
+   a=1.00: alpha = 1.182±0.006; local 1.07±0.12 1.01±0.05 1.06±0.03 1.16±0.03 1.18±0.04 1.22±0.06 1.22±0.07 1.15±0.10 1.39±0.12
+          R_eff=17: 1.073  R_eff=22: 1.093  R_eff=29: 1.096  R_eff=36: 1.111  R_eff=46: 1.155  R_eff=58: 1.206  R_eff=75: 1.277  R_eff=98: 1.352  R_eff=124: 1.403  R_eff=161: 1.555
+          overhangs: L=128: 0.000  L=256: 0.000  L=512: 0.002  L=1024: 0.004  L=2048: 0.010  L=4096: 0.016

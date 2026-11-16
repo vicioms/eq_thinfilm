@@ -1,0 +1,56 @@
+runs: runs/flat_D0.04_b0_A2, runs/flat_D0.04_b90_A2
+  screw walls (line ∥ b), Ly/L = 2: 1440 walls
+  edge walls (line ⊥ b), Ly/L = 2: 960 walls
+== roughness: screw walls (line ∥ b), Ly/L = 2
+   zeta from pooled spectra, modes n >= 2 up to q = 0.1; intrinsic S_psi ~ q^(1-2 zeta) | profile (u(x)) S ~ q^-(1+2 zeta) | intrinsic split at the median travel (memory)
+   a=0.00 L=  256 n= 256: intrinsic 1.297±0.042 | profile 0.967±0.073 | travel<225: 1.301±0.062, >: 1.316±0.057
+   a=0.00 L=  512 n= 128: intrinsic 1.254±0.024 | profile 0.785±0.068 | travel<451: 1.283±0.029, >: 1.226±0.036
+   a=0.00 L= 1024 n=  64: intrinsic 1.208±0.017 | profile 0.670±0.045 | travel<942: 1.195±0.023, >: 1.216±0.026
+   a=0.00 L= 2048 n=  32: intrinsic 1.201±0.009 | profile 0.474±0.029 | travel<1878: 1.196±0.009, >: 1.205±0.014
+   a=0.50 L=  256 n= 256: intrinsic 1.297±0.035 | profile 1.022±0.075 | travel<239: 1.269±0.055, >: 1.291±0.051
+   a=0.50 L=  512 n= 128: intrinsic 1.255±0.020 | profile 0.821±0.052 | travel<526: 1.239±0.028, >: 1.270±0.028
+   a=0.50 L= 1024 n=  64: intrinsic 1.224±0.012 | profile 0.674±0.033 | travel<994: 1.232±0.017, >: 1.220±0.020
+   a=0.50 L= 2048 n=  32: intrinsic 1.192±0.008 | profile 0.591±0.030 | travel<1714: 1.175±0.014, >: 1.207±0.009
+   a=1.00 L=  256 n= 256: intrinsic 1.185±0.029 | profile 0.913±0.062 | travel<255: 1.172±0.046, >: 1.194±0.036
+   a=1.00 L=  512 n= 128: intrinsic 1.277±0.023 | profile 0.961±0.058 | travel<540: 1.233±0.035, >: 1.325±0.032
+   a=1.00 L= 1024 n=  64: intrinsic 1.265±0.012 | profile 0.950±0.057 | travel<1007: 1.251±0.017, >: 1.276±0.017
+   a=1.00 L= 2048 n=  32: intrinsic 1.214±0.009 | profile 0.834±0.034 | travel<1792: 1.204±0.013, >: 1.217±0.012
+== roughness: edge walls (line ⊥ b), Ly/L = 2
+   zeta from pooled spectra, modes n >= 2 up to q = 0.1; intrinsic S_psi ~ q^(1-2 zeta) | profile (u(x)) S ~ q^-(1+2 zeta) | intrinsic split at the median travel (memory)
+   a=0.50 L=  256 n= 256: intrinsic 1.009±0.070 | profile 0.856±0.065 | travel<242: 0.868±0.081, >: 1.142±0.096
+   a=0.50 L=  512 n= 128: intrinsic 1.041±0.033 | profile 0.866±0.036 | travel<487: 1.051±0.047, >: 1.027±0.042
+   a=0.50 L= 1024 n=  64: intrinsic 1.042±0.029 | profile 0.722±0.027 | travel<931: 1.029±0.037, >: 1.046±0.041
+   a=0.50 L= 2048 n=  32: intrinsic 1.038±0.023 | profile 0.636±0.098 | travel<1893: 0.988±0.025, >: 1.071±0.026
+   a=1.00 L=  256 n= 256: intrinsic 0.969±0.057 | profile 0.842±0.060 | travel<222: 1.046±0.086, >: 0.883±0.084
+   a=1.00 L=  512 n= 128: intrinsic 0.926±0.036 | profile 0.767±0.028 | travel<458: 0.912±0.037, >: 0.929±0.053
+   a=1.00 L= 1024 n=  64: intrinsic 0.835±0.024 | profile 0.716±0.029 | travel<1088: 0.788±0.037, >: 0.854±0.031
+   a=1.00 L= 2048 n=  32: intrinsic 0.784±0.024 | profile 0.682±0.025 | travel<1408: 0.760±0.022, >: 0.802±0.043
+== threshold: screw walls (line ∥ b), Ly/L = 2   (<h_d> = h_c + A L^(-1/nu), L >= 0)
+   a=0.00: L=256: 0.02614±0.00012  L=512: 0.02568±0.00008  L=1024: 0.02566±0.00007  L=2048: 0.02559±0.00006
+          nu(var) = 1.20±0.09;  h_c[qEW] = 0.02544±0.00007 (chi2/dof 1.5);  h_c[qKPZ] = 0.02537±0.00009 (chi2/dof 1.9);  h_c[free, 1/nu = 2.62±1.67] = 0.02560±0.00005 (chi2/dof 0.4)
+   a=0.50: L=256: 0.02308±0.00011  L=512: 0.02391±0.00008  L=1024: 0.02452±0.00007  L=2048: 0.02487±0.00005
+          nu(var) = 1.17±0.11;  h_c[qEW] = 0.02534±0.00007 (chi2/dof 0.3);  h_c[qKPZ] = 0.02565±0.00009 (chi2/dof 0.1);  h_c[free, 1/nu = 0.61±0.20] = 0.02557±0.00042 (chi2/dof 0.2)
+   a=1.00: L=256: 0.01831±0.00015  L=512: 0.02038±0.00015  L=1024: 0.02210±0.00010  L=2048: 0.02331±0.00010
+          nu(var) = 1.35±0.09;  h_c[qEW] = 0.02450±0.00011 (chi2/dof 5.7);  h_c[qKPZ] = 0.02541±0.00014 (chi2/dof 1.7);  h_c[free, 1/nu = 0.38±0.11] = 0.02745±0.00170 (chi2/dof 0.2)
+== threshold: edge walls (line ⊥ b), Ly/L = 2   (<h_d> = h_c + A L^(-1/nu), L >= 0)
+   a=0.50: L=256: 0.02859±0.00013  L=512: 0.02748±0.00011  L=1024: 0.02675±0.00008  L=2048: 0.02628±0.00008
+          nu(var) = 1.31±0.10;  h_c[qEW] = 0.02569±0.00009 (chi2/dof 0.2);  h_c[qKPZ] = 0.02527±0.00011 (chi2/dof 0.0);  h_c[free, 1/nu = 0.62±0.20] = 0.02541±0.00054 (chi2/dof 0.0)
+   a=1.00: L=256: 0.03097±0.00016  L=512: 0.02920±0.00014  L=1024: 0.02786±0.00011  L=2048: 0.02707±0.00008
+          nu(var) = 1.15±0.08;  h_c[qEW] = 0.02604±0.00010 (chi2/dof 1.0);  h_c[qKPZ] = 0.02537±0.00012 (chi2/dof 0.2);  h_c[free, 1/nu = 0.57±0.14] = 0.02532±0.00074 (chi2/dof 0.3)
+== length: screw walls (line ∥ b), Ly/L = 2   P ∝ L^alpha (P/L; overhangs = fraction of columns crossing the wall more than once)
+   a=0.00: alpha = 1.201±0.017; local 1.19±0.04 1.26±0.06 1.19±0.11
+          L=256: 1.330  L=512: 1.521  L=1024: 1.820  L=2048: 2.072
+          overhangs: L=256: 0.012  L=512: 0.040  L=1024: 0.092  L=2048: 0.203
+   a=0.50: alpha = 1.441±0.015; local 1.43±0.04 1.43±0.05 1.46±0.06
+          L=256: 1.714  L=512: 2.302  L=1024: 3.103  L=2048: 4.260
+          overhangs: L=256: 0.039  L=512: 0.108  L=1024: 0.193  L=2048: 0.292
+   a=1.00: alpha = 1.451±0.014; local 1.41±0.03 1.48±0.04 1.43±0.04
+          L=256: 1.920  L=512: 2.554  L=1024: 3.569  L=2048: 4.809
+          overhangs: L=256: 0.034  L=512: 0.086  L=1024: 0.177  L=2048: 0.275
+== length: edge walls (line ⊥ b), Ly/L = 2   P ∝ L^alpha (P/L; overhangs = fraction of columns crossing the wall more than once)
+   a=0.50: alpha = 1.044±0.005; local 1.05±0.01 1.04±0.02 1.03±0.02
+          L=256: 1.153  L=512: 1.195  L=1024: 1.231  L=2048: 1.255
+          overhangs: L=256: 0.002  L=512: 0.004  L=1024: 0.016  L=2048: 0.020
+   a=1.00: alpha = 1.009±0.002; local 1.02±0.01 1.00±0.01 1.00±0.01
+          L=256: 1.107  L=512: 1.122  L=1024: 1.120  L=2048: 1.122
+          overhangs: L=256: 0.000  L=512: 0.001  L=1024: 0.001  L=2048: 0.001

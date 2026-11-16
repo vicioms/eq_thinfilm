@@ -20,8 +20,8 @@ import sys
 
 import numpy as np
 
-HERE = os.path.dirname(os.path.abspath(__file__))
-sys.path.insert(0, HERE)
+HERE = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))   # bubble_sim/ (this file is in legacy/)
+sys.path[:0] = [os.path.dirname(os.path.abspath(__file__)), HERE]
 RNG = np.random.default_rng(7)
 B = 300
 

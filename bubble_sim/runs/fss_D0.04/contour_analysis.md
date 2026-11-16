@@ -1,7 +1,7 @@
 # Critical bubble walls: contour analysis (series D = 0.04, R0 = L/6)
 
 Data: 7460 critical configurations, L = 128 to 4096, anisotropy a = 0 to 1, b along x.
-Code: `fss_contours.py` (validation: `python fss_contours.py --selftest`).
+Code: `legacy/fss_contours.py` (validation: `python legacy/fss_contours.py --selftest`).
 Figures: `contours_overhangs.png`, `contours_roughness.png`, `contours_anisotropy.png`.
 All numbers: `contour_report.txt`.
 
@@ -103,7 +103,7 @@ All numbers: `contour_report.txt`.
 
 ## a = 0: is it quenched Edwards-Wilkinson (qEW)?
 
-Script: `qew_a0.py`. Figure: `qew_a0.png`. Numbers: `qew_a0.txt`. Errors come from bootstrapping over disorder samples.
+Script: `legacy/qew_a0.py`. Figure: `qew_a0.png`. Numbers: `qew_a0.txt`. Errors come from bootstrapping over disorder samples.
 
 **Targets.** qEW in d = 1 at depinning has ζ = 1.25 and ν = 1/(2 − ζ) = 4/3 (statistical tilt symmetry). KFR's large-scale invasion-percolation-like regime has the same ν = 4/3 but ζ = 1 (self-similar). So ζ, not ν, tells the two apart.
 
@@ -147,7 +147,7 @@ Script: `qew_a0.py`. Figure: `qew_a0.png`. Numbers: `qew_a0.txt`. Errors come fr
 
 ## a > 0: edge and screw sides taken separately
 
-Script: `sides.py`. Figure: `sides.png`. Numbers: `sides.txt`. Bubbles with L ≥ 1024.
+Script: `legacy/sides.py`. Figure: `sides.png`. Numbers: `sides.txt`. Bubbles with L ≥ 1024.
 
 **Cutting the bubble into sides.**
 - On the wall smoothed over P/20, take the run of wall around the extreme point in each direction ±x, ±y whose normal is within 45° of that direction.
@@ -195,7 +195,7 @@ Script: `sides.py`. Figure: `sides.png`. Numbers: `sides.txt`. Bubbles with L �
 
 ## Do the edge sides follow qKPZ?
 
-Script: `kpz_edge.py`. Figure: `kpz_edge.png`. Numbers: `kpz_edge.txt`. L = 2048 and 4096.
+Script: `legacy/kpz_edge.py`. Figure: `kpz_edge.png`. Numbers: `kpz_edge.txt`. L = 2048 and 4096.
 
 **Why qKPZ is expected.** Tang, Kardar & Dhar, PRL 74, 920 (1995) ([cond-mat/9409002](https://arxiv.org/abs/cond-mat/9409002)):
 - In an anisotropic medium the threshold depends on the tilt of the wall.

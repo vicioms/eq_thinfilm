@@ -328,7 +328,7 @@ ripiegamenti.
 
 | test | previsione | come |
 |---|---|---|
-| ζ, ν pareti edge (b90) | 0.633, 1.733 (qKPZ) per $\ell\gtrsim\ell_\times\approx20$–60 a $a = 1$ | `slurm_fss_flat.sh 90`, `fss_flat.py` |
+| ζ, ν pareti edge (b90) | 0.633, 1.733 (qKPZ) per $\ell\gtrsim\ell_\times\approx20$–60 a $a = 1$ | `slurm_fss_flat.sh 90`, `analyze_flat.py` |
 | ζ locale pareti edge | da ≈1.25 a ≈0.63 attorno a $q\approx2\pi/\ell_\times$ | pannello "local exponent" |
 | ripiegamenti | pareti edge molto meno multivalore delle screw | `frac_multivalued`, $P/L$ |
 | $h_c(\alpha)$ vicino all'edge | massimo; $h_c(0)-h_c(\delta)\propto|\delta|^{1.57}$, non $\delta^2$ | `slurm_fss_flat.sh 85`, `80`, `70` ($a = 1$, $L$ fisso) |

@@ -39,8 +39,8 @@ from concurrent.futures import ProcessPoolExecutor
 
 import numpy as np
 
-HERE = os.path.dirname(os.path.abspath(__file__))
-sys.path.insert(0, HERE)
+HERE = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))   # bubble_sim/ (this file is in legacy/)
+sys.path[:0] = [os.path.dirname(os.path.abspath(__file__)), HERE]
 from fss_contours import Q_EDGES, resample_closed, smooth_closed, normals_angle, tangent_angle  # noqa: E402
 from sides import side_extent, SIG_SIDE  # noqa: E402
 

@@ -70,8 +70,8 @@ from concurrent.futures import ProcessPoolExecutor
 import numpy as np
 from numba import njit
 
-HERE = os.path.dirname(os.path.abspath(__file__))
-sys.path.insert(0, HERE)
+HERE = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))   # bubble_sim/ (this file is in legacy/)
+sys.path[:0] = [os.path.dirname(os.path.abspath(__file__)), HERE]
 
 DS = 0.5                    # arc-length resampling step (lattice units)
 TAN_HALF = 2                # tangent from the chord p[k+m] - p[k-m]: 2 m DS = 2 sites

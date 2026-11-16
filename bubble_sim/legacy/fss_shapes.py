@@ -50,7 +50,8 @@ from concurrent.futures import ProcessPoolExecutor
 
 import numpy as np
 
-HERE = os.path.dirname(os.path.abspath(__file__))
+HERE = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))   # bubble_sim/ (this file is in legacy/)
+sys.path[:0] = [os.path.dirname(os.path.abspath(__file__)), HERE]
 N_THETA_MIN = 1024
 
 

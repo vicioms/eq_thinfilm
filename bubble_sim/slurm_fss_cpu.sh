@@ -11,7 +11,7 @@
 # run at the same time without writing to the same shard files.
 #
 #   cd bubble_sim && mkdir -p logs && sbatch slurm_fss_cpu.sh
-#   python fss_analyze.py --dir runs/fss_cpu     # once (some of) the shards are done
+#   python analyze_bubbles.py --extract runs/fss_cpu && python analyze_bubbles.py runs/fss_cpu
 #
 # (logs/ must exist before sbatch: SLURM opens the output file before the
 #  script runs.)

@@ -30,8 +30,8 @@ import sys
 
 import numpy as np
 
-HERE = os.path.dirname(os.path.abspath(__file__))
-sys.path.insert(0, HERE)
+HERE = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))   # bubble_sim/ (this file is in legacy/)
+sys.path[:0] = [os.path.dirname(os.path.abspath(__file__)), HERE]
 from fss_contours import Q_EDGES, N_MIN_FIT, Q_MAX_FIT  # noqa: E402
 
 QC = np.sqrt(Q_EDGES[1:] * Q_EDGES[:-1])

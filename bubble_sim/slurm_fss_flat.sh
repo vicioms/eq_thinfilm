@@ -16,10 +16,10 @@
 # realization for every angle, so a = 0 is run only with angle 0.
 #
 # then, on the cluster, for each output directory:
-#   python fss_flat.py --dir runs/flat_D0.04_b0_A2 --extract --workers 8
+#   python analyze_flat.py --extract runs/flat_D0.04_b0_A2 --workers 8
 #   git add runs/flat_D0.04_b0_A2/walls.npz runs/flat_D0.04_b0_A2/results_shard*.jsonl
 # and anywhere:
-#   python fss_flat.py --dirs runs/flat_D0.04_b0_A2 runs/flat_D0.04_b90_A2
+#   python analyze_flat.py runs/flat_D0.04_b0_A2 runs/flat_D0.04_b90_A2
 #
 # Cost, measured (angle 0, aspect 2, first shards): ~30 s per sample at
 # L = 256, ~55 s at 512, ~85 s at 1024, ~11-13 min at 2048; about 36 GPU-h

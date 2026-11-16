@@ -43,8 +43,8 @@ from concurrent.futures import ProcessPoolExecutor
 
 import numpy as np
 
-HERE = os.path.dirname(os.path.abspath(__file__))
-sys.path.insert(0, HERE)
+HERE = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))   # bubble_sim/ (this file is in legacy/)
+sys.path[:0] = [os.path.dirname(os.path.abspath(__file__)), HERE]
 SCALE = 8
 CFG_RE = re.compile(r"L(\d+)_a([0-9.]+)_s(\d+)\.npz$")
 Q_MAX = 0.1

@@ -40,52 +40,7 @@ noise; `--aniso a` interpolates from isotropic, a = 0, to the letter's
 spectrum, a = 1, at fixed radial spectrum and variance). `R0 = L/6` (`--r0` sets a fixed radius instead). Results
 go to `runs/fss/results*.jsonl` (+ critical configurations in
 `runs/fss/configs/`); restarting skips finished samples.
-`fss_analyze.py` makes `runs/fss/summary.csv` and `runs/fss/fss_summary.png`
-(⟨h_d⟩ vs L with its drift d⟨h_d⟩/d ln L — not monotonic, so no 1/L extrapolation —, var(h_d) ~ L^(−2/ν), bubble elongation vs a, overhangs).
-
-`fss_shapes.py` looks at the critical bubbles themselves:
-`bubbles.png` (snapshots, mean shape ⟨R(θ)⟩/R_eff, overhang probability vs θ)
-and `Sq.png` (interface structure factor S(q) ~ q^−(1+2ζ), ζ vs a, and S(q)
-of edge vs screw arcs). The number of rays grows with L (≥ 2 per lattice unit
-of wall: 1024 up to L = 256, 8192 at L = 2048). The configurations are git-ignored, so on the cluster
-run
-
-```bash
-python fss_shapes.py --dir runs/fss_cpu --no-plot   # -> runs/fss_cpu/shapes.npz (tracked, few MB)
-```
-
-push `shapes.npz`, and plot anywhere with `python fss_shapes.py --dir runs/fss_cpu`
-(`fss_analyze.py` also does it when `shapes.npz` is there).
-
-R(θ) is single-valued (mean of the crossings along a ray). For the actual
-interfaces, overhangs and pinch-off loops included, add `--contours`: it writes
-`contours.npz` (tracked, ~1.5 bytes per vertex, 1/8-site resolution) with
-every φ = 0 level line of every critical configuration. Load it with
-
-```python
-from fss_shapes import load_contours
-C = load_contours("runs/fss_D0.04")
-C["contours"][i]           # list of (n, 2) arrays (x, y) for sample i (C["L"][i], C["aniso"][i], C["seed"][i])
-C["area"][i]               # signed areas: > 0 encloses φ > 0, < 0 a hole
-C["contours"][i][C["main"][i]]   # the bubble wall
-```
-
-`fss_contours.py --dir runs/fss_D0.04` analyses those walls directly (no polar
-projection): turning-angle spectrum S_ψ(q) ~ q^(1−2ζ) (valid with overhangs and
-for ζ > 1), winding structure function, divider dimension, KFR-style overhang
-statistics (ρ, u_o, wall length per overhang), wall-orientation distribution and
-support function relative to b, and edge/screw-resolved slope fluctuations.
-`--selftest` checks the estimators on synthetic walls. Results and discussion:
-`runs/fss_D0.04/contour_analysis.md`.
-
-`qew_a0.py --dir runs/fss_D0.04 [--a 0]` tests the isotropic case against qEW:
-compensated S_ψ, fit-window scan with bootstrap errors, ν from var(h_d), the
-relation ν = 1/(2−ζ), and the collapse of the h_d distribution.
-
-`sides.py --dir runs/fss_D0.04` cuts each bubble into its edge sides (normal ∥ b)
-and screw sides (normal ⊥ b) and measures ζ on each along its own contour arc
-(the Cartesian x(y) / y(x) projection is kept for comparison), together with how
-far each side advanced from the initial circle.
+The analysis is in the [Analysis](#analysis) section below.
 
 ## GPU / cluster
 
@@ -106,7 +61,7 @@ CUDA toolkit. Use an fp64-capable GPU (A100/H100/V100). Small systems
 (L ≲ 256) are faster on CPU cores; the GPU pays off from L ≈ 512 upward.
 
 With `--shard i --nshards n` each job-array task runs a disjoint slice of the
-same task list and writes `results_shard<i>.jsonl`; `fss_analyze.py` merges
+same task list and writes `results_shard<i>.jsonl`; the analysis merges
 all shards. Resubmitting skips finished samples.
 
 ## Flat walls (wall along or across b)
@@ -127,18 +82,42 @@ python bubble_depinning.py --geometry flat --burgers-angle 90 --L 256 --Delta 0.
 sbatch slurm_fss_flat.sh 0          # screw walls  -> runs/flat_D0.04_b0_A2
 sbatch slurm_fss_flat.sh 90         # edge walls   -> runs/flat_D0.04_b90_A2
 sbatch slurm_fss_flat.sh 90 4       # same with a L x 4L box -> runs/flat_D0.04_b90_A4
-python fss_flat.py --dir runs/flat_D0.04_b90_A2 --extract    # on the cluster -> walls.npz
-python fss_flat.py --dirs runs/flat_D0.04_b0_A2 runs/flat_D0.04_b90_A2
 ```
 
-`fss_flat.py` measures ζ intrinsically from the wall's tangent angle (and from
-the KFR mean-crossing profile u(x) for comparison), the local exponent, ζ split
-by how far the wall travelled before its last pinning (memory check), and ν from
-var(h_d). The critical (last pinned) wall can sit close to its start in some
-samples; the travel is stored for every sample.
+## Analysis
 
-`perimeter.py` compares the length of the critical front with the system size:
-P(L) per period for the flat walls, P(R_eff) for the bubbles (also P / 2πR_eff, as
-NB7_perimeter.ipynb does for the experiment) -> `runs/perimeter/`. For a
-self-affine front P ∝ L when ζ < 1, P ∝ L^ζ when ζ > 1 (the mean squared slope
-grows as L^(2ζ-2)).
+One script per geometry, the same observables and figures for both; shared code
+in `analysis/` (`data` extraction and loading, `geometry` curves, `measure` one
+wall, `spectra` pooled spectra and ζ fits, `stats` thresholds and power laws,
+`figures` plots and report). The critical configurations stay on the cluster
+(git-ignored); the walls are extracted there into small tracked files:
+
+```bash
+python analyze_flat.py --extract runs/flat_D0.04_b0_A2      # -> walls.npz     (one period of each wall)
+python analyze_bubbles.py --extract runs/fss_D0.04          # -> contours.npz  (all φ = 0 contours)
+```
+
+push them, and analyse anywhere (one row per run in every figure):
+
+```bash
+python analyze_flat.py runs/flat_D0.04_b0_A2 runs/flat_D0.04_b90_A2   # -> runs/flat_D0.04_A2_analysis/
+python analyze_bubbles.py runs/fss_D0.04                              # -> runs/fss_D0.04_analysis/
+```
+
+| output | content |
+|---|---|
+| `configs.png` | example critical walls at the largest L with b; distribution of the angle between the wall line and b (0 screw-like, 90 edge-like: faceting) for every L; bubbles: mean shape ⟨R(θ)⟩/R_eff |
+| `roughness.png` | tangent-angle spectrum S_ψ(q) ~ q^(1−2ζ) along the arc length (valid with overhangs and for ζ > 1), pooled over the walls of each (L, a); local ζ_eff(q); ζ vs L, intrinsic and from the single-valued profile (u(x) per column, R(θ) per ray: KFR Eq. 9) |
+| `threshold.png` | ⟨h_d⟩(L) = h_c + A L^(−1/ν) (+ B/L for bubbles, Laplace pressure) with ν = 4/3 (qEW), 1.733 (qKPZ) or free; var(h_d) ~ L^(−2/ν); h_c vs a |
+| `length.png` | wall length P ∝ size^α (α = 1 for ζ < 1, α ≈ ζ for ζ > 1); P/L or P/2πR_eff (as `NB7_perimeter.ipynb`); fraction of columns / rays with overhangs |
+| `report.txt` | all numbers, with bootstrap errors over disorder samples, and ζ split at the median distance travelled before the last pinning (memory check) |
+
+Spectra: the modes of all walls of one (L, a) go into one array, binned in log q
+with bins merged until each holds at least one mode per wall; fits use modes
+n ≥ 2 (flat) or n ≥ 12 (bubbles: lower modes are the bubble's shape) up to
+`--qmax` (default 0.1, the noise core). With a fixed R0 (`fss_scan.py --r0`)
+the critical bubble stays near R0 at every L, so nothing there scales with L.
+
+The previous scripts (`fss_analyze.py`, `fss_shapes.py`, `fss_contours.py`,
+`qew_a0.py`, `kpz_edge.py`, `sides.py`, `fss_flat.py`, `perimeter.py`) are in
+`legacy/` with a table of what is and is not ported (`legacy/README.md`).
