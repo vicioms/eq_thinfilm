@@ -136,3 +136,9 @@ the KFR mean-crossing profile u(x) for comparison), the local exponent, ζ split
 by how far the wall travelled before its last pinning (memory check), and ν from
 var(h_d). The critical (last pinned) wall can sit close to its start in some
 samples; the travel is stored for every sample.
+
+`perimeter.py` compares the length of the critical front with the system size:
+P(L) per period for the flat walls, P(R_eff) for the bubbles (also P / 2πR_eff, as
+NB7_perimeter.ipynb does for the experiment) -> `runs/perimeter/`. For a
+self-affine front P ∝ L when ζ < 1, P ∝ L^ζ when ζ > 1 (the mean squared slope
+grows as L^(2ζ-2)).
