@@ -24,6 +24,8 @@ Critical flat walls (fss_scan.py --geometry flat): extraction and analysis.
      * h_d: mean and var(h_d) ~ L^(-2/nu) (L >= lmin).
    Reference values: qEW zeta = 1.25, nu = 4/3; qKPZ / DPD zeta = 0.633, nu = 1.733
    (Tang, Kardar & Dhar, PRL 74, 920 (1995)).
+   Also writes <out>/walls.png: example critical walls at the largest L per orientation and a,
+   with the arc-length distribution of the wall's tangent angle (facets) for every L.
 """
 from __future__ import annotations
 
@@ -134,9 +136,80 @@ def load_walls(d):
             meta[(r["L"], r["aniso"], r["seed"])] = r
     W["travel"] = np.array([meta.get((int(L), float(a), int(s)), {}).get("travel", np.nan)
                             for L, a, s in zip(W["L"], W["aniso"], W["seed"])])
+    W["Ly"] = np.array([meta.get((int(L), float(a), int(s)), {}).get("Ly", 2 * int(L))
+                        for L, a, s in zip(W["L"], W["aniso"], W["seed"])])
     angles = {r.get("burgers_angle") for r in meta.values()}
     W["burgers_angle"] = angles.pop() if len(angles) == 1 else np.nan
     return W
+
+
+# ---------------------------------------------------------------------------
+# configurations
+# ---------------------------------------------------------------------------
+def plot_walls(sets, outdir, n_show=4):
+    """walls.png: example critical walls at the largest L (phi > 0 domain grey, red arrow = b),
+    one row per (orientation, a), and the arc-length distribution of the tangent angle
+    theta of the wall (0 = along x) for every L: facets show up as peaks at +- theta."""
+    import matplotlib.pyplot as plt
+    from matplotlib import cm
+    rows = []
+    for name, W in sets:
+        for a in sorted({float(x) for x in W["aniso"]}):
+            if a == 0 and any(r[2] == 0 for r in rows):      # isotropic: shown once
+                continue
+            rows.append((name, W, a))
+    Ls = sorted({int(L) for _, W in sets for L in W["L"]})
+    cL = {L: cm.plasma(i / max(1, len(Ls) - 1) * 0.85) for i, L in enumerate(Ls)}
+    bins = np.linspace(-90, 90, 37)
+    fig, axs = plt.subplots(len(rows), n_show + 1, figsize=(2.3 * n_show + 4.2, 4.2 * len(rows)),
+                            squeeze=False, gridspec_kw=dict(width_ratios=[1] * n_show + [1.9]))
+    for r, (name, W, a) in enumerate(rows):
+        sel = W["aniso"] == a
+        Lm = int(W["L"][sel].max())
+        idx = np.nonzero(sel & (W["L"] == Lm))[0][:n_show]
+        ang = np.deg2rad(W["burgers_angle"])
+        for c in range(n_show):
+            ax = axs[r, c]
+            ax.set_xticks([]); ax.set_yticks([])
+            if c >= len(idx):
+                ax.axis("off"); continue
+            i = idx[c]
+            cv, Ly = W["curve"][i], int(W["Ly"][i])
+            # the period runs from x = 0 to x = L (wall_curve starts at the x = L crossing)
+            x = np.r_[cv[:, 0], Lm, Lm, 0, 0]
+            y = np.r_[cv[:, 1], cv[0, 1], 0, 0, cv[0, 1]]
+            ax.fill(x, y, color="0.55", lw=0)
+            ax.plot(cv[:, 0], cv[:, 1], color=cm.viridis(a) if a < 1 else "goldenrod", lw=0.6)
+            ax.set_xlim(0, Lm); ax.set_ylim(0, Ly); ax.set_aspect("equal")
+            ax.annotate("", xy=(0.12 * Lm + 0.1 * Lm * np.cos(ang), 0.06 * Ly + 0.1 * Lm * np.sin(ang)),
+                        xytext=(0.12 * Lm, 0.06 * Ly), arrowprops=dict(arrowstyle="->", color="red", lw=1.5))
+            ax.set_title(f"h_d={W['h_d'][i]:.4f}", fontsize=8)
+            if c == 0:
+                ax.set_ylabel(f"{name.split(' (')[0]}, a = {a:g}\nL = {Lm}", fontsize=10)
+        ax = axs[r, n_show]
+        for L in Ls:
+            ii = np.nonzero(sel & (W["L"] == L))[0]
+            if len(ii) == 0:
+                continue
+            th = []
+            for i in ii:
+                # chords over 4 sites of arc length, so the contour's lattice steps do not dominate
+                c2, _ = periodic_resample(W["curve"][i], L, ds=0.5)
+                d = np.roll(c2, -8, axis=0) - c2
+                d[-8:, 0] += L
+                th.append(np.degrees(np.arctan(d[:, 1] / np.where(d[:, 0] == 0, 1e-12, d[:, 0]))))
+            h, _ = np.histogram(np.concatenate(th), bins, density=True)
+            ax.plot(0.5 * (bins[1:] + bins[:-1]), h, color=cL[L], label=f"L={L} (n={len(ii)})")
+        ax.set_xlabel("tangent angle θ (deg, 0 = along x)"); ax.set_ylabel("P(θ)")
+        ax.set_xlim(-90, 90); ax.set_xticks([-90, -45, 0, 45, 90]); ax.legend(fontsize=7)
+        ax.set_title("arc-length distribution of θ", fontsize=9)
+    fig.suptitle("critical flat walls (grey: phi > 0 domain attached to the bottom; red arrow: Burgers vector b)",
+                 fontsize=11)
+    fig.tight_layout(rect=(0, 0, 1, 0.985))
+    fn = os.path.join(outdir, "walls.png")
+    fig.savefig(fn, dpi=110)
+    plt.close(fig)
+    print("saved", fn)
 
 
 # ---------------------------------------------------------------------------
@@ -219,6 +292,7 @@ def analyse(dirs, outdir, lmin):
         W["P"] = np.array([s[2] for s in spec])
         W["multi"] = np.array([np.mean(m > 1) for m in W["mult"]])
         sets.append((name, W))
+    plot_walls(sets, outdir)
     As = sorted({float(a) for _, W in sets for a in W["aniso"]})
     Ls = sorted({int(L) for _, W in sets for L in W["L"]})
     cL = {L: cm.plasma(i / max(1, len(Ls) - 1) * 0.85) for i, L in enumerate(Ls)}
