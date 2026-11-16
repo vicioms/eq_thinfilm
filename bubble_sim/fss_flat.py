@@ -208,6 +208,7 @@ def analyse(dirs, outdir, lmin):
     matplotlib.use("Agg")
     import matplotlib.pyplot as plt
     from matplotlib import cm
+    os.makedirs(outdir, exist_ok=True)
     sets = []
     for d in dirs:
         W = load_walls(d)
@@ -267,7 +268,7 @@ def analyse(dirs, outdir, lmin):
         ax.set_title("local exponent", fontsize=10); ax.legend(fontsize=6, ncol=2)
         # zeta vs a: intrinsic, Cartesian, and split by travel
         ax = axs[row, 2]
-        out.append("  zeta (window 2 pi 2/P .. 0.1): intrinsic S_psi | Cartesian u(x) | intrinsic, travel < median / > median")
+        out.append(f"  zeta (window 2 pi 2/P .. {Q_MAX:g}): intrinsic S_psi | Cartesian u(x) | intrinsic, travel < median / > median")
         for L, ls in zip(Ls, (":", "-.", "--", "-")):
             zi, zc = [], []
             for a in As:
@@ -308,7 +309,8 @@ def analyse(dirs, outdir, lmin):
                 nb = []
                 for _ in range(B):
                     vb = [np.var(W["h_d"][sel(L, a)][RNG.integers(0, sel(L, a).sum(), sel(L, a).sum())], ddof=1) for L in Lf]
-                    nb.append(-2 / np.polyfit(np.log(Lf), np.log(vb), 1)[0])
+                    if min(vb) > 0:            # a resample of identical h_d has no variance
+                        nb.append(-2 / np.polyfit(np.log(Lf), np.log(vb), 1)[0])
                 nue = np.std(nb)
             out.append(f"  a={a:4.2f}: " + "  ".join(f"L={L}: <h_d>={W['h_d'][sel(L, a)].mean():.5f}" for L in Lx)
                        + f"   nu = {nu:.2f} ± {nue:.2f}")
@@ -326,14 +328,19 @@ def analyse(dirs, outdir, lmin):
 
 
 def main():
+    global Q_MAX
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("--dir", help="run directory to extract")
     ap.add_argument("--extract", action="store_true")
     ap.add_argument("--dirs", nargs="+", help="run directories to analyse (one per orientation)")
     ap.add_argument("--out", help="where to write the figure (default: first of --dirs)")
     ap.add_argument("--lmin", type=int, default=256)
+    ap.add_argument("--qmax", type=float, default=Q_MAX,
+                    help="upper end of the zeta fit window (default 0.1; e.g. 0.03 keeps only the "
+                         "scales beyond the qEW -> qKPZ crossover of the edge walls)")
     ap.add_argument("--workers", type=int, default=os.cpu_count())
     args = ap.parse_args()
+    Q_MAX = args.qmax
     if args.extract:
         extract(args.dir, args.workers)
     if args.dirs:
