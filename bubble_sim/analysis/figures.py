@@ -166,7 +166,9 @@ def configs(sets, out, n_show=4):
 # ---------------------------------------------------------------------------
 def roughness(sets, out, cfg, txt):
     plt = _plt()
-    fig, axs = plt.subplots(len(sets), 3, figsize=(17, 4.6 * len(sets)), squeeze=False)
+    qlg = cfg.get("qlarge")          # large-scale window q <= qlarge (flat walls: past the qEW -> qKPZ crossover)
+    ncol = 4 if qlg else 3
+    fig, axs = plt.subplots(len(sets), ncol, figsize=(17 * ncol / 3, 4.6 * len(sets)), squeeze=False)
     for row, W in enumerate(sets):
         n_min, qmax = cfg[W["geometry"]]["n_min"], cfg["qmax"]
         As, Ls = a_values(W), L_values(W)
@@ -174,7 +176,8 @@ def roughness(sets, out, cfg, txt):
         txt.append(f"== roughness: {W['label']}")
         txt.append(f"   zeta from pooled spectra, modes n >= {n_min} up to q = {qmax:g}; "
                    f"intrinsic S_psi ~ q^(1-2 zeta) | profile ({'u(x)' if W['geometry'] == 'flat' else 'R(theta)'}) "
-                   f"S ~ q^-(1+2 zeta) | intrinsic split at the median travel (memory)")
+                   f"S ~ q^-(1+2 zeta) | intrinsic split at the median travel (memory)"
+                   + (f" | large scales q <= {qlg:g}: intrinsic, profile" if qlg else ""))
         ax = axs[row, 0]
         for a in As:
             p = pool(W, "psi", n_min, L=Lm, a=a)
@@ -200,15 +203,19 @@ def roughness(sets, out, cfg, txt):
         for name, z, ls in ZETA_REF:
             ax.axhline(z, color="k", ls=ls, lw=0.7, label=name)
         ax.axvspan(qmax, 0.3, color="0.93", zorder=-1)
+        if qlg:
+            ax.axvline(qlg, color="0.5", ls="--", lw=0.7)
         ax.set_xscale("log"); ax.set_ylim(0, 2); ax.set_xlabel("q"); ax.set_ylabel(r"local $\zeta_{eff}$ (intrinsic)")
         ax.set_title("local exponent (window: factor 2 in q)", fontsize=9); ax.legend(fontsize=5.5, ncol=2)
         ax = axs[row, 2]
         for a in As:
-            zi, zp = [], []
+            zi, zp, li, lp = [], [], [], []
             for L in Ls:
                 p = pool(W, "psi", n_min, L=L, a=a)
                 if p.n < 4:
-                    zi.append((np.nan, np.nan)); zp.append((np.nan, np.nan)); continue
+                    for z_ in (zi, zp, li, lp):
+                        z_.append((np.nan, np.nan))
+                    continue
                 z1 = SP.fit(p, qmax, "psi")
                 z2 = SP.fit(pool(W, "prof", n_min, L=L, a=a), qmax, "u")
                 tr = W["travel"]
@@ -216,17 +223,31 @@ def roughness(sets, out, cfg, txt):
                 zlo = SP.fit(pool(W, "psi", n_min, L=L, a=a, mask=tr < med), qmax, "psi")
                 zhi = SP.fit(pool(W, "psi", n_min, L=L, a=a, mask=tr >= med), qmax, "psi")
                 zi.append(z1); zp.append(z2)
-                txt.append(f"   a={a:4.2f} L={L:5d} n={p.n:4d}: intrinsic {z1[0]:.3f}±{z1[1]:.3f} | profile "
-                           f"{z2[0]:.3f}±{z2[1]:.3f} | travel<{med:.0f}: {zlo[0]:.3f}±{zlo[1]:.3f}, "
-                           f">: {zhi[0]:.3f}±{zhi[1]:.3f}")
-            z, ze = np.array(zi).T
-            ax.errorbar(Ls, z, ze, fmt="o-", color=color_a(a), label=f"a={a:g}")
-            z, ze = np.array(zp).T
-            ax.errorbar(Ls, z, ze, fmt="x:", color=color_a(a), alpha=0.6)
-        for name, zz, ls in ZETA_REF:
-            ax.axhline(zz, color="k", ls=ls, lw=0.7)
-        ax.set_xscale("log"); ax.set_xlabel("L"); ax.set_ylabel("ζ  (o intrinsic, x profile)")
-        ax.set_title(f"roughness exponent (n ≥ {n_min}, q ≤ {qmax:g})", fontsize=9); ax.legend(fontsize=7)
+                line = (f"   a={a:4.2f} L={L:5d} n={p.n:4d}: intrinsic {z1[0]:.3f}±{z1[1]:.3f} | profile "
+                        f"{z2[0]:.3f}±{z2[1]:.3f} | travel<{med:.0f}: {zlo[0]:.3f}±{zlo[1]:.3f}, "
+                        f">: {zhi[0]:.3f}±{zhi[1]:.3f}")
+                if qlg:
+                    l1 = SP.fit(p, qlg, "psi")
+                    l2 = SP.fit(pool(W, "prof", n_min, L=L, a=a), qlg, "u")
+                    li.append(l1); lp.append(l2)
+                    line += f" | q<={qlg:g}: {l1[0]:.3f}±{l1[1]:.3f}, {l2[0]:.3f}±{l2[1]:.3f}"
+                txt.append(line)
+            panels = [(axs[row, 2], zi, zp)] + ([(axs[row, 3], li, lp)] if qlg else [])
+            for ax_, a1, a2 in panels:
+                z, ze = np.array(a1).T
+                ax_.errorbar(Ls, z, ze, fmt="o-", color=color_a(a), label=f"a={a:g}")
+                z, ze = np.array(a2).T
+                ax_.errorbar(Ls, z, ze, fmt="x:", color=color_a(a), alpha=0.6)
+        for c, qq in ((2, qmax), (3, qlg)):
+            if c >= ncol:
+                continue
+            ax = axs[row, c]
+            for name, zz, ls in ZETA_REF:
+                ax.axhline(zz, color="k", ls=ls, lw=0.7)
+            ax.set_xscale("log"); ax.set_xlabel("L"); ax.set_ylabel("ζ  (o intrinsic, x profile)")
+            ax.set_title(f"roughness exponent (n ≥ {n_min}, q ≤ {qq:g})" + (", large scales" if c == 3 else ""),
+                         fontsize=9)
+            ax.legend(fontsize=7)
     return save(fig, out, "roughness.png")
 
 

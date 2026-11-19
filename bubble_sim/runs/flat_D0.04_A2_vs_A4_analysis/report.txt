@@ -4,53 +4,53 @@ runs: runs/flat_D0.04_b0_A2, runs/flat_D0.04_b0_A4, runs/flat_D0.04_b90_A2, runs
   edge walls (line ⊥ b), Ly/L = 2: 960 walls
   edge walls (line ⊥ b), Ly/L = 4: 960 walls
 == roughness: screw walls (line ∥ b), Ly/L = 2
-   zeta from pooled spectra, modes n >= 2 up to q = 0.1; intrinsic S_psi ~ q^(1-2 zeta) | profile (u(x)) S ~ q^-(1+2 zeta) | intrinsic split at the median travel (memory)
-   a=0.00 L=  256 n= 256: intrinsic 1.297±0.042 | profile 0.967±0.073 | travel<225: 1.301±0.062, >: 1.316±0.057
-   a=0.00 L=  512 n= 128: intrinsic 1.254±0.024 | profile 0.785±0.068 | travel<451: 1.283±0.029, >: 1.226±0.036
-   a=0.00 L= 1024 n=  64: intrinsic 1.208±0.017 | profile 0.670±0.045 | travel<942: 1.195±0.023, >: 1.216±0.026
-   a=0.00 L= 2048 n=  32: intrinsic 1.201±0.009 | profile 0.474±0.029 | travel<1878: 1.196±0.009, >: 1.205±0.014
-   a=0.50 L=  256 n= 256: intrinsic 1.297±0.035 | profile 1.022±0.075 | travel<239: 1.269±0.055, >: 1.291±0.051
-   a=0.50 L=  512 n= 128: intrinsic 1.255±0.020 | profile 0.821±0.052 | travel<526: 1.239±0.028, >: 1.270±0.028
-   a=0.50 L= 1024 n=  64: intrinsic 1.224±0.012 | profile 0.674±0.033 | travel<994: 1.232±0.017, >: 1.220±0.020
-   a=0.50 L= 2048 n=  32: intrinsic 1.192±0.008 | profile 0.591±0.030 | travel<1714: 1.175±0.014, >: 1.207±0.009
-   a=1.00 L=  256 n= 256: intrinsic 1.185±0.029 | profile 0.913±0.062 | travel<255: 1.172±0.046, >: 1.194±0.036
-   a=1.00 L=  512 n= 128: intrinsic 1.277±0.023 | profile 0.961±0.058 | travel<540: 1.233±0.035, >: 1.325±0.032
-   a=1.00 L= 1024 n=  64: intrinsic 1.265±0.012 | profile 0.950±0.057 | travel<1007: 1.251±0.017, >: 1.276±0.017
-   a=1.00 L= 2048 n=  32: intrinsic 1.214±0.009 | profile 0.834±0.034 | travel<1792: 1.204±0.013, >: 1.217±0.012
+   zeta from pooled spectra, modes n >= 2 up to q = 0.1; intrinsic S_psi ~ q^(1-2 zeta) | profile (u(x)) S ~ q^-(1+2 zeta) | intrinsic split at the median travel (memory) | large scales q <= 0.03: intrinsic, profile
+   a=0.00 L=  256 n= 256: intrinsic 1.297±0.042 | profile 0.967±0.073 | travel<225: 1.301±0.062, >: 1.316±0.057 | q<=0.03: nan±nan, nan±nan
+   a=0.00 L=  512 n= 128: intrinsic 1.254±0.024 | profile 0.785±0.071 | travel<451: 1.283±0.030, >: 1.226±0.032 | q<=0.03: nan±nan, nan±nan
+   a=0.00 L= 1024 n=  64: intrinsic 1.208±0.018 | profile 0.670±0.047 | travel<942: 1.195±0.022, >: 1.216±0.025 | q<=0.03: 1.225±0.051, 0.605±0.258
+   a=0.00 L= 2048 n=  32: intrinsic 1.201±0.009 | profile 0.474±0.026 | travel<1878: 1.196±0.009, >: 1.205±0.014 | q<=0.03: 1.149±0.024, 0.494±0.052
+   a=0.50 L=  256 n= 256: intrinsic 1.297±0.037 | profile 1.022±0.078 | travel<239: 1.269±0.056, >: 1.291±0.052 | q<=0.03: nan±nan, nan±nan
+   a=0.50 L=  512 n= 128: intrinsic 1.255±0.020 | profile 0.821±0.052 | travel<526: 1.239±0.026, >: 1.270±0.028 | q<=0.03: 1.236±0.059, nan±nan
+   a=0.50 L= 1024 n=  64: intrinsic 1.224±0.012 | profile 0.674±0.031 | travel<994: 1.232±0.017, >: 1.220±0.019 | q<=0.03: 1.284±0.040, 0.961±0.126
+   a=0.50 L= 2048 n=  32: intrinsic 1.192±0.008 | profile 0.591±0.033 | travel<1714: 1.175±0.014, >: 1.207±0.009 | q<=0.03: 1.243±0.016, 0.953±0.080
+   a=1.00 L=  256 n= 256: intrinsic 1.185±0.028 | profile 0.913±0.063 | travel<255: 1.172±0.050, >: 1.194±0.035 | q<=0.03: nan±nan, nan±nan
+   a=1.00 L=  512 n= 128: intrinsic 1.277±0.024 | profile 0.961±0.058 | travel<540: 1.233±0.036, >: 1.325±0.032 | q<=0.03: 1.333±0.081, nan±nan
+   a=1.00 L= 1024 n=  64: intrinsic 1.265±0.012 | profile 0.950±0.056 | travel<1007: 1.251±0.018, >: 1.276±0.016 | q<=0.03: 1.416±0.029, 1.358±0.126
+   a=1.00 L= 2048 n=  32: intrinsic 1.214±0.008 | profile 0.834±0.035 | travel<1792: 1.204±0.011, >: 1.217±0.011 | q<=0.03: 1.379±0.011, 1.347±0.066
 == roughness: screw walls (line ∥ b), Ly/L = 4
-   zeta from pooled spectra, modes n >= 2 up to q = 0.1; intrinsic S_psi ~ q^(1-2 zeta) | profile (u(x)) S ~ q^-(1+2 zeta) | intrinsic split at the median travel (memory)
-   a=0.00 L=  256 n= 256: intrinsic 1.346±0.041 | profile 0.966±0.062 | travel<432: 1.349±0.055, >: 1.341±0.064
-   a=0.00 L=  512 n= 128: intrinsic 1.221±0.024 | profile 0.697±0.080 | travel<1045: 1.201±0.032, >: 1.241±0.034
-   a=0.00 L= 1024 n=  64: intrinsic 1.212±0.015 | profile 0.612±0.031 | travel<1926: 1.202±0.026, >: 1.214±0.020
-   a=0.00 L= 2048 n=  32: intrinsic 1.203±0.009 | profile 0.425±0.042 | travel<2981: 1.195±0.012, >: 1.205±0.015
-   a=0.50 L=  256 n= 256: intrinsic 1.245±0.029 | profile 1.086±0.068 | travel<475: 1.233±0.057, >: 1.207±0.038
-   a=0.50 L=  512 n= 128: intrinsic 1.194±0.013 | profile 0.649±0.046 | travel<1078: 1.163±0.019, >: 1.222±0.017
-   a=0.50 L= 1024 n=  64: intrinsic 1.174±0.012 | profile 0.520±0.042 | travel<1934: 1.167±0.017, >: 1.178±0.017
-   a=0.50 L= 2048 n=  32: intrinsic 1.161±0.008 | profile 0.468±0.022 | travel<3455: 1.161±0.012, >: 1.157±0.011
-   a=1.00 L=  256 n= 256: intrinsic 1.206±0.024 | profile 0.857±0.081 | travel<512: 1.165±0.037, >: 1.237±0.029
-   a=1.00 L=  512 n= 128: intrinsic 1.230±0.016 | profile 0.754±0.055 | travel<1127: 1.211±0.022, >: 1.242±0.019
-   a=1.00 L= 1024 n=  64: intrinsic 1.182±0.012 | profile 0.647±0.048 | travel<2031: 1.174±0.013, >: 1.186±0.017
-   a=1.00 L= 2048 n=  32: intrinsic 1.125±0.010 | profile 0.584±0.033 | travel<3921: 1.108±0.014, >: 1.136±0.014
+   zeta from pooled spectra, modes n >= 2 up to q = 0.1; intrinsic S_psi ~ q^(1-2 zeta) | profile (u(x)) S ~ q^-(1+2 zeta) | intrinsic split at the median travel (memory) | large scales q <= 0.03: intrinsic, profile
+   a=0.00 L=  256 n= 256: intrinsic 1.346±0.041 | profile 0.966±0.069 | travel<432: 1.349±0.058, >: 1.341±0.063 | q<=0.03: nan±nan, nan±nan
+   a=0.00 L=  512 n= 128: intrinsic 1.221±0.023 | profile 0.697±0.088 | travel<1045: 1.201±0.031, >: 1.241±0.037 | q<=0.03: nan±nan, nan±nan
+   a=0.00 L= 1024 n=  64: intrinsic 1.212±0.015 | profile 0.612±0.031 | travel<1926: 1.202±0.025, >: 1.214±0.020 | q<=0.03: 1.181±0.045, 0.473±0.284
+   a=0.00 L= 2048 n=  32: intrinsic 1.203±0.010 | profile 0.425±0.040 | travel<2981: 1.195±0.014, >: 1.205±0.016 | q<=0.03: 1.108±0.025, 0.229±0.130
+   a=0.50 L=  256 n= 256: intrinsic 1.245±0.029 | profile 1.086±0.066 | travel<475: 1.233±0.055, >: 1.207±0.037 | q<=0.03: nan±nan, nan±nan
+   a=0.50 L=  512 n= 128: intrinsic 1.194±0.013 | profile 0.649±0.042 | travel<1078: 1.163±0.019, >: 1.222±0.017 | q<=0.03: 1.115±0.059, nan±nan
+   a=0.50 L= 1024 n=  64: intrinsic 1.174±0.012 | profile 0.520±0.046 | travel<1934: 1.167±0.017, >: 1.178±0.016 | q<=0.03: 1.182±0.031, 0.844±0.126
+   a=0.50 L= 2048 n=  32: intrinsic 1.161±0.008 | profile 0.468±0.023 | travel<3455: 1.161±0.014, >: 1.157±0.011 | q<=0.03: 1.168±0.019, 0.621±0.083
+   a=1.00 L=  256 n= 256: intrinsic 1.206±0.024 | profile 0.857±0.082 | travel<512: 1.165±0.036, >: 1.237±0.027 | q<=0.03: nan±nan, nan±nan
+   a=1.00 L=  512 n= 128: intrinsic 1.230±0.016 | profile 0.754±0.056 | travel<1127: 1.211±0.026, >: 1.242±0.021 | q<=0.03: 1.195±0.042, nan±nan
+   a=1.00 L= 1024 n=  64: intrinsic 1.182±0.011 | profile 0.647±0.050 | travel<2031: 1.174±0.014, >: 1.186±0.017 | q<=0.03: 1.329±0.029, 1.329±0.126
+   a=1.00 L= 2048 n=  32: intrinsic 1.125±0.011 | profile 0.584±0.030 | travel<3921: 1.108±0.014, >: 1.136±0.015 | q<=0.03: 1.277±0.013, 1.175±0.047
 == roughness: edge walls (line ⊥ b), Ly/L = 2
-   zeta from pooled spectra, modes n >= 2 up to q = 0.1; intrinsic S_psi ~ q^(1-2 zeta) | profile (u(x)) S ~ q^-(1+2 zeta) | intrinsic split at the median travel (memory)
-   a=0.50 L=  256 n= 256: intrinsic 1.009±0.067 | profile 0.856±0.066 | travel<242: 0.868±0.091, >: 1.142±0.098
-   a=0.50 L=  512 n= 128: intrinsic 1.041±0.031 | profile 0.866±0.039 | travel<487: 1.051±0.047, >: 1.027±0.042
-   a=0.50 L= 1024 n=  64: intrinsic 1.042±0.028 | profile 0.722±0.027 | travel<931: 1.029±0.038, >: 1.046±0.038
-   a=0.50 L= 2048 n=  32: intrinsic 1.038±0.022 | profile 0.636±0.097 | travel<1893: 0.988±0.025, >: 1.071±0.029
-   a=1.00 L=  256 n= 256: intrinsic 0.969±0.062 | profile 0.842±0.056 | travel<222: 1.046±0.087, >: 0.883±0.082
-   a=1.00 L=  512 n= 128: intrinsic 0.926±0.035 | profile 0.767±0.031 | travel<458: 0.912±0.036, >: 0.929±0.058
-   a=1.00 L= 1024 n=  64: intrinsic 0.835±0.023 | profile 0.716±0.028 | travel<1088: 0.788±0.036, >: 0.854±0.030
-   a=1.00 L= 2048 n=  32: intrinsic 0.784±0.026 | profile 0.682±0.027 | travel<1408: 0.760±0.023, >: 0.802±0.045
+   zeta from pooled spectra, modes n >= 2 up to q = 0.1; intrinsic S_psi ~ q^(1-2 zeta) | profile (u(x)) S ~ q^-(1+2 zeta) | intrinsic split at the median travel (memory) | large scales q <= 0.03: intrinsic, profile
+   a=0.50 L=  256 n= 256: intrinsic 1.009±0.067 | profile 0.856±0.067 | travel<242: 0.868±0.085, >: 1.142±0.100 | q<=0.03: nan±nan, nan±nan
+   a=0.50 L=  512 n= 128: intrinsic 1.041±0.031 | profile 0.866±0.039 | travel<487: 1.051±0.047, >: 1.027±0.044 | q<=0.03: nan±nan, nan±nan
+   a=0.50 L= 1024 n=  64: intrinsic 1.042±0.029 | profile 0.722±0.025 | travel<931: 1.029±0.036, >: 1.046±0.038 | q<=0.03: 0.809±0.117, 0.598±0.135
+   a=0.50 L= 2048 n=  32: intrinsic 1.038±0.023 | profile 0.636±0.095 | travel<1893: 0.988±0.025, >: 1.071±0.030 | q<=0.03: 0.876±0.067, 0.799±0.075
+   a=1.00 L=  256 n= 256: intrinsic 0.969±0.060 | profile 0.842±0.055 | travel<222: 1.046±0.083, >: 0.883±0.085 | q<=0.03: nan±nan, nan±nan
+   a=1.00 L=  512 n= 128: intrinsic 0.926±0.034 | profile 0.767±0.030 | travel<458: 0.912±0.040, >: 0.929±0.062 | q<=0.03: nan±nan, nan±nan
+   a=1.00 L= 1024 n=  64: intrinsic 0.835±0.023 | profile 0.716±0.029 | travel<1088: 0.788±0.038, >: 0.854±0.031 | q<=0.03: 0.583±0.094, 0.590±0.130
+   a=1.00 L= 2048 n=  32: intrinsic 0.784±0.026 | profile 0.682±0.025 | travel<1408: 0.760±0.023, >: 0.802±0.047 | q<=0.03: 0.652±0.047, 0.637±0.060
 == roughness: edge walls (line ⊥ b), Ly/L = 4
-   zeta from pooled spectra, modes n >= 2 up to q = 0.1; intrinsic S_psi ~ q^(1-2 zeta) | profile (u(x)) S ~ q^-(1+2 zeta) | intrinsic split at the median travel (memory)
-   a=0.50 L=  256 n= 256: intrinsic 1.014±0.070 | profile 0.822±0.058 | travel<491: 0.919±0.092, >: 1.122±0.092
-   a=0.50 L=  512 n= 128: intrinsic 1.029±0.035 | profile 0.821±0.034 | travel<966: 1.037±0.048, >: 1.008±0.048
-   a=0.50 L= 1024 n=  64: intrinsic 1.006±0.023 | profile 0.762±0.029 | travel<1393: 1.008±0.037, >: 1.006±0.031
-   a=0.50 L= 2048 n=  32: intrinsic 1.053±0.040 | profile 0.541±0.114 | travel<2990: 1.034±0.034, >: 1.064±0.066
-   a=1.00 L=  256 n= 256: intrinsic 0.972±0.061 | profile 0.824±0.059 | travel<429: 0.959±0.088, >: 0.989±0.082
-   a=1.00 L=  512 n= 128: intrinsic 0.891±0.044 | profile 0.786±0.033 | travel<842: 0.963±0.060, >: 0.807±0.053
-   a=1.00 L= 1024 n=  64: intrinsic 0.848±0.020 | profile 0.769±0.026 | travel<1850: 0.842±0.033, >: 0.850±0.029
-   a=1.00 L= 2048 n=  32: intrinsic 0.797±0.030 | profile 0.691±0.029 | travel<2396: 0.795±0.044, >: 0.795±0.029
+   zeta from pooled spectra, modes n >= 2 up to q = 0.1; intrinsic S_psi ~ q^(1-2 zeta) | profile (u(x)) S ~ q^-(1+2 zeta) | intrinsic split at the median travel (memory) | large scales q <= 0.03: intrinsic, profile
+   a=0.50 L=  256 n= 256: intrinsic 1.014±0.068 | profile 0.822±0.059 | travel<491: 0.919±0.082, >: 1.122±0.094 | q<=0.03: nan±nan, nan±nan
+   a=0.50 L=  512 n= 128: intrinsic 1.029±0.034 | profile 0.821±0.036 | travel<966: 1.037±0.049, >: 1.008±0.048 | q<=0.03: nan±nan, nan±nan
+   a=0.50 L= 1024 n=  64: intrinsic 1.006±0.024 | profile 0.762±0.031 | travel<1393: 1.008±0.035, >: 1.006±0.032 | q<=0.03: 0.667±0.071, 0.462±0.141
+   a=0.50 L= 2048 n=  32: intrinsic 1.053±0.041 | profile 0.541±0.114 | travel<2990: 1.034±0.037, >: 1.064±0.065 | q<=0.03: 0.924±0.080, 0.492±0.111
+   a=1.00 L=  256 n= 256: intrinsic 0.972±0.063 | profile 0.824±0.061 | travel<429: 0.959±0.085, >: 0.989±0.087 | q<=0.03: nan±nan, nan±nan
+   a=1.00 L=  512 n= 128: intrinsic 0.891±0.040 | profile 0.786±0.032 | travel<842: 0.963±0.058, >: 0.807±0.050 | q<=0.03: nan±nan, nan±nan
+   a=1.00 L= 1024 n=  64: intrinsic 0.848±0.020 | profile 0.769±0.024 | travel<1850: 0.842±0.033, >: 0.850±0.028 | q<=0.03: 0.672±0.086, 0.740±0.122
+   a=1.00 L= 2048 n=  32: intrinsic 0.797±0.027 | profile 0.691±0.028 | travel<2396: 0.795±0.042, >: 0.795±0.027 | q<=0.03: 0.574±0.061, 0.551±0.069
 == threshold: screw walls (line ∥ b), Ly/L = 2   (<h_d> = h_c + A L^(-1/nu), L >= 0)
    a=0.00: L=256: 0.02614±0.00012  L=512: 0.02568±0.00008  L=1024: 0.02566±0.00007  L=2048: 0.02559±0.00006
           nu(var) = 1.20±0.09;  h_c[qEW] = 0.02544±0.00007 (chi2/dof 1.5);  h_c[qKPZ] = 0.02537±0.00009 (chi2/dof 1.9);  h_c[free, 1/nu = 2.62±1.67] = 0.02560±0.00005 (chi2/dof 0.4)
