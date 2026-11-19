@@ -1,37 +1,37 @@
 runs: runs/fss_D0.04_R32
   bubbles, R0 = 32: 7511 bubbles
 == roughness: bubbles, R0 = 32
-   zeta from pooled spectra, modes n >= 12 up to q = 0.1; intrinsic S_psi ~ q^(1-2 zeta) | profile (R(theta)) S ~ q^-(1+2 zeta) | intrinsic split at the median travel (memory)
-   a=0.00 L=  128 n= 512: intrinsic nan±nan | profile nan±nan | travel<4: nan±nan, >: nan±nan
-   a=0.00 L=  256 n= 512: intrinsic nan±nan | profile nan±nan | travel<16: nan±nan, >: nan±nan
-   a=0.00 L=  512 n= 256: intrinsic nan±nan | profile nan±nan | travel<23: nan±nan, >: nan±nan
-   a=0.00 L= 1024 n= 128: intrinsic nan±nan | profile nan±nan | travel<20: nan±nan, >: 1.306±0.164
-   a=0.00 L= 2048 n=  64: intrinsic nan±nan | profile nan±nan | travel<17: nan±nan, >: 1.545±0.127
-   a=0.00 L= 4096 n=  32: intrinsic 1.234±0.030 | profile 0.940±0.032 | travel<11: nan±nan, >: 1.216±0.252
-   a=0.25 L=  128 n= 512: intrinsic nan±nan | profile nan±nan | travel<4: nan±nan, >: nan±nan
-   a=0.25 L=  256 n= 512: intrinsic nan±nan | profile nan±nan | travel<16: nan±nan, >: nan±nan
-   a=0.25 L=  512 n= 256: intrinsic nan±nan | profile nan±nan | travel<20: nan±nan, >: nan±nan
-   a=0.25 L= 1024 n= 128: intrinsic nan±nan | profile nan±nan | travel<17: nan±nan, >: nan±nan
-   a=0.25 L= 2048 n=  64: intrinsic 1.133±0.094 | profile nan±nan | travel<19: nan±nan, >: 1.088±0.089
-   a=0.25 L= 4096 n=  32: intrinsic nan±nan | profile nan±nan | travel<11: nan±nan, >: 0.817±0.045
-   a=0.50 L=  128 n= 510: intrinsic nan±nan | profile nan±nan | travel<4: nan±nan, >: nan±nan
-   a=0.50 L=  256 n= 512: intrinsic nan±nan | profile nan±nan | travel<15: nan±nan, >: nan±nan
-   a=0.50 L=  512 n= 256: intrinsic nan±nan | profile nan±nan | travel<22: nan±nan, >: nan±nan
-   a=0.50 L= 1024 n= 128: intrinsic nan±nan | profile nan±nan | travel<23: nan±nan, >: nan±nan
-   a=0.50 L= 2048 n=  64: intrinsic 1.187±0.047 | profile 1.009±0.113 | travel<30: nan±nan, >: 1.192±0.039
-   a=0.50 L= 4096 n=  32: intrinsic nan±nan | profile nan±nan | travel<13: nan±nan, >: 1.194±0.312
-   a=0.75 L=  128 n= 510: intrinsic nan±nan | profile nan±nan | travel<3: nan±nan, >: nan±nan
-   a=0.75 L=  256 n= 512: intrinsic nan±nan | profile nan±nan | travel<14: nan±nan, >: nan±nan
-   a=0.75 L=  512 n= 256: intrinsic nan±nan | profile nan±nan | travel<23: nan±nan, >: nan±nan
-   a=0.75 L= 1024 n= 128: intrinsic nan±nan | profile nan±nan | travel<24: nan±nan, >: 1.215±0.187
-   a=0.75 L= 2048 n=  64: intrinsic 1.084±0.073 | profile nan±nan | travel<31: nan±nan, >: 1.093±0.064
-   a=0.75 L= 4096 n=  32: intrinsic 1.076±0.087 | profile 1.226±0.167 | travel<25: nan±nan, >: 1.061±0.052
-   a=1.00 L=  128 n= 507: intrinsic nan±nan | profile nan±nan | travel<3: nan±nan, >: nan±nan
-   a=1.00 L=  256 n= 512: intrinsic nan±nan | profile nan±nan | travel<15: nan±nan, >: nan±nan
-   a=1.00 L=  512 n= 256: intrinsic nan±nan | profile nan±nan | travel<25: nan±nan, >: nan±nan
-   a=1.00 L= 1024 n= 128: intrinsic nan±nan | profile nan±nan | travel<27: nan±nan, >: 1.124±0.194
-   a=1.00 L= 2048 n=  64: intrinsic 1.006±0.051 | profile nan±nan | travel<39: nan±nan, >: 0.997±0.049
-   a=1.00 L= 4096 n=  32: intrinsic 0.968±0.042 | profile 1.273±0.113 | travel<45: nan±nan, >: 0.971±0.035
+   zeta from pooled spectra, modes n >= 12 up to q = 0.1; intrinsic S_psi ~ q^(1-2 zeta) | profile (R(theta)) S ~ q^-(1+2 zeta) | intrinsic split at the median travel (memory) | large scales q <= 0.03: intrinsic, profile
+   a=0.00 L=  128 n= 512: intrinsic nan±nan | profile nan±nan | travel<4: nan±nan, >: nan±nan | q<=0.03: nan±nan, nan±nan
+   a=0.00 L=  256 n= 512: intrinsic nan±nan | profile nan±nan | travel<16: nan±nan, >: nan±nan | q<=0.03: nan±nan, nan±nan
+   a=0.00 L=  512 n= 256: intrinsic nan±nan | profile nan±nan | travel<23: nan±nan, >: nan±nan | q<=0.03: nan±nan, nan±nan
+   a=0.00 L= 1024 n= 128: intrinsic nan±nan | profile nan±nan | travel<20: nan±nan, >: 1.306±0.172 | q<=0.03: nan±nan, nan±nan
+   a=0.00 L= 2048 n=  64: intrinsic nan±nan | profile nan±nan | travel<17: nan±nan, >: 1.545±0.114 | q<=0.03: nan±nan, nan±nan
+   a=0.00 L= 4096 n=  32: intrinsic 1.234±0.031 | profile 0.940±0.028 | travel<11: nan±nan, >: 1.216±0.232 | q<=0.03: nan±nan, nan±nan
+   a=0.25 L=  128 n= 512: intrinsic nan±nan | profile nan±nan | travel<4: nan±nan, >: nan±nan | q<=0.03: nan±nan, nan±nan
+   a=0.25 L=  256 n= 512: intrinsic nan±nan | profile nan±nan | travel<16: nan±nan, >: nan±nan | q<=0.03: nan±nan, nan±nan
+   a=0.25 L=  512 n= 256: intrinsic nan±nan | profile nan±nan | travel<20: nan±nan, >: nan±nan | q<=0.03: nan±nan, nan±nan
+   a=0.25 L= 1024 n= 128: intrinsic nan±nan | profile nan±nan | travel<17: nan±nan, >: nan±nan | q<=0.03: nan±nan, nan±nan
+   a=0.25 L= 2048 n=  64: intrinsic 1.133±0.108 | profile nan±nan | travel<19: nan±nan, >: 1.088±0.106 | q<=0.03: nan±nan, nan±nan
+   a=0.25 L= 4096 n=  32: intrinsic nan±nan | profile nan±nan | travel<11: nan±nan, >: 0.817±0.045 | q<=0.03: nan±nan, nan±nan
+   a=0.50 L=  128 n= 510: intrinsic nan±nan | profile nan±nan | travel<4: nan±nan, >: nan±nan | q<=0.03: nan±nan, nan±nan
+   a=0.50 L=  256 n= 512: intrinsic nan±nan | profile nan±nan | travel<15: nan±nan, >: nan±nan | q<=0.03: nan±nan, nan±nan
+   a=0.50 L=  512 n= 256: intrinsic nan±nan | profile nan±nan | travel<22: nan±nan, >: nan±nan | q<=0.03: nan±nan, nan±nan
+   a=0.50 L= 1024 n= 128: intrinsic nan±nan | profile nan±nan | travel<23: nan±nan, >: nan±nan | q<=0.03: nan±nan, nan±nan
+   a=0.50 L= 2048 n=  64: intrinsic 1.187±0.048 | profile 1.009±0.120 | travel<30: nan±nan, >: 1.192±0.037 | q<=0.03: nan±nan, nan±nan
+   a=0.50 L= 4096 n=  32: intrinsic nan±nan | profile nan±nan | travel<13: nan±nan, >: 1.194±0.357 | q<=0.03: nan±nan, nan±nan
+   a=0.75 L=  128 n= 510: intrinsic nan±nan | profile nan±nan | travel<3: nan±nan, >: nan±nan | q<=0.03: nan±nan, nan±nan
+   a=0.75 L=  256 n= 512: intrinsic nan±nan | profile nan±nan | travel<14: nan±nan, >: nan±nan | q<=0.03: nan±nan, nan±nan
+   a=0.75 L=  512 n= 256: intrinsic nan±nan | profile nan±nan | travel<23: nan±nan, >: nan±nan | q<=0.03: nan±nan, nan±nan
+   a=0.75 L= 1024 n= 128: intrinsic nan±nan | profile nan±nan | travel<24: nan±nan, >: 1.215±0.198 | q<=0.03: nan±nan, nan±nan
+   a=0.75 L= 2048 n=  64: intrinsic 1.084±0.074 | profile nan±nan | travel<31: nan±nan, >: 1.093±0.060 | q<=0.03: nan±nan, nan±nan
+   a=0.75 L= 4096 n=  32: intrinsic 1.076±0.071 | profile 1.226±0.170 | travel<25: nan±nan, >: 1.061±0.073 | q<=0.03: nan±nan, nan±nan
+   a=1.00 L=  128 n= 507: intrinsic nan±nan | profile nan±nan | travel<3: nan±nan, >: nan±nan | q<=0.03: nan±nan, nan±nan
+   a=1.00 L=  256 n= 512: intrinsic nan±nan | profile nan±nan | travel<15: nan±nan, >: nan±nan | q<=0.03: nan±nan, nan±nan
+   a=1.00 L=  512 n= 256: intrinsic nan±nan | profile nan±nan | travel<25: nan±nan, >: nan±nan | q<=0.03: nan±nan, nan±nan
+   a=1.00 L= 1024 n= 128: intrinsic nan±nan | profile nan±nan | travel<27: nan±nan, >: 1.124±0.203 | q<=0.03: nan±nan, nan±nan
+   a=1.00 L= 2048 n=  64: intrinsic 1.006±0.049 | profile nan±nan | travel<39: nan±nan, >: 0.997±0.046 | q<=0.03: nan±nan, nan±nan
+   a=1.00 L= 4096 n=  32: intrinsic 0.968±0.040 | profile 1.273±0.116 | travel<45: nan±nan, >: 0.971±0.034 | q<=0.03: nan±nan, nan±nan
 == threshold: bubbles, R0 = 32   (<h_d> = h_c + A L^(-1/nu) + B/L, L >= 256)
    a=0.00: L=128: 0.02612±0.00022  L=256: 0.02857±0.00015  L=512: 0.02888±0.00020  L=1024: 0.02891±0.00024  L=2048: 0.02892±0.00037  L=4096: 0.02967±0.00054
           nu(var) = 27.25±1185.32;  h_c[qEW] = 0.02940±0.00070 (chi2/dof 0.6);  h_c[qKPZ] = 0.02949±0.00085 (chi2/dof 0.6);  h_c[free, 1/nu = 0.00±6.11] = 1.05844±27725.14356 (chi2/dof 1.1)

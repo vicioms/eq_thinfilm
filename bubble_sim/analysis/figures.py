@@ -252,7 +252,8 @@ def roughness(sets, out, cfg, txt):
             ax = axs[row, c]
             for name, zz, ls in ZETA_REF:
                 ax.axhline(zz, color="k", ls=ls, lw=0.7)
-            ax.set_xscale("log"); ax.set_xlabel("L"); ax.set_ylabel("ζ  (o intrinsic, x profile)")
+            ax.set_xscale("log"); ax.set_xlim(min(Ls) / 1.25, max(Ls) * 1.25)   # also when all ζ are nan
+            ax.set_xlabel("L"); ax.set_ylabel("ζ  (o intrinsic, x profile)")
             ax.set_title(f"roughness exponent (n ≥ {n_min}, q ≤ {qq:g})" + (", large scales" if c == 4 else ""),
                          fontsize=9)
             ax.legend(fontsize=7)
