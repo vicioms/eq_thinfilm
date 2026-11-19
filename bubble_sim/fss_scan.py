@@ -69,7 +69,8 @@ def run_task(task):
     p = bd.Params(L=L, noise="dislocation", coupling="field", Delta=opts["Delta"], w=opts["w"],
                   burgers_angle=opts["burgers_angle"], aniso=a, R0=opts["r0"] or L * opts["r0_frac"],
                   geometry=opts["geometry"], y0_frac=opts["y0_frac"], aspect=opts["aspect"],
-                  h_start=opts["h_start"], dh=opts["dh"], n_bisect=opts["n_bisect"], seed=seed)
+                  h_start=opts["h_start"], dh=opts["dh"], n_bisect=opts["n_bisect"], seed=seed,
+                  **({"max_sweeps": opts["max_sweeps"]} if opts.get("max_sweeps") else {}))
     t0 = time.time()
     tries = []
     for _ in range(12):          # adapt h_start if the initial bubble collapses / escapes
@@ -127,6 +128,9 @@ def main():
     ap.add_argument("--h-step", type=float, default=0.01, help="h_start correction on collapse")
     ap.add_argument("--dh", type=float, default=0.002)
     ap.add_argument("--n-bisect", type=int, default=10)
+    ap.add_argument("--max-sweeps", type=int, default=None,
+                    help="cap on the sweeps of one relaxation (default: Params.max_sweeps = 2e6); "
+                         "a relaxation that hits it counts as depinned, so raise it for large L")
     ap.add_argument("--backend", choices=["cpu", "cuda"], default="cpu")
     ap.add_argument("--workers", type=int, default=max(1, (os.cpu_count() or 2) - 1),
                     help="CPU worker processes (cpu backend)")
@@ -151,6 +155,7 @@ def main():
     opts = dict(Delta=args.Delta, w=args.w, burgers_angle=args.burgers_angle, r0_frac=args.r0_frac, r0=args.r0,
                 geometry=args.geometry, y0_frac=args.y0_frac, aspect=args.aspect,
                 h_start=args.h_start, h_step=args.h_step, dh=args.dh, n_bisect=args.n_bisect,
+                max_sweeps=args.max_sweeps,
                 save_configs=not args.no_configs, outdir=args.outdir, backend=args.backend)
     # large L first so that the slow tasks do not end up alone at the end
     # the full, deterministic task list is split round-robin over shards
