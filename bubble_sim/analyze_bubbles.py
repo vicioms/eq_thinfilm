@@ -2,7 +2,7 @@
 """Critical bubbles (fss_scan.py, bubble geometry): the whole analysis in one place.
 
     python analyze_bubbles.py --extract runs/fss_D0.04          # where the scan ran -> contours.npz
-    python analyze_bubbles.py runs/fss_D0.04 [runs/fss_D0.04_R32 ...] [--out D] [--qmax 0.1]
+    python analyze_bubbles.py runs/fss_D0.04 [runs/fss_D0.04_R32 ...] [--out D] [--qmax 0.1] [--qlarge 0.03]
 
 One row per run in every figure, written to --out (default runs/<common name>_analysis) with report.txt.
 The same observables as analyze_flat.py, measured on the closed phi = 0 contour of the bubble:
@@ -23,7 +23,7 @@ import os
 
 from analysis import data, figures, measure
 
-CFG = dict(bubble=dict(n_min=12, lmin=256), qmax=0.1)
+CFG = dict(bubble=dict(n_min=12, lmin=256), qmax=0.1, qlarge=0.03)
 
 
 def main():
@@ -32,6 +32,7 @@ def main():
     ap.add_argument("--extract", metavar="DIR", help="extract the contours of DIR/configs -> DIR/contours.npz")
     ap.add_argument("--out")
     ap.add_argument("--qmax", type=float, default=CFG["qmax"], help="upper end of the zeta fits")
+    ap.add_argument("--qlarge", type=float, default=CFG["qlarge"], help="upper end of the large-scale zeta fits")
     ap.add_argument("--nmin", type=int, default=CFG["bubble"]["n_min"], help="lowest mode in the zeta fits")
     ap.add_argument("--lmin", type=int, default=CFG["bubble"]["lmin"], help="smallest L in the threshold fits")
     ap.add_argument("--workers", type=int, default=os.cpu_count())
@@ -40,7 +41,7 @@ def main():
         data.extract_bubbles(args.extract, args.workers)
     if not args.dirs:
         return
-    CFG["qmax"] = args.qmax
+    CFG["qmax"], CFG["qlarge"] = args.qmax, args.qlarge
     CFG["bubble"].update(n_min=args.nmin, lmin=args.lmin)
     out = args.out or data.default_out(args.dirs)
     os.makedirs(out, exist_ok=True)
