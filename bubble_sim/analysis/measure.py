@@ -12,6 +12,12 @@ Per wall:
   u_o      rms spread of the crossings of one column / ray (KFR Eq. 11)
   ang      histogram of the angle between the wall line and b, [0, 90] degrees, per arc length
   shape    (bubbles) <R(theta)> / R_eff in N_SHAPE angular bins, theta measured from b
+  Pdir     (bubbles) wall length by direction: the arc length of the contour whose polar angle
+           about the centroid, folded to [0, 90] degrees from b, falls in each of the N_DIR bins
+           DIR_BINS (0 = edge flanks, normal ∥ b; 90 = screw tips, normal ⊥ b)
+  Sdir     the same for the smooth shape, R(theta) keeping only the modes n < N_SMOOTH (the
+           shape modes left out of the zeta fits): Pdir / Sdir is the excess length of the
+           roughness in that direction, without the elongation of the bubble
 """
 from __future__ import annotations
 
@@ -25,6 +31,8 @@ from .spectra import modes
 
 ANG_BINS = np.linspace(0, 90, 19)
 N_SHAPE = 72
+DIR_BINS = np.linspace(0, 90, 7)
+N_SMOOTH = 12
 SCALAR = ("P", "size", "travel", "multi", "u_o", "A")
 
 
@@ -52,9 +60,34 @@ def bubble(curve, L, R0, b_angle):
     k = (th / (2 * np.pi) * N_SHAPE).astype(int) % N_SHAPE
     shape = np.bincount(k, Rf, N_SHAPE) / np.maximum(np.bincount(k, minlength=N_SHAPE), 1) / R_eff
     ang = np.histogram(G.angle_to_b(pts, True, b_angle), ANG_BINS)[0] / len(pts)
+    Pdir, Sdir = length_by_direction(pts, P, cen, Rf, b_angle)
     return dict(P=P, size=R_eff, travel=R_eff - R0, multi=float(np.mean(mult > 1)),
                 u_o=float(np.sqrt(var[good].mean())), A=A, xc=cen[0], yc=cen[1],
-                psi=modes(psi, P), prof=modes(Rf, 2 * np.pi * R_eff), ang=ang, shape=shape)
+                psi=modes(psi, P), prof=modes(Rf, 2 * np.pi * R_eff), ang=ang, shape=shape,
+                Pdir=Pdir, Sdir=Sdir)
+
+
+def _fold(theta_deg):
+    t = np.mod(theta_deg, 180.0)
+    return np.minimum(t, 180.0 - t)
+
+
+def length_by_direction(pts, P, cen, Rf, b_angle):
+    """Arc length of the contour and of its smooth shape in each folded direction bin."""
+    d = pts - cen
+    f = _fold(np.degrees(np.arctan2(d[:, 1], d[:, 0])) - b_angle)
+    Pdir = np.histogram(f, DIR_BINS, weights=np.full(len(pts), P / len(pts)))[0]
+    nt = len(Rf)
+    c = np.fft.rfft(Rf)
+    c[N_SMOOTH:] = 0
+    Rs = np.fft.irfft(c, nt)
+    th = 2 * np.pi * np.arange(nt + 1) / nt
+    Rs = np.r_[Rs, Rs[:1]]
+    x, y = Rs * np.cos(th), Rs * np.sin(th)
+    ds = np.hypot(np.diff(x), np.diff(y))
+    fm = _fold(np.degrees(0.5 * (th[1:] + th[:-1])) - b_angle)
+    Sdir = np.histogram(fm, DIR_BINS, weights=ds)[0]
+    return Pdir, Sdir
 
 
 def _bubble_job(args):
@@ -83,5 +116,6 @@ def measure_run(W, workers=None):
         W[k] = [r[k] for r in rows]
     W["ang"] = np.array([r["ang"] for r in rows])
     if W["geometry"] == "bubble":
-        W["shape"] = np.array([r["shape"] for r in rows])
+        for k in ("shape", "Pdir", "Sdir"):
+            W[k] = np.array([r[k] for r in rows])
     return W

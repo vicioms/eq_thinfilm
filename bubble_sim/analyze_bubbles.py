@@ -12,6 +12,8 @@ The same observables as analyze_flat.py, measured on the closed phi = 0 contour 
                  polar profile R(theta), KFR Eq. 9 about the centroid); text: memory split
   threshold.png  <h_d>(L) = h_c + A L^(-1/nu) + B/L (B: Laplace pressure, R0 ∝ L), var(h_d)
   length.png     perimeter P ∝ R_eff^alpha, P / 2 pi R_eff (as NB7_perimeter.ipynb), overhangs
+  length_dir.png perimeter by direction from b (edge flanks vs screw tips): the excess over the
+                 smooth shape ∝ R_eff^(alpha - 1), alpha = 1 for qKPZ, zeta for qEW
 With a fixed R0 (fss_scan.py --r0) the critical bubble stays near R0 whatever L: there h_d and
 the shapes do not scale with L.
 Reference values: qEW zeta = 1.25, nu = 4/3; qKPZ / DPD zeta = 0.633, nu = 1.733.
@@ -48,7 +50,8 @@ def main():
     sets = [measure.measure_run(data.load_bubbles(d), args.workers) for d in args.dirs]
     txt = [f"runs: {', '.join(args.dirs)}"] + [f"  {W['label']}: {len(W['L'])} bubbles" for W in sets]
     figs = [figures.configs(sets, out), figures.roughness(sets, out, CFG, txt),
-            figures.threshold(sets, out, CFG, txt), figures.length(sets, out, txt)]
+            figures.threshold(sets, out, CFG, txt), figures.length(sets, out, txt),
+            figures.length_dir(sets, out, txt)]
     with open(os.path.join(out, "report.txt"), "w") as f:
         f.write("\n".join(txt) + "\n")
     print("\n".join(txt))

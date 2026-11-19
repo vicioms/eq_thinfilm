@@ -9,6 +9,8 @@ A "set" is one run after data.load_* and measure.measure_run: a dict of per-wall
                     profile)
     threshold.png   <h_d>(L) with the fits, var(h_d)(L) -> nu, extrapolated h_c vs a
     length.png      wall length P vs size, P / size, fraction of columns / rays with overhangs
+    length_dir.png  (bubbles) wall length by direction from b: Pdir / Sdir (contour over smooth
+                    shape) vs R_eff at the edge flanks and screw tips, alpha per direction
 """
 from __future__ import annotations
 
@@ -18,7 +20,7 @@ import numpy as np
 
 from . import spectra as SP
 from . import stats as ST
-from .measure import ANG_BINS, N_SHAPE
+from .measure import ANG_BINS, DIR_BINS, N_SHAPE, N_SMOOTH
 
 ZETA_REF = (("qEW", 1.25, "--"), ("qKPZ", 0.633, "-."))
 
@@ -351,3 +353,56 @@ def length(sets, out, txt):
         ax.set_xscale("log"); ax.set_xlabel("L"); ax.set_ylabel("fraction multivalued")
         ax.set_title("overhangs (KFR)", fontsize=9); ax.legend(fontsize=7)
     return save(fig, out, "length.png")
+
+
+# ---------------------------------------------------------------------------
+# bubbles: length by direction
+# ---------------------------------------------------------------------------
+def length_dir(sets, out, txt):
+    """P ∝ R^alpha is dominated by the roughest direction; split by the polar direction about
+    the centroid (folded from b: 0 = edge flanks, 90 = screw tips). In each direction bin the
+    excess Pdir / Sdir over the smooth shape (modes n < N_SMOOTH) goes as R^(alpha - 1):
+    constant (alpha = 1) for zeta < 1 (qKPZ), R^(zeta - 1) for zeta > 1 (qEW)."""
+    plt = _plt()
+    sets = [W for W in sets if W["geometry"] == "bubble"]
+    if not sets:
+        return None
+    fig, axs = plt.subplots(len(sets), 2, figsize=(12, 4.4 * len(sets)), squeeze=False)
+    mid = 0.5 * (DIR_BINS[1:] + DIR_BINS[:-1])
+    nb = len(mid)
+    for row, W in enumerate(sets):
+        txt.append(f"== length by direction: {W['label']}   excess Pdir / Sdir over the smooth shape "
+                   f"(n < {N_SMOOTH}) ∝ R_eff^(alpha - 1); direction folded from b: "
+                   f"0 = edge flanks, 90 = screw tips")
+        txt.append("          bins: " + "  ".join(f"[{lo:g},{hi:g})" for lo, hi in zip(DIR_BINS[:-1], DIR_BINS[1:])))
+        for a in a_values(W):
+            m = sel(W, a=a)
+            c = color_a(a)
+            al = []
+            for j in range(nb):
+                r = W["Pdir"][m, j] / W["Sdir"][m, j]
+                (sl, se), loc, tab = ST.length_scaling(W["size"][m], r)
+                al.append((1 + sl, se, loc, tab))
+            for j, ls, nm in ((0, "-", "edge"), (nb - 1, "--", "screw")):
+                tab = al[j][3]
+                axs[row, 0].errorbar(tab[:, 0], tab[:, 1], tab[:, 2], fmt="o" + ls, ms=3, color=c,
+                                     label=f"a={a:g} {nm}: α = {al[j][0]:.3f}±{al[j][1]:.3f}")
+            axs[row, 1].errorbar(mid + 0.6 * a, [x[0] for x in al], [x[1] for x in al], fmt="o-", color=c,
+                                 label=f"a={a:g}")
+            txt.append(f"   a={a:4.2f}: alpha by direction " + "  ".join(f"{x[0]:.3f}±{x[1]:.3f}" for x in al))
+            for j, nm in ((0, "edge "), (nb - 1, "screw")):
+                loc, tab = al[j][2], al[j][3]
+                txt.append(f"          {nm}: " + "  ".join(f"R={t[0]:.0f}: {t[1]:.3f}" for t in tab))
+                txt.append(f"          {nm} local alpha: " + " ".join(f"{1 + x:.2f}±{y:.2f}" for x, y in loc))
+        ax = axs[row, 0]
+        ax.set_xscale("log"); ax.set_yscale("log"); ax.set_xlabel(r"$R_{eff}$")
+        ax.set_ylabel("Pdir / Sdir")
+        ax.set_title(f"{W['label']}: excess length, edge flanks [0,{DIR_BINS[1]:g})° (solid), "
+                     f"screw tips [{DIR_BINS[-2]:g},90]° (dashed)", fontsize=8)
+        ax.legend(fontsize=6)
+        ax = axs[row, 1]
+        for name, z, ls in ZETA_REF:
+            ax.axhline(max(1.0, z), color="k", ls=ls, lw=0.8, label=f"{name}: α = {max(1.0, z):g}")
+        ax.set_xlabel("direction from b (deg): 0 = edge flank, 90 = screw tip"); ax.set_ylabel("α")
+        ax.set_title("α per direction (1 + slope of Pdir / Sdir)", fontsize=9); ax.legend(fontsize=7)
+    return save(fig, out, "length_dir.png")
