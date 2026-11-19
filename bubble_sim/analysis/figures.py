@@ -167,8 +167,8 @@ def configs(sets, out, n_show=4):
 def roughness(sets, out, cfg, txt):
     plt = _plt()
     qlg = cfg.get("qlarge")          # large-scale window q <= qlarge (flat walls: past the qEW -> qKPZ crossover)
-    ncol = 4 if qlg else 3
-    fig, axs = plt.subplots(len(sets), ncol, figsize=(17 * ncol / 3, 4.6 * len(sets)), squeeze=False)
+    ncol = 5 if qlg else 4
+    fig, axs = plt.subplots(len(sets), ncol, figsize=(5.7 * ncol, 4.6 * len(sets)), squeeze=False)
     for row, W in enumerate(sets):
         n_min, qmax = cfg[W["geometry"]]["n_min"], cfg["qmax"]
         As, Ls = a_values(W), L_values(W)
@@ -178,19 +178,27 @@ def roughness(sets, out, cfg, txt):
                    f"intrinsic S_psi ~ q^(1-2 zeta) | profile ({'u(x)' if W['geometry'] == 'flat' else 'R(theta)'}) "
                    f"S ~ q^-(1+2 zeta) | intrinsic split at the median travel (memory)"
                    + (f" | large scales q <= {qlg:g}: intrinsic, profile" if qlg else ""))
-        ax = axs[row, 0]
-        for a in As:
-            p = pool(W, "psi", n_min, L=Lm, a=a)
-            if p.n < 2:
-                continue
-            m, e = p.mean_err()
-            ax.errorbar(p.qc, m * p.qc ** 1.5, e * p.qc ** 1.5, fmt="o-", ms=2.5, lw=0.8, color=color_a(a),
-                        label=f"a={a:g} (n={p.n})")
-        ax.axvspan(qmax, 3, color="0.93", zorder=-1)
-        ax.set_xscale("log"); ax.set_yscale("log"); ax.set_xlabel("q (arc length)")
-        ax.set_ylabel(r"$q^{1.5} S_\psi$  (flat: ζ = 1.25)")
-        ax.set_title(f"{W['label']}, L = {Lm}", fontsize=9); ax.legend(fontsize=7)
-        ax = axs[row, 1]
+        # S_psi ~ q^(1 - 2 zeta): q^(2 zeta - 1) S_psi is flat for qEW (col 0) and qKPZ (col 1)
+        spec = {a: pool(W, "psi", n_min, L=Lm, a=a) for a in As}
+        spec = {a: (p, p.mean_err()) for a, p in spec.items() if p.n >= 2}
+        for col, (rname, rz, _) in enumerate(ZETA_REF):
+            ax, ex = axs[row, col], 2 * rz - 1
+            ys = []
+            for a, (p, (m, e)) in spec.items():
+                ax.errorbar(p.qc, m * p.qc ** ex, e * p.qc ** ex, fmt="o-", ms=2.5, lw=0.8, color=color_a(a),
+                            label=f"a={a:g} (n={p.n})")
+                y = m * p.qc ** ex
+                ys.append(y[(p.qc <= qmax) & np.isfinite(y) & (y > 0)])
+            ys = np.concatenate(ys) if ys else np.zeros(0)
+            if ys.size:                    # y range from the fit region: the plateau, not the lattice cutoff
+                ax.set_ylim(ys.min() / 2, ys.max() * 2)
+            ax.axvspan(qmax, 3, color="0.93", zorder=-1)
+            if qlg:
+                ax.axvline(qlg, color="0.5", ls="--", lw=0.7)
+            ax.set_xscale("log"); ax.set_yscale("log"); ax.set_xlabel("q (arc length)")
+            ax.set_ylabel(rf"$q^{{{ex:.2f}}} S_\psi$  (flat: {rname}, ζ = {rz:g})")
+            ax.set_title(f"{W['label']}, L = {Lm}: compensated for {rname}", fontsize=9); ax.legend(fontsize=7)
+        ax = axs[row, 2]
         for a, mk in ((As[0], "o"), (As[-1], "s")):
             for L in Ls:
                 p = pool(W, "psi", n_min, L=L, a=a)
@@ -207,7 +215,7 @@ def roughness(sets, out, cfg, txt):
             ax.axvline(qlg, color="0.5", ls="--", lw=0.7)
         ax.set_xscale("log"); ax.set_ylim(0, 2); ax.set_xlabel("q"); ax.set_ylabel(r"local $\zeta_{eff}$ (intrinsic)")
         ax.set_title("local exponent (window: factor 2 in q)", fontsize=9); ax.legend(fontsize=5.5, ncol=2)
-        ax = axs[row, 2]
+        ax = axs[row, 3]
         for a in As:
             zi, zp, li, lp = [], [], [], []
             for L in Ls:
@@ -232,20 +240,20 @@ def roughness(sets, out, cfg, txt):
                     li.append(l1); lp.append(l2)
                     line += f" | q<={qlg:g}: {l1[0]:.3f}±{l1[1]:.3f}, {l2[0]:.3f}±{l2[1]:.3f}"
                 txt.append(line)
-            panels = [(axs[row, 2], zi, zp)] + ([(axs[row, 3], li, lp)] if qlg else [])
+            panels = [(axs[row, 3], zi, zp)] + ([(axs[row, 4], li, lp)] if qlg else [])
             for ax_, a1, a2 in panels:
                 z, ze = np.array(a1).T
                 ax_.errorbar(Ls, z, ze, fmt="o-", color=color_a(a), label=f"a={a:g}")
                 z, ze = np.array(a2).T
                 ax_.errorbar(Ls, z, ze, fmt="x:", color=color_a(a), alpha=0.6)
-        for c, qq in ((2, qmax), (3, qlg)):
+        for c, qq in ((3, qmax), (4, qlg)):
             if c >= ncol:
                 continue
             ax = axs[row, c]
             for name, zz, ls in ZETA_REF:
                 ax.axhline(zz, color="k", ls=ls, lw=0.7)
             ax.set_xscale("log"); ax.set_xlabel("L"); ax.set_ylabel("ζ  (o intrinsic, x profile)")
-            ax.set_title(f"roughness exponent (n ≥ {n_min}, q ≤ {qq:g})" + (", large scales" if c == 3 else ""),
+            ax.set_title(f"roughness exponent (n ≥ {n_min}, q ≤ {qq:g})" + (", large scales" if c == 4 else ""),
                          fontsize=9)
             ax.legend(fontsize=7)
     return save(fig, out, "roughness.png")

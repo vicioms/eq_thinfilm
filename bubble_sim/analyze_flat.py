@@ -7,7 +7,8 @@
 One row per run (orientation) in every figure, written to --out (default runs/<common name>_analysis,
 e.g. runs/flat_D0.04_A2_analysis) with report.txt:
   configs.png    example walls, angle between the wall line and b (faceting) per L
-  roughness.png  pooled tangent-angle spectra S_psi(q) ~ q^(1-2 zeta) (modes n >= 2), local zeta,
+  roughness.png  pooled tangent-angle spectra S_psi(q) ~ q^(1-2 zeta) (modes n >= 2) compensated for qEW
+                 (q^1.5 S_psi) and qKPZ (q^0.27 S_psi), local zeta,
                  zeta vs L (intrinsic and from the KFR column profile u(x)) for q <= qmax and for the
                  large scales q <= qlarge only (edge walls cross over from qEW to qKPZ at ~100-150 sites);
                  text: memory split
