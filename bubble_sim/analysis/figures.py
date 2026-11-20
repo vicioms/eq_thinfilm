@@ -9,6 +9,8 @@ A "set" is one run after data.load_* and measure.measure_run: a dict of per-wall
                     profile)
     threshold.png   <h_d>(L) with the fits, var(h_d)(L) -> nu, extrapolated h_c vs a
     length.png      wall length P vs size, P / size, fraction of columns / rays with overhangs
+    rdensity.png    roughness density (Caballero & Giamarchi): -2 ln chi vs q^2 B, B(r) per a for
+                    every L (dashed: exact q -> 0 limit), B at fixed r vs L
     length_dir.png  (bubbles) wall length by direction from b: Pdir / Sdir (contour over smooth
                     shape) vs R_eff at the edge flanks and screw tips, alpha per direction
 """
@@ -18,11 +20,13 @@ import os
 
 import numpy as np
 
+from . import rdensity as RD
 from . import spectra as SP
 from . import stats as ST
 from .measure import ANG_BINS, DIR_BINS, N_SHAPE, N_SMOOTH
 
 ZETA_REF = (("qEW", 1.25, "--"), ("qKPZ", 0.633, "-."))
+REF_COLOR = {"qEW": "black", "qKPZ": "red"}     # apart from each other and from the plasma / viridis curves
 
 
 def _plt():
@@ -211,7 +215,7 @@ def roughness(sets, out, cfg, txt):
                 ax.errorbar(p.qc[ok], z[ok], ze[ok], fmt=mk + ("-" if a == As[-1] else ":"), color=color_L(L, Ls),
                             ms=2.5, lw=0.7, label=f"a={a:g}, L={L}")
         for name, z, ls in ZETA_REF:
-            ax.axhline(z, color="k", ls=ls, lw=0.7, label=name)
+            ax.axhline(z, color=REF_COLOR[name], ls=ls, lw=1.0, label=name)
         ax.axvspan(qmax, 0.3, color="0.93", zorder=-1)
         if qlg:
             ax.axvline(qlg, color="0.5", ls="--", lw=0.7)
@@ -253,7 +257,7 @@ def roughness(sets, out, cfg, txt):
                 continue
             ax = axs[row, c]
             for name, zz, ls in ZETA_REF:
-                ax.axhline(zz, color="k", ls=ls, lw=0.7)
+                ax.axhline(zz, color=REF_COLOR[name], ls=ls, lw=1.0)
             ax.set_xscale("log"); ax.set_xlim(min(Ls) / 1.25, max(Ls) * 1.25)   # also when all ζ are nan
             ax.set_xlabel("L"); ax.set_ylabel("ζ  (o intrinsic, x profile)")
             ax.set_title(f"roughness exponent (n ≥ {n_min}, q ≤ {qq:g})" + (", large scales" if c == 4 else ""),
@@ -402,7 +406,114 @@ def length_dir(sets, out, txt):
         ax.legend(fontsize=6)
         ax = axs[row, 1]
         for name, z, ls in ZETA_REF:
-            ax.axhline(max(1.0, z), color="k", ls=ls, lw=0.8, label=f"{name}: α = {max(1.0, z):g}")
+            ax.axhline(max(1.0, z), color=REF_COLOR[name], ls=ls, lw=1.0, label=f"{name}: α = {max(1.0, z):g}")
         ax.set_xlabel("direction from b (deg): 0 = edge flank, 90 = screw tip"); ax.set_ylabel("α")
         ax.set_title("α per direction (1 + slope of Pdir / Sdir)", fontsize=9); ax.legend(fontsize=7)
     return save(fig, out, "length_dir.png")
+
+
+# ---------------------------------------------------------------------------
+# roughness density (Caballero & Giamarchi)
+# ---------------------------------------------------------------------------
+R_FIX = 32          # B(R_FIX) - B(0) vs L: ∝ L^(2 zeta - 2) for zeta > 1 (anomalous), flat for zeta < 1
+# large-r window of the local slope, as fractions of rmax (flat: L/2; bubble: pi R_eff, where B
+# saturates above ~2 pi R_eff / (2 N_SMOOTH) since the smooth shape is subtracted)
+R_WIN = dict(flat=(1 / 16, 1 / 4), bubble=(1 / 64, 1 / 16))
+
+
+def rd_pool(W, L, a):
+    """chi and Bdir averaged over the walls at (L, a), with r in lattice units (bubbles: arc
+    length R_eff dtheta at the mean R_eff)."""
+    idx = np.nonzero(sel(W, L, a))[0]
+    if not len(idx):
+        return None
+    chi = np.mean([W["chi"][i] for i in idx], 0)
+    bdir = np.mean([W["Bdir"][i] for i in idx], 0)
+    rg = W["rd_r"][idx[0]]
+    scale = 1.0 if W["geometry"] == "flat" else 2 * np.pi * W["size"][idx].mean() / W["rd_n"][idx[0]]
+    B, y = RD.fit_B(chi)
+    return dict(r=rg * scale, B=B, Bdir=bdir, y=y, n=len(idx))
+
+
+def rdensity(sets, out, txt):
+    plt = _plt()
+    ncol = 2 + max(len(a_values(W)) for W in sets)
+    fig, AX = plt.subplots(2 * len(sets), ncol, figsize=(4.6 * ncol, 3.9 * 2 * len(sets)), squeeze=False)
+    for row, W in enumerate(sets):
+        axs, axl = AX[2 * row:2 * row + 1], AX[2 * row + 1]
+        axl[0].axis("off"); axl[-1].axis("off")
+        As, Ls = a_values(W), L_values(W)
+        flat = W["geometry"] == "flat"
+        txt.append(f"== roughness density (Caballero-Giamarchi): {W['label']}   B(r) = slope of -2 ln chi(q, r) "
+                   f"vs q^2 at q -> 0 (= exact <Δu^2> + B(0), u the signed height); "
+                   f"local slope d lnB/d ln r of B - B(0) (2 zeta for zeta < 1; 2 for zeta > 1); "
+                   f"B({R_FIX}) - B(0) vs L ∝ L^(2 zeta - 2) for zeta > 1; B(0) = overhangs")
+        pools = {(L, a): rd_pool(W, L, a) for L in Ls for a in As}
+        # -2 ln chi vs q^2 B at the largest L of the largest a
+        a0 = As[-1]
+        L0 = max(L for L in Ls if pools[(L, a0)] is not None)
+        p = pools[(L0, a0)]
+        ax = axs[0, 0]
+        for j in np.unique(np.linspace(1, len(p["r"]) - 1, 5).astype(int)):
+            if np.isfinite(p["B"][j]) and p["B"][j] > 0:
+                ax.plot(RD.QS ** 2 * p["B"][j], p["y"][:, j], ".-", ms=3, lw=0.7, label=f"r = {p['r'][j]:.0f}")
+        xx = np.geomspace(1e-6, 10, 10)
+        ax.plot(xx, xx, "k--", lw=0.8, label="Gaussian: q² B")
+        ax.set_xscale("log"); ax.set_yscale("log"); ax.set_xlim(1e-6, 1e3); ax.set_ylim(1e-6, 30)
+        ax.set_xlabel("q² B(r)"); ax.set_ylabel("-2 ln χ(q, r)")
+        ax.set_title(f"{W['label']}\na = {a0:g}, L = {L0}", fontsize=8); ax.legend(fontsize=6)
+        for k, a in enumerate(As):
+            ax = axs[0, 1 + k]
+            fixed, ref = [], None
+            for L in Ls:
+                p = pools[(L, a)]
+                if p is None:
+                    continue
+                c = color_L(L, Ls)
+                ok = p["r"] > 0
+                b0 = p["B"][0]
+                d = p["B"] - b0
+                rr = p["r"]
+                ax.plot(rr[ok], d[ok], "-", color=c, lw=1.3, label=f"L={L} (n={p['n']})")
+                ax.plot(rr[ok], p["B"][ok], "-", color=c, lw=0.6, alpha=0.35)
+                axl[1 + k].plot(rr[ok], RD.local_slopes(rr, d)[ok], "o-", ms=2.5, lw=1, color=c, label=f"L={L}")
+                rmax = rr.max()
+                sl_s = RD.local_slope(rr, d, 2, 16)
+                sl_m = RD.local_slope(rr, d, 16, 128)
+                lo, hi = (f * rmax for f in R_WIN[W["geometry"]])
+                sl_l = RD.local_slope(rr, d, lo, hi)
+                bf = np.exp(np.interp(np.log(R_FIX), np.log(rr[ok]), np.log(np.maximum(d[ok], 1e-30))))
+                fixed.append((L, bf))
+                ref = (bf, rr[ok].min(), rr.max())
+                txt.append(f"   a={a:4.2f} L={L:5d} n={p['n']:4d}: B(0) = {b0:.3g} | slope r 2-16: {sl_s:.2f}  "
+                           f"16-128: {sl_m:.2f}  {lo:.0f}-{hi:.0f}: {sl_l:.2f} | B({R_FIX}) - B(0) = {bf:.4g} | "
+                           f"max |B - Bdir| / Bdir = {np.nanmax(np.abs(p['B'] - p['Bdir'])[ok] / p['Bdir'][ok]):.1e}")
+            if len(fixed) > 1:
+                Lf, bf = np.array(fixed).T
+                e = ST.loglog_slope(Lf, bf)
+                txt.append(f"          B({R_FIX}) - B(0) ∝ L^{e:.2f}  -> zeta = {1 + e / 2:.2f} if anomalous (zeta > 1); "
+                           f"local " + " ".join(f"{np.log(bf[i + 1] / bf[i]) / np.log(Lf[i + 1] / Lf[i]):.2f}"
+                                                 for i in range(len(Lf) - 1)))
+                axs[0, -1].plot(Lf, bf, "o-", color=color_a(a), label=f"a={a:g}: ∝ L^{e:.2f}")
+            al = axl[1 + k]
+            for name, z, ls in ZETA_REF:
+                ex = min(2 * z, 2.0)
+                if ref is not None:     # through B - B(0) of the largest L at r = R_FIX
+                    r0 = np.geomspace(max(1.0, ref[1]), ref[2] / 2, 20)
+                    ax.plot(r0, ref[0] * (r0 / R_FIX) ** ex, color=REF_COLOR[name], ls=ls, lw=1.6,
+                            label=f"r^{ex:.3g} ({name}{', anomalous' if z > 1 else ''})")
+                al.axhline(ex, color=REF_COLOR[name], ls=ls, lw=1.6, label=f"{ex:.3g} ({name})")
+            al.set_xscale("log"); al.set_ylim(0, 2.4); al.set_xlabel("r" if flat else "r = R_eff Δθ")
+            al.set_ylabel("d ln[B - B(0)] / d ln r")
+            al.set_title(f"a = {a:g}: local slope (window ×2)", fontsize=8); al.legend(fontsize=6)
+            al.grid(alpha=0.3)
+            ax.set_xscale("log"); ax.set_yscale("log"); ax.set_xlabel("r" if flat else "r = R_eff Δθ")
+            ax.set_ylabel("B(r) - B(0)")
+            ax.set_title(f"a = {a:g}: B(r) - B(0) from χ (faint: B(r), with overhangs)", fontsize=8)
+            ax.legend(fontsize=6)
+        for k in range(len(As), ncol - 2):
+            axs[0, 1 + k].axis("off"); axl[1 + k].axis("off")
+        ax = axs[0, -1]
+        ax.set_xscale("log"); ax.set_yscale("log"); ax.set_xlabel("L"); ax.set_ylabel(f"B({R_FIX}) - B(0)")
+        ax.set_title(f"B({R_FIX}) - B(0): ∝ L^(2ζ-2) if ζ > 1, flat if ζ < 1", fontsize=8); ax.legend(fontsize=7)
+    return save(fig, out, "rdensity.png")

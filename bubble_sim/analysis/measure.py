@@ -15,6 +15,8 @@ Per wall:
   Pdir     (bubbles) wall length by direction: the arc length of the contour whose polar angle
            about the centroid, folded to [0, 90] degrees from b, falls in each of the N_DIR bins
            DIR_BINS (0 = edge flanks, normal ∥ b; 90 = screw tips, normal ⊥ b)
+  chi      roughness density chi(q, r) (Caballero & Giamarchi; rdensity.py) on rdensity.QS x
+           rdensity.r_grid(columns / rays), and Bdir(r) its exact q -> 0 limit
   Sdir     the same for the smooth shape, R(theta) keeping only the modes n < N_SMOOTH (the
            shape modes left out of the zeta fits): Pdir / Sdir is the excess length of the
            roughness in that direction, without the elongation of the bubble
@@ -27,6 +29,7 @@ from concurrent.futures import ProcessPoolExecutor
 import numpy as np
 
 from . import geometry as G
+from . import rdensity as RD
 from .spectra import modes
 
 ANG_BINS = np.linspace(0, 90, 19)
@@ -42,8 +45,9 @@ def flat_wall(curve, u, mult, L, b_angle, travel):
     ok = np.isfinite(u)
     uu = np.interp(np.arange(L), np.nonzero(ok)[0], u[ok], period=L) if ok.sum() > 1 else np.zeros(L)
     ang = np.histogram(G.angle_to_b(pts, False, b_angle, L), ANG_BINS)[0] / len(pts)
+    chi, bdir = RD.chi_one(*RD.column_crossings(np.asarray(curve, float), L), L)
     return dict(P=P, size=float(L), travel=travel, multi=float(np.mean(mult > 1)), u_o=np.nan, A=np.nan,
-                psi=modes(psi, P), prof=modes(uu, L), ang=ang)
+                psi=modes(psi, P), prof=modes(uu, L), ang=ang, chi=chi, Bdir=bdir, rd_n=L)
 
 
 def bubble(curve, L, R0, b_angle):
@@ -61,10 +65,13 @@ def bubble(curve, L, R0, b_angle):
     shape = np.bincount(k, Rf, N_SHAPE) / np.maximum(np.bincount(k, minlength=N_SHAPE), 1) / R_eff
     ang = np.histogram(G.angle_to_b(pts, True, b_angle), ANG_BINS)[0] / len(pts)
     Pdir, Sdir = length_by_direction(pts, P, cen, Rf, b_angle)
+    col, rk, sk = RD.ray_crossings(pts, cen, nt)
+    base = RD.smooth(np.bincount(col, sk * rk, nt), N_SMOOTH)
+    chi, bdir = RD.chi_one(col, rk, sk, nt, base)
     return dict(P=P, size=R_eff, travel=R_eff - R0, multi=float(np.mean(mult > 1)),
                 u_o=float(np.sqrt(var[good].mean())), A=A, xc=cen[0], yc=cen[1],
                 psi=modes(psi, P), prof=modes(Rf, 2 * np.pi * R_eff), ang=ang, shape=shape,
-                Pdir=Pdir, Sdir=Sdir)
+                Pdir=Pdir, Sdir=Sdir, chi=chi, Bdir=bdir, rd_n=nt)
 
 
 def _fold(theta_deg):
@@ -112,8 +119,10 @@ def measure_run(W, workers=None):
         rows = list(ex.map(fn, jobs, chunksize=8))
     for k in SCALAR:
         W[k] = np.array([r[k] for r in rows], float)
-    for k in ("psi", "prof"):
+    for k in ("psi", "prof", "chi", "Bdir"):
         W[k] = [r[k] for r in rows]
+    W["rd_n"] = np.array([r["rd_n"] for r in rows])
+    W["rd_r"] = [RD.r_grid(n) for n in W["rd_n"]]
     W["ang"] = np.array([r["ang"] for r in rows])
     if W["geometry"] == "bubble":
         for k in ("shape", "Pdir", "Sdir"):

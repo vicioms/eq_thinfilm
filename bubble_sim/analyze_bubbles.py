@@ -12,6 +12,9 @@ The same observables as analyze_flat.py, measured on the closed phi = 0 contour 
                  polar profile R(theta), KFR Eq. 9 about the centroid); text: memory split
   threshold.png  <h_d>(L) = h_c + A L^(-1/nu) + B/L (B: Laplace pressure, R0 ∝ L), var(h_d)
   length.png     perimeter P ∝ R_eff^alpha, P / 2 pi R_eff (as NB7_perimeter.ipynb), overhangs
+  rdensity.png   roughness density chi(q, r) (Caballero & Giamarchi 2022, analysis/rdensity.py): B(r) from
+                 -2 ln chi = q^2 B(r) without a single-valued height (overhangs included: B(0) > 0),
+                 B(r) per L, B(r = 32) vs L (∝ L^(2 zeta - 2) when zeta > 1, flat for qKPZ)
   length_dir.png perimeter by direction from b (edge flanks vs screw tips): the excess over the
                  smooth shape ∝ R_eff^(alpha - 1), alpha = 1 for qKPZ, zeta for qEW
 With a fixed R0 (fss_scan.py --r0) the critical bubble stays near R0 whatever L: there h_d and
@@ -51,6 +54,7 @@ def main():
     txt = [f"runs: {', '.join(args.dirs)}"] + [f"  {W['label']}: {len(W['L'])} bubbles" for W in sets]
     figs = [figures.configs(sets, out), figures.roughness(sets, out, CFG, txt),
             figures.threshold(sets, out, CFG, txt), figures.length(sets, out, txt),
+            figures.rdensity(sets, out, txt),
             figures.length_dir(sets, out, txt)]
     with open(os.path.join(out, "report.txt"), "w") as f:
         f.write("\n".join(txt) + "\n")

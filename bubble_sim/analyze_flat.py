@@ -14,6 +14,9 @@ e.g. runs/flat_D0.04_A2_analysis) with report.txt:
                  text: memory split
   threshold.png  <h_d>(L) = h_c + A L^(-1/nu) with nu = 4/3 (qEW), 1.733 (qKPZ) or free, var(h_d)
   length.png     wall length P ∝ L^alpha (alpha = 1 for zeta < 1, zeta for zeta > 1), overhangs
+  rdensity.png   roughness density chi(q, r) (Caballero & Giamarchi 2022, analysis/rdensity.py): B(r) from
+                 -2 ln chi = q^2 B(r) without a single-valued height (overhangs included: B(0) > 0),
+                 B(r) per L, B(r = 32) vs L (∝ L^(2 zeta - 2) when zeta > 1, flat for qKPZ)
 Reference values: qEW zeta = 1.25, nu = 4/3; qKPZ / DPD zeta = 0.633, nu = 1.733.
 """
 from __future__ import annotations
@@ -47,7 +50,8 @@ def main():
     sets = [measure.measure_run(data.load_flat(d), args.workers) for d in args.dirs]
     txt = [f"runs: {', '.join(args.dirs)}"] + [f"  {W['label']}: {len(W['L'])} walls" for W in sets]
     figs = [figures.configs(sets, out), figures.roughness(sets, out, CFG, txt),
-            figures.threshold(sets, out, CFG, txt), figures.length(sets, out, txt)]
+            figures.threshold(sets, out, CFG, txt), figures.length(sets, out, txt),
+            figures.rdensity(sets, out, txt)]
     with open(os.path.join(out, "report.txt"), "w") as f:
         f.write("\n".join(txt) + "\n")
     print("\n".join(txt))
