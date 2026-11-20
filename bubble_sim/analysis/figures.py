@@ -421,22 +421,31 @@ R_FIX = 32          # B(R_FIX) - B(0) vs L: ∝ L^(2 zeta - 2) for zeta > 1 (ano
 R_WIN = dict(flat=(1 / 16, 1 / 4), bubble=(1 / 64, 1 / 16))
 
 
-def rd_pool(W, L, a):
+def rd_pool(W, L, a, sector=None):
     """chi and Bdir averaged over the walls at (L, a), with r in lattice units (bubbles: arc
-    length R_eff dtheta at the mean R_eff)."""
+    length R_eff dtheta at the mean R_eff); sector: 'edge' / 'screw' (bubbles) for the chi
+    averaged over the pairs of rays in that sector only."""
     idx = np.nonzero(sel(W, L, a))[0]
     if not len(idx):
         return None
-    chi = np.mean([W["chi"][i] for i in idx], 0)
-    bdir = np.mean([W["Bdir"][i] for i in idx], 0)
+    sfx = f"_{sector}" if sector else ""
+    chi = np.mean([W["chi" + sfx][i] for i in idx], 0)
+    bdir = np.mean([W["Bdir" + sfx][i] for i in idx], 0)
     rg = W["rd_r"][idx[0]]
     scale = 1.0 if W["geometry"] == "flat" else 2 * np.pi * W["size"][idx].mean() / W["rd_n"][idx[0]]
     B, y = RD.fit_B(chi)
     return dict(r=rg * scale, B=B, Bdir=bdir, y=y, n=len(idx))
 
 
-def rdensity(sets, out, txt):
+def rdensity(sets, out, txt, sector=None):
+    """sector (bubbles): 'edge' or 'screw' -> rdensity_<sector>.png from the sector-restricted chi."""
     plt = _plt()
+    if sector:
+        sets = [W for W in sets if W["geometry"] == "bubble"]
+        if not sets:
+            return None
+    sname = {"edge": ", edge flanks only (directions [0, 30)° from b)",
+             "screw": ", screw tips only (directions [60, 90]° from b)"}.get(sector, "")
     ncol = 2 + max(len(a_values(W)) for W in sets)
     fig, AX = plt.subplots(2 * len(sets), ncol, figsize=(4.6 * ncol, 3.9 * 2 * len(sets)), squeeze=False)
     for row, W in enumerate(sets):
@@ -444,11 +453,11 @@ def rdensity(sets, out, txt):
         axl[0].axis("off"); axl[-1].axis("off")
         As, Ls = a_values(W), L_values(W)
         flat = W["geometry"] == "flat"
-        txt.append(f"== roughness density (Caballero-Giamarchi): {W['label']}   B(r) = slope of -2 ln chi(q, r) "
+        txt.append(f"== roughness density (Caballero-Giamarchi): {W['label']}{sname}   B(r) = slope of -2 ln chi(q, r) "
                    f"vs q^2 at q -> 0 (= exact <Δu^2> + B(0), u the signed height); "
                    f"local slope d lnB/d ln r of B - B(0) (2 zeta for zeta < 1; 2 for zeta > 1); "
                    f"B({R_FIX}) - B(0) vs L ∝ L^(2 zeta - 2) for zeta > 1; B(0) = overhangs")
-        pools = {(L, a): rd_pool(W, L, a) for L in Ls for a in As}
+        pools = {(L, a): rd_pool(W, L, a, sector) for L in Ls for a in As}
         # -2 ln chi vs q^2 B at the largest L of the largest a
         a0 = As[-1]
         L0 = max(L for L in Ls if pools[(L, a0)] is not None)
@@ -461,7 +470,7 @@ def rdensity(sets, out, txt):
         ax.plot(xx, xx, "k--", lw=0.8, label="Gaussian: q² B")
         ax.set_xscale("log"); ax.set_yscale("log"); ax.set_xlim(1e-6, 1e3); ax.set_ylim(1e-6, 30)
         ax.set_xlabel("q² B(r)"); ax.set_ylabel("-2 ln χ(q, r)")
-        ax.set_title(f"{W['label']}\na = {a0:g}, L = {L0}", fontsize=8); ax.legend(fontsize=6)
+        ax.set_title(f"{W['label']}{sname}\na = {a0:g}, L = {L0}", fontsize=8); ax.legend(fontsize=6)
         for k, a in enumerate(As):
             ax = axs[0, 1 + k]
             fixed, ref = [], None
@@ -477,14 +486,15 @@ def rdensity(sets, out, txt):
                 ax.plot(rr[ok], d[ok], "-", color=c, lw=1.3, label=f"L={L} (n={p['n']})")
                 ax.plot(rr[ok], p["B"][ok], "-", color=c, lw=0.6, alpha=0.35)
                 axl[1 + k].plot(rr[ok], RD.local_slopes(rr, d)[ok], "o-", ms=2.5, lw=1, color=c, label=f"L={L}")
-                rmax = rr.max()
+                ok &= np.isfinite(p["B"])
+                rmax = rr[ok].max()
                 sl_s = RD.local_slope(rr, d, 2, 16)
                 sl_m = RD.local_slope(rr, d, 16, 128)
                 lo, hi = (f * rmax for f in R_WIN[W["geometry"]])
                 sl_l = RD.local_slope(rr, d, lo, hi)
                 bf = np.exp(np.interp(np.log(R_FIX), np.log(rr[ok]), np.log(np.maximum(d[ok], 1e-30))))
                 fixed.append((L, bf))
-                ref = (bf, rr[ok].min(), rr.max())
+                ref = (bf, rr[ok].min(), rmax)
                 txt.append(f"   a={a:4.2f} L={L:5d} n={p['n']:4d}: B(0) = {b0:.3g} | slope r 2-16: {sl_s:.2f}  "
                            f"16-128: {sl_m:.2f}  {lo:.0f}-{hi:.0f}: {sl_l:.2f} | B({R_FIX}) - B(0) = {bf:.4g} | "
                            f"max |B - Bdir| / Bdir = {np.nanmax(np.abs(p['B'] - p['Bdir'])[ok] / p['Bdir'][ok]):.1e}")
@@ -516,4 +526,4 @@ def rdensity(sets, out, txt):
         ax = axs[0, -1]
         ax.set_xscale("log"); ax.set_yscale("log"); ax.set_xlabel("L"); ax.set_ylabel(f"B({R_FIX}) - B(0)")
         ax.set_title(f"B({R_FIX}) - B(0): ∝ L^(2ζ-2) if ζ > 1, flat if ζ < 1", fontsize=8); ax.legend(fontsize=7)
-    return save(fig, out, "rdensity.png")
+    return save(fig, out, f"rdensity_{sector}.png" if sector else "rdensity.png")

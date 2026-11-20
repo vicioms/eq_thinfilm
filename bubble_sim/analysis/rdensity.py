@@ -22,7 +22,8 @@ and B(r) - B(0) the roughness of the signed height. Bdir is this exact limit, fr
 crossings, as a check of the fit.
 
 For a bubble the radius is taken relative to the smooth shape (modes n < N_SMOOTH of u(theta)),
-and r is the arc length R_eff * dtheta.
+and r is the arc length R_eff * dtheta. chi is also kept per sector of directions from b (edge
+flanks, screw tips): the average then runs over the pairs of rays both inside the sector.
 
 Real-space B(r) and the exponent: B ∝ r^(2 zeta) only for zeta < 1. For zeta > 1 (qEW, 1.25)
 the scaling is anomalous: B(r) ∝ r^2 L^(2 zeta - 2) for r << L, so the local slope saturates
@@ -83,21 +84,38 @@ def smooth(u, n_keep):
     return np.fft.irfft(c, len(u))
 
 
-def chi_one(col, y, s, n, base=None):
-    """One wall: chi(q, r) on QS x r_grid(n), and the exact q -> 0 limit Bdir(r)."""
+def _corr(f, g):
+    """A(r) = sum_x f(x) g(x - r), periodic, real f and g."""
+    return np.fft.ifft(np.fft.fft(f) * np.conj(np.fft.fft(g))).real
+
+
+def chi_one(col, y, s, n, base=None, mask=None, rmax=None):
+    """One wall: chi(q, r) on QS x r_grid(n), and the exact q -> 0 limit Bdir(r).
+    mask (bool per column / ray): average only over the pairs with both columns in the mask
+    (a sector of a bubble); r > rmax (in columns) is left nan, e.g. the separations that would
+    pair the two opposite arcs of a sector."""
     if base is not None:
         y = y - base[col]
     rg = r_grid(n)
     u = np.bincount(col, s * y, n)
-    m2 = np.bincount(col, s * y * y, n)
-    du = np.array([np.mean((np.roll(u, -r) - u) ** 2) for r in rg])
-    bdir = du + 2 * np.mean(m2 - u * u)
+    o = np.bincount(col, s * y * y, n) - u * u           # overhang term M2 - u^2 per column
+    m = np.ones(n) if mask is None else mask.astype(float)
+    den = _corr(m, m)[rg]
+    with np.errstate(invalid="ignore", divide="ignore"):
+        bdir = (_corr(m * u * u, m) + _corr(m, m * u * u) - 2 * _corr(m * u, m * u)
+                + _corr(m * o, m) + _corr(m, m * o))[rg] / den
     chi = np.empty((len(QS), len(rg)))
     for i, q in enumerate(QS):
         ph = q * y
-        rho = np.bincount(col, s * np.cos(ph), n) - 1j * np.bincount(col, s * np.sin(ph), n)
+        rho = m * (np.bincount(col, s * np.cos(ph), n) - 1j * np.bincount(col, s * np.sin(ph), n))
         F = np.fft.fft(rho)
-        chi[i] = (np.fft.ifft(np.abs(F) ** 2).real / n)[rg]
+        with np.errstate(invalid="ignore", divide="ignore"):
+            chi[i] = np.fft.ifft(np.abs(F) ** 2).real[rg] / den
+    bad = den < 0.5
+    if rmax is not None:
+        bad |= rg > rmax
+    chi[:, bad] = np.nan
+    bdir[bad] = np.nan
     return chi, bdir
 
 

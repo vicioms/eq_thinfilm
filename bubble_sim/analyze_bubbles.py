@@ -15,6 +15,8 @@ The same observables as analyze_flat.py, measured on the closed phi = 0 contour 
   rdensity.png   roughness density chi(q, r) (Caballero & Giamarchi 2022, analysis/rdensity.py): B(r) from
                  -2 ln chi = q^2 B(r) without a single-valued height (overhangs included: B(0) > 0),
                  B(r) per L, B(r = 32) vs L (∝ L^(2 zeta - 2) when zeta > 1, flat for qKPZ)
+  rdensity_edge.png, rdensity_screw.png   the same over the pairs of rays in the edge-flank
+                 ([0, 30) deg from b) or screw-tip ([60, 90] deg) sector only
   length_dir.png perimeter by direction from b (edge flanks vs screw tips): the excess over the
                  smooth shape ∝ R_eff^(alpha - 1), alpha = 1 for qKPZ, zeta for qEW
 With a fixed R0 (fss_scan.py --r0) the critical bubble stays near R0 whatever L: there h_d and
@@ -54,7 +56,8 @@ def main():
     txt = [f"runs: {', '.join(args.dirs)}"] + [f"  {W['label']}: {len(W['L'])} bubbles" for W in sets]
     figs = [figures.configs(sets, out), figures.roughness(sets, out, CFG, txt),
             figures.threshold(sets, out, CFG, txt), figures.length(sets, out, txt),
-            figures.rdensity(sets, out, txt),
+            figures.rdensity(sets, out, txt), figures.rdensity(sets, out, txt, "edge"),
+            figures.rdensity(sets, out, txt, "screw"),
             figures.length_dir(sets, out, txt)]
     with open(os.path.join(out, "report.txt"), "w") as f:
         f.write("\n".join(txt) + "\n")

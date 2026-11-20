@@ -17,6 +17,8 @@ Per wall:
            DIR_BINS (0 = edge flanks, normal ∥ b; 90 = screw tips, normal ⊥ b)
   chi      roughness density chi(q, r) (Caballero & Giamarchi; rdensity.py) on rdensity.QS x
            rdensity.r_grid(columns / rays), and Bdir(r) its exact q -> 0 limit
+  chi_edge, chi_screw (bubbles) chi and Bdir averaged over the pairs of rays both in the sector
+           RD_SECTORS of folded directions from b: edge flanks [0, 30), screw tips [60, 90]
   Sdir     the same for the smooth shape, R(theta) keeping only the modes n < N_SMOOTH (the
            shape modes left out of the zeta fits): Pdir / Sdir is the excess length of the
            roughness in that direction, without the elongation of the bubble
@@ -36,6 +38,7 @@ ANG_BINS = np.linspace(0, 90, 19)
 N_SHAPE = 72
 DIR_BINS = np.linspace(0, 90, 7)
 N_SMOOTH = 12
+RD_SECTORS = dict(edge=(0.0, 30.0), screw=(60.0, 90.01))   # folded direction from b (deg)
 SCALAR = ("P", "size", "travel", "multi", "u_o", "A")
 
 
@@ -68,10 +71,16 @@ def bubble(curve, L, R0, b_angle):
     col, rk, sk = RD.ray_crossings(pts, cen, nt)
     base = RD.smooth(np.bincount(col, sk * rk, nt), N_SMOOTH)
     chi, bdir = RD.chi_one(col, rk, sk, nt, base)
+    fold = _fold(np.degrees(2 * np.pi * np.arange(nt) / nt) - b_angle)
+    sect = {}
+    for name, (lo, hi) in RD_SECTORS.items():
+        sect[name] = RD.chi_one(col, rk, sk, nt, base, mask=(fold >= lo) & (fold < hi),
+                                rmax=nt * 2 * (hi - lo) / 360)
     return dict(P=P, size=R_eff, travel=R_eff - R0, multi=float(np.mean(mult > 1)),
                 u_o=float(np.sqrt(var[good].mean())), A=A, xc=cen[0], yc=cen[1],
                 psi=modes(psi, P), prof=modes(Rf, 2 * np.pi * R_eff), ang=ang, shape=shape,
-                Pdir=Pdir, Sdir=Sdir, chi=chi, Bdir=bdir, rd_n=nt)
+                Pdir=Pdir, Sdir=Sdir, chi=chi, Bdir=bdir, rd_n=nt,
+                **{f"chi_{k}": v[0] for k, v in sect.items()}, **{f"Bdir_{k}": v[1] for k, v in sect.items()})
 
 
 def _fold(theta_deg):
@@ -127,4 +136,7 @@ def measure_run(W, workers=None):
     if W["geometry"] == "bubble":
         for k in ("shape", "Pdir", "Sdir"):
             W[k] = np.array([r[k] for r in rows])
+        for k in RD_SECTORS:
+            W[f"chi_{k}"] = [r[f"chi_{k}"] for r in rows]
+            W[f"Bdir_{k}"] = [r[f"Bdir_{k}"] for r in rows]
     return W
