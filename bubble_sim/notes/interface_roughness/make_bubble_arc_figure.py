@@ -1,14 +1,17 @@
-"""Bubbles without a centre: width of arcs of length ell about their mean line.
+"""Bubbles without a centre: width of arcs of length ell about a reference, a line or a cubic.
 
 Each contour is resampled at uniform arc length (ds <= 1) and cut into arcs of length ell (start
-points ell/4 apart). The mean orientation of an arc, the average of its unit tangent, is the
-direction of its chord. The reference is the straight line along that direction through the mean
-point of the arc; the deviation is the distance from it, w^2(ell) is its mean square, and X is the
-chord length. With METHOD = "cubic" the reference is instead a smooth parametric cubic, x(s) and
-y(s) fitted separately, the deviation is taken along its normal and X is its length.
+points ell/4 apart). Two references, both computed:
+  line:  the mean orientation of an arc, the average of its unit tangent, is the direction of its
+         chord. The reference is the straight line along that direction through the mean point of
+         the arc; the deviation is the distance from it and X is the chord length.
+  cubic: a smooth parametric cubic, x(s) and y(s) fitted separately (a spline with no interior
+         knot); the deviation is taken along its normal and X is its length.
+w^2(ell) is the mean square deviation. The line removes the mean and the tilt of the arc (zeta < 2),
+the cubic also its curvature (zeta < 4).
 
-Isotropic bubbles (fig11): all arcs; flat isotropic walls (L = 2048) for comparison.
-Anisotropic bubbles (fig12, a = 1, b along x): arcs are split by the direction of the normal of
+Isotropic bubbles (fig11 line, fig12 cubic): all arcs; flat isotropic walls (L = 2048) for comparison.
+Anisotropic bubbles (fig13 line, fig14 cubic; a = 1, b along x): arcs are split by the direction of the normal of
 their chord, folded to [0, 90] degrees from b: edge-like arcs (normal within 30 degrees of b) and
 screw-like arcs (normal within 30 degrees of the perpendicular), compared with flat edge
 (b = 90 degrees) and screw (b = 0) walls at a = 1, L = 2048 (all arcs).
@@ -32,7 +35,11 @@ OUT = mb.OUT
 FLAT = ROOT / "runs/flat_D0.04_b0_A2/walls.npz"
 EDGE = ROOT / "runs/flat_D0.04_b90_A2/walls.npz"
 DEGREE = 3
-METHOD = "line"
+METHODS = ("line", "cubic")
+REFERENCE = dict(line="mean line", cubic="cubic")
+LABEL_X = dict(line=6.5, cubic=25)     # reference labels of the local-exponent panels, clear of the data
+NAMES = dict(line=("fig11_bubble_arc_width_line", "fig13_bubble_anisotropic_arc_width_line"),
+             cubic=("fig12_bubble_arc_width_cubic", "fig14_bubble_anisotropic_arc_width_cubic"))
 ELLS = np.unique(np.rint(np.geomspace(8, 4096, 28)))
 SECTORS = dict(edge=(0., 30.), screw=(60., 90.01))
 RNG = np.random.default_rng(20261124)
@@ -47,20 +54,20 @@ def resample(line):
     return np.stack((np.interp(s, length, line[:, 0]), np.interp(s, length, line[:, 1])), 1), P/N
 
 
-def arcs(points, ds, shift, ell, degree=DEGREE, every=1):
+def arcs(points, ds, shift, ell, method, degree=DEGREE, every=1):
     """Arcs of length ell starting every n/4 points (every: keep one arc in that many).
     Returns the arcs (k, 2, n), the reference curves, the normal deviations (k, n), the lengths X
     and the direction of the chord normal folded to [0, 90] degrees from the x axis.
-    METHOD "line": the reference is the straight line through the mean point of the arc along its
+    method "line": the reference is the straight line through the mean point of the arc along its
     mean orientation (the mean unit tangent, i.e. the chord), X is the chord length and the
-    deviation is the distance from that line. METHOD "cubic": the smooth parametric cubic."""
+    deviation is the distance from that line. method "cubic": the smooth parametric cubic."""
     N, n = len(points), int(round(ell/ds))
     extended = np.vstack((points, points[:n] + shift))
     W = sliding_window_view(extended, n, axis=0)[:N:max(1, n//4)*every]
     chord = W[:, :, -1] - W[:, :, 0]
     angle = np.mod(np.degrees(np.arctan2(chord[:, 1], chord[:, 0])) + 90, 180)
     phi = np.minimum(angle, 180 - angle)
-    if METHOD == "line":
+    if method == "line":
         X = np.linalg.norm(chord, axis=1)
         tangent = chord/X[:, None]
         normal = np.stack((-tangent[:, 1], tangent[:, 0]), 1)
@@ -84,13 +91,13 @@ def arcs(points, ds, shift, ell, degree=DEGREE, every=1):
     return W, fit, deviation, X, phi
 
 
-def widths(points, ds, shift, P, sector=None):
+def widths(points, ds, shift, P, method, sector=None):
     """Per contour: mean square deviation and mean fitted length at every ell <= P/4,
     over the arcs whose folded normal direction lies in sector (all arcs if None)."""
     w2, X = np.full(len(ELLS), np.nan), np.full(len(ELLS), np.nan)
     for j, ell in enumerate(ELLS):
         if ell <= P/4:
-            _, _, d, x, phi = arcs(points, ds, shift, ell)
+            _, _, d, x, phi = arcs(points, ds, shift, ell, method)
             take = np.ones(len(x), bool) if sector is None else (phi >= sector[0]) & (phi < sector[1])
             if take.any():
                 w2[j], X[j] = np.mean(d[take]**2), np.mean(x[take])
@@ -109,7 +116,7 @@ def ensemble(w2, X, draws, complete=1.):
                 ci95=np.quantile(boot, [.025, .975], axis=0), n=len(w2))
 
 
-def flat_walls(path, a, L=2048):
+def flat_walls(path, a, method, L=2048):
     z = np.load(path)
     rows = []
     for i in np.flatnonzero((z["L"]==L) & (z["aniso"]==a)):
@@ -117,12 +124,12 @@ def flat_walls(path, a, L=2048):
         line = np.vstack((curve, curve[:1] + (L, 0)))
         line = line[np.r_[True, np.linalg.norm(np.diff(line, axis=0), axis=1) > 0]]
         points, ds = resample(line)
-        rows.append(widths(points, ds, np.array([float(L), 0.]), len(points)*ds))
+        rows.append(widths(points, ds, np.array([float(L), 0.]), len(points)*ds, method))
     w2, X = map(np.array, zip(*rows))
     return ensemble(w2, X, RNG.integers(len(rows), size=(2000, len(rows))))
 
 
-def bubbles(z, main_contour, a, sectors):
+def bubbles(z, main_contour, a, sectors, method):
     """sectors: {name: sector or None}. Returns {name: {L: ensemble}} and the L = 1024, seed 0 example."""
     result, example = {name: {} for name in sectors}, None
     for L in mb.SIZES:
@@ -132,22 +139,22 @@ def bubbles(z, main_contour, a, sectors):
             line = mb.profiles(decode(z, main_contour[k]))["line"]
             points, ds = resample(line[:-1])
             for name, sector in sectors.items():
-                rows[name].append(widths(points, ds, np.zeros(2), len(points)*ds, sector))
+                rows[name].append(widths(points, ds, np.zeros(2), len(points)*ds, method, sector))
             if L == 1024 and z["seed"][k] == 0:
                 example = (line, points, ds)
         draws = RNG.integers(len(ks), size=(2000, len(ks)))
         for name, sector in sectors.items():
             w2, X = map(np.array, zip(*rows[name]))
             result[name][L] = ensemble(w2, X, draws, 1. if sector is None else .8)
-        print(a, L, len(ks), flush=True)
+        print(method, a, L, len(ks), flush=True)
     return result, example
 
 
-def example_panel(ax, example, colors, count=4):
+def example_panel(ax, example, colors, method, count=4):
     """count consecutive arcs of length 256 (all if None); colors(j, phi) gives the color of an arc."""
     line, points, ds = example
     ax.plot(line[:, 0], line[:, 1], color=".75", lw=.8)
-    W, fit, _, _, phi = arcs(points, ds, np.zeros(2), 256, every=4)
+    W, fit, _, _, phi = arcs(points, ds, np.zeros(2), 256, method, every=4)
     count = len(W) if count is None else count
     for j in range(count):
         ax.plot(W[j, 0], W[j, 1], color=colors(j, phi[j]), lw=1)
@@ -160,9 +167,9 @@ def example_panel(ax, example, colors, count=4):
         spine.set_visible(True)
 
 
-def isotropic_figure(result, flat, example):
+def isotropic_figure(result, flat, example, method):
     fig, axes = plt.subplots(1, 3, figsize=(11.5, 3.8), layout="constrained")
-    example_panel(axes[0], example, lambda j, phi: (COLORS[2], COLORS[0])[j % 2])
+    example_panel(axes[0], example, lambda j, phi: (COLORS[2], COLORS[0])[j % 2], method)
 
     ax = axes[1]
     for L, color, marker in zip(mb.SIZES, COLORS, MARKERS):
@@ -179,7 +186,7 @@ def isotropic_figure(result, flat, example):
                for L, c, m in zip(mb.SIZES, COLORS, MARKERS)]
     handles.append(Line2D([], [], c=".45", lw=1.1, label="flat, $L=2048$"))
     ax.legend(handles=handles, frameon=False, fontsize=8, loc="upper left")
-    ax.set(xlabel=r"$X$", ylabel=r"$w$", title="(b) Width about the mean line")
+    ax.set(xlabel=r"$X$", ylabel=r"$w$", title=f"(b) Width about the {REFERENCE[method]}")
 
     ax = axes[2]
     for L, color, marker in zip(mb.SIZES, COLORS, MARKERS):
@@ -191,8 +198,8 @@ def isotropic_figure(result, flat, example):
     ax.plot(r["X"], r["zeta_ell"], ls="none", marker=MARKERS[3], color=COLORS[3], mfc="none", ms=5)
     ax.axhline(1.25, ls="--", c="black", lw=1.3)
     ax.axhline(.63, ls=":", c="black", lw=1.6)
-    ax.text(6.5, 1.25*1.03, r"$\zeta=1.25$", fontsize=10)
-    ax.text(6.5, .63*1.04, r"$\zeta=0.63$", fontsize=10)
+    ax.text(LABEL_X[method], 1.25*1.03, r"$\zeta=1.25$", fontsize=10)
+    ax.text(LABEL_X[method], .63*1.04, r"$\zeta=0.63$", fontsize=10)
     ax.legend(handles=[Line2D([], [], c=".25", marker="o", ls="none", label=r"$d\ln w/d\ln X$"),
                        Line2D([], [], c=COLORS[3], marker=MARKERS[3], mfc="none", ls="none",
                               label=r"$d\ln w/d\ln\ell$, $L=8192$")],
@@ -202,19 +209,19 @@ def isotropic_figure(result, flat, example):
     for ax in axes[1:]:
         ax.xaxis.set_minor_formatter(NullFormatter())
     for ext in ("pdf", "png"):
-        fig.savefig(OUT / f"fig11_bubble_arc_width.{ext}", dpi=200)
+        fig.savefig(OUT / f"{NAMES[method][0]}.{ext}", dpi=200)
     plt.close(fig)
 
 
-def anisotropic_figure(result, flat, example):
+def anisotropic_figure(result, flat, example, method):
     """(a) example arcs, (b) widths, (c) local exponent; filled edge-like, open screw-like arcs."""
     fig, axes = plt.subplots(1, 3, figsize=(11.5, 3.8), layout="constrained")
     sector_color = lambda j, phi: ("#2b7bba" if phi < 30 else "#c0392b" if phi >= 60 else ".6")
-    example_panel(axes[0], example, sector_color, count=None)
+    example_panel(axes[0], example, sector_color, method, count=None)
     axes[0].legend(handles=[Line2D([], [], c="#2b7bba", label="edge-like"),
                             Line2D([], [], c="#c0392b", label="screw-like"),
                             Line2D([], [], c=".6", label="other"),
-                            Line2D([], [], c="black", label="mean line")],
+                            Line2D([], [], c="black", label=REFERENCE[method])],
                    frameon=False, fontsize=7, loc="center left", bbox_to_anchor=(1, .5))
     style = dict(edge=dict(), screw=dict(mfc="none"))
     flat_style = dict(edge="-", screw="--")
@@ -229,7 +236,7 @@ def anisotropic_figure(result, flat, example):
     anchor = np.exp(np.interp(np.log(200), np.log(result["edge"][8192]["X"]),
                               np.log(result["edge"][8192]["w"])))
     ax.plot(xx, 1.6*anchor*(xx/200)**1.25, "--", c="black", lw=1.3)
-    ax.text(2500, 1.6*anchor*(2500/200)**1.25*.6, r"$\zeta=1.25$", ha="right", va="top", fontsize=10)
+    ax.text(3000, 1.6*anchor*(3000/200)**1.25*1.15, r"$\zeta=1.25$", ha="right", va="bottom", fontsize=10)
     ax.plot(xx, .5*anchor*(xx/200)**.63, ":", c="black", lw=1.6)
     ax.text(2500, .5*anchor*(2500/200)**.63*.55, r"$\zeta=0.63$", ha="right", va="top", fontsize=10)
     handles = [Line2D([], [], c=c, marker=m, ls="none", label=fr"$L={L}$")
@@ -239,7 +246,7 @@ def anisotropic_figure(result, flat, example):
                     Line2D([], [], c=".45", lw=1.1, label="flat edge, $L=2048$"),
                     Line2D([], [], c=".45", lw=1.1, ls="--", label="flat screw, $L=2048$")])
     ax.legend(handles=handles, frameon=False, fontsize=7, loc="upper left")
-    ax.set(xlabel=r"$X$", ylabel=r"$w$", title="(b) Width about the mean line")
+    ax.set(xlabel=r"$X$", ylabel=r"$w$", title=f"(b) Width about the {REFERENCE[method]}")
 
     ax = axes[2]
     for name in SECTORS:
@@ -251,14 +258,14 @@ def anisotropic_figure(result, flat, example):
         ax.plot(flat[name]["X"], flat[name]["zeta"], ls=flat_style[name], color=".45", lw=1.1)
     ax.axhline(1.25, ls="--", c="black", lw=1.3)
     ax.axhline(.63, ls=":", c="black", lw=1.6)
-    ax.text(6.5, 1.25*1.03, r"$\zeta=1.25$", fontsize=10)
-    ax.text(6.5, .63*1.04, r"$\zeta=0.63$", fontsize=10)
+    ax.text(LABEL_X[method], 1.25*1.03, r"$\zeta=1.25$", fontsize=10)
+    ax.text(LABEL_X[method], .63*1.04, r"$\zeta=0.63$", fontsize=10)
     ax.set(xscale="log", xlabel=r"$X$", ylabel=r"$d\ln w/d\ln X$", ylim=(.4, 2.6),
            title="(c) Local exponent")
     for ax in axes[1:]:
         ax.xaxis.set_minor_formatter(NullFormatter())
     for ext in ("pdf", "png"):
-        fig.savefig(OUT / f"fig12_bubble_anisotropic_arc_width.{ext}", dpi=200)
+        fig.savefig(OUT / f"{NAMES[method][1]}.{ext}", dpi=200)
     plt.close(fig)
 
 
@@ -273,18 +280,20 @@ def main():
     main_contour = mb.bubbles(z)
     report = dict(method=__doc__.strip(), source=[str(p.relative_to(ROOT)) for p in (mb.DATA, FLAT, EDGE)])
 
-    result, example = bubbles(z, main_contour, 0, dict(all=None))
-    flat = flat_walls(FLAT, 0)
-    isotropic_figure(result["all"], flat, example)
-    report["a=0"] = {str(L): table(r) for L, r in result["all"].items()}
-    report["a=0"]["flat"] = table(flat)
+    for method in METHODS:
+        result, example = bubbles(z, main_contour, 0, dict(all=None), method)
+        flat = flat_walls(FLAT, 0, method)
+        isotropic_figure(result["all"], flat, example, method)
+        report[method] = {"a=0": {str(L): table(r) for L, r in result["all"].items()}}
+        report[method]["a=0"]["flat"] = table(flat)
 
-    result, example = bubbles(z, main_contour, 1, SECTORS)
-    flat = dict(edge=flat_walls(EDGE, 1), screw=flat_walls(FLAT, 1))
-    anisotropic_figure(result, flat, example)
-    report["a=1"] = {name: {str(L): table(r) for L, r in result[name].items()} for name in SECTORS}
-    for name in SECTORS:
-        report["a=1"][name]["flat"] = table(flat[name])
+        result, example = bubbles(z, main_contour, 1, SECTORS, method)
+        flat = dict(edge=flat_walls(EDGE, 1, method), screw=flat_walls(FLAT, 1, method))
+        anisotropic_figure(result, flat, example, method)
+        report[method]["a=1"] = {name: {str(L): table(r) for L, r in result[name].items()}
+                                 for name in SECTORS}
+        for name in SECTORS:
+            report[method]["a=1"][name]["flat"] = table(flat[name])
     (OUT/"bubble_arc_width.json").write_text(json.dumps(report, indent=1)+"\n")
 
 

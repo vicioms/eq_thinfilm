@@ -12,8 +12,9 @@ Read [roughness_note.pdf](roughness_note.pdf). The current results cover flat is
 - `fig5` and `fig6`: anisotropic screw results.
 - `fig7` and `fig8`: isotropic bubble results.
 - `fig9` and `fig10`: anisotropic bubble results.
-- `make_figures.py`, `make_edge_figures.py`, `make_screw_figures.py`, `make_bubble_figures.py`: analysis and plotting scripts using saved contours only.
-- `statistics.json`, `edge_statistics.json`, `screw_statistics.json`, `bubble_statistics.json`: measured quantities and fitting ranges.
+- `fig11` to `fig14`: local width of arcs of bubble contours about their mean line (`fig11`, `fig13`) and about a fitted cubic (`fig12`, `fig14`), isotropic and anisotropic.
+- `make_figures.py`, `make_edge_figures.py`, `make_screw_figures.py`, `make_bubble_figures.py`, `make_bubble_arc_figure.py`: analysis and plotting scripts using saved contours only.
+- `statistics.json`, `edge_statistics.json`, `screw_statistics.json`, `bubble_statistics.json`, `bubble_arc_width.json`: measured quantities and fitting ranges.
 - `provenance.json`: input snapshot and SHA-256 checksums.
 
 Each figure is provided as PDF and PNG. All cases use the same contour extraction, area-preserving h(x), arc-length h(s), and equal-realization spectral averaging. Sizes are 256, 512, 1024, and 2048 with 256, 128, 64, and 32 realizations, respectively. Bubbles use 1024, 2048, 4096, and 8192 with 128, 64, 32, and 16 realizations, area-preserving radius h(theta), and arc-length h(s) = |r(s) - c|. Spectral panels show the two largest sizes.
@@ -29,6 +30,7 @@ python3 make_figures.py
 python3 make_edge_figures.py
 python3 make_screw_figures.py
 python3 make_bubble_figures.py
+python3 make_bubble_arc_figure.py
 ```
 
 These commands analyze saved contours and do not run simulations. The figure scripts resolve input paths relative to `bubble_sim`, regardless of the working directory. Statistics are regenerated with the figures. The bundled results use the input snapshot recorded in `provenance.json`; newer input data may give different results.
