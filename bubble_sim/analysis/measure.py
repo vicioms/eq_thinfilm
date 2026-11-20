@@ -6,6 +6,8 @@ Per wall:
   travel   how far the wall moved before its last pinning (flat: mean height - start,
            bubble: R_eff - R0)
   psi      modes of the tangent angle psi(s) along the arc length (intrinsic)
+  hs       modes of the height along the arc length, h(s) (intrinsic, single-valued with overhangs):
+           flat: y(s); bubble: distance |r(s) - centroid|. S_h ~ q^-(1+2 zeta), q conjugate to s
   prof     modes of the single-valued profile (KFR Eq. 9): u(x) per column (flat),
            R(theta) per ray about the centroid (bubble)
   multi    fraction of columns / rays crossing the wall more than once (overhangs)
@@ -50,7 +52,8 @@ def flat_wall(curve, u, mult, L, b_angle, travel):
     ang = np.histogram(G.angle_to_b(pts, False, b_angle, L), ANG_BINS)[0] / len(pts)
     chi, bdir = RD.chi_one(*RD.column_crossings(np.asarray(curve, float), L), L)
     return dict(P=P, size=float(L), travel=travel, multi=float(np.mean(mult > 1)), u_o=np.nan, A=np.nan,
-                psi=modes(psi, P), prof=modes(uu, L), ang=ang, chi=chi, Bdir=bdir, rd_n=L)
+                psi=modes(psi, P), hs=modes(pts[:, 1], P), prof=modes(uu, L), ang=ang, chi=chi, Bdir=bdir,
+                rd_n=L)
 
 
 def bubble(curve, L, R0, b_angle):
@@ -78,7 +81,8 @@ def bubble(curve, L, R0, b_angle):
                                 rmax=nt * 2 * (hi - lo) / 360)
     return dict(P=P, size=R_eff, travel=R_eff - R0, multi=float(np.mean(mult > 1)),
                 u_o=float(np.sqrt(var[good].mean())), A=A, xc=cen[0], yc=cen[1],
-                psi=modes(psi, P), prof=modes(Rf, 2 * np.pi * R_eff), ang=ang, shape=shape,
+                psi=modes(psi, P), hs=modes(np.hypot(*(pts - cen).T), P), prof=modes(Rf, 2 * np.pi * R_eff),
+                ang=ang, shape=shape,
                 Pdir=Pdir, Sdir=Sdir, chi=chi, Bdir=bdir, rd_n=nt,
                 **{f"chi_{k}": v[0] for k, v in sect.items()}, **{f"Bdir_{k}": v[1] for k, v in sect.items()})
 
@@ -128,7 +132,7 @@ def measure_run(W, workers=None):
         rows = list(ex.map(fn, jobs, chunksize=8))
     for k in SCALAR:
         W[k] = np.array([r[k] for r in rows], float)
-    for k in ("psi", "prof", "chi", "Bdir"):
+    for k in ("psi", "hs", "prof", "chi", "Bdir"):
         W[k] = [r[k] for r in rows]
     W["rd_n"] = np.array([r["rd_n"] for r in rows])
     W["rd_r"] = [RD.r_grid(n) for n in W["rd_n"]]

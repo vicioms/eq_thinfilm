@@ -43,6 +43,37 @@ runs: runs/fss_D0.04_R32
           nu(var) = 9.41±25.80;  h_c[qEW] = 0.02801±0.00061 (chi2/dof 0.9);  h_c[qKPZ] = 0.02784±0.00074 (chi2/dof 0.9);  h_c[free, 1/nu = 0.00±1.20] = -2.17860±14059.09733 (chi2/dof 1.5)
    a=1.00: L=128: 0.02229±0.00027  L=256: 0.02648±0.00019  L=512: 0.02744±0.00022  L=1024: 0.02797±0.00027  L=2048: 0.02869±0.00052  L=4096: 0.02821±0.00054
           nu(var) = 14.50±124.66;  h_c[qEW] = 0.02869±0.00078 (chi2/dof 0.4);  h_c[qKPZ] = 0.02872±0.00095 (chi2/dof 0.4);  h_c[free, 1/nu = 1.00±13.82] = 0.02867±0.00161 (chi2/dof 0.8)
+== h(s) spectrum: bubbles, R0 = 32   h = |r(s) - centroid| along the arc length s, S_h ~ q^-(1+2 zeta), modes n >= 12: zeta for q <= 0.1 | q <= 0.03
+   a=0.00 L=  128 n= 512: zeta_h nan±nan | q<=0.03: nan±nan
+   a=0.00 L=  256 n= 512: zeta_h nan±nan | q<=0.03: nan±nan
+   a=0.00 L=  512 n= 256: zeta_h nan±nan | q<=0.03: nan±nan
+   a=0.00 L= 1024 n= 128: zeta_h nan±nan | q<=0.03: nan±nan
+   a=0.00 L= 2048 n=  64: zeta_h nan±nan | q<=0.03: nan±nan
+   a=0.00 L= 4096 n=  32: zeta_h 1.347±0.124 | q<=0.03: nan±nan
+   a=0.25 L=  128 n= 512: zeta_h nan±nan | q<=0.03: nan±nan
+   a=0.25 L=  256 n= 512: zeta_h nan±nan | q<=0.03: nan±nan
+   a=0.25 L=  512 n= 256: zeta_h nan±nan | q<=0.03: nan±nan
+   a=0.25 L= 1024 n= 128: zeta_h nan±nan | q<=0.03: nan±nan
+   a=0.25 L= 2048 n=  64: zeta_h 1.175±0.152 | q<=0.03: nan±nan
+   a=0.25 L= 4096 n=  32: zeta_h nan±nan | q<=0.03: nan±nan
+   a=0.50 L=  128 n= 510: zeta_h nan±nan | q<=0.03: nan±nan
+   a=0.50 L=  256 n= 512: zeta_h nan±nan | q<=0.03: nan±nan
+   a=0.50 L=  512 n= 256: zeta_h nan±nan | q<=0.03: nan±nan
+   a=0.50 L= 1024 n= 128: zeta_h nan±nan | q<=0.03: nan±nan
+   a=0.50 L= 2048 n=  64: zeta_h 1.245±0.056 | q<=0.03: nan±nan
+   a=0.50 L= 4096 n=  32: zeta_h nan±nan | q<=0.03: nan±nan
+   a=0.75 L=  128 n= 510: zeta_h nan±nan | q<=0.03: nan±nan
+   a=0.75 L=  256 n= 512: zeta_h nan±nan | q<=0.03: nan±nan
+   a=0.75 L=  512 n= 256: zeta_h nan±nan | q<=0.03: nan±nan
+   a=0.75 L= 1024 n= 128: zeta_h nan±nan | q<=0.03: nan±nan
+   a=0.75 L= 2048 n=  64: zeta_h 1.215±0.077 | q<=0.03: nan±nan
+   a=0.75 L= 4096 n=  32: zeta_h 1.121±0.117 | q<=0.03: nan±nan
+   a=1.00 L=  128 n= 507: zeta_h nan±nan | q<=0.03: nan±nan
+   a=1.00 L=  256 n= 512: zeta_h nan±nan | q<=0.03: nan±nan
+   a=1.00 L=  512 n= 256: zeta_h nan±nan | q<=0.03: nan±nan
+   a=1.00 L= 1024 n= 128: zeta_h nan±nan | q<=0.03: nan±nan
+   a=1.00 L= 2048 n=  64: zeta_h 1.078±0.106 | q<=0.03: nan±nan
+   a=1.00 L= 4096 n=  32: zeta_h 1.018±0.064 | q<=0.03: nan±nan
 == length: bubbles, R0 = 32   P ∝ R_eff^alpha (P / 2 pi R_eff; overhangs = fraction of rays crossing the wall more than once)
    a=0.00: alpha = 1.084±0.003; local 1.07±0.10 1.06±0.03 1.06±0.02 1.09±0.02 1.06±0.03 1.13±0.06 1.10±0.09 1.04±0.16
           R_eff=18: 1.046  R_eff=24: 1.066  R_eff=32: 1.084  R_eff=41: 1.102  R_eff=56: 1.134  R_eff=75: 1.155  R_eff=102: 1.204  R_eff=135: 1.240  R_eff=176: 1.254

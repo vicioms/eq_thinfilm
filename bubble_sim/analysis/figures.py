@@ -8,6 +8,8 @@ A "set" is one run after data.load_* and measure.measure_run: a dict of per-wall
     roughness.png   pooled S_psi at the largest L, local zeta_eff(q), zeta vs L (intrinsic and
                     profile)
     threshold.png   <h_d>(L) with the fits, var(h_d)(L) -> nu, extrapolated h_c vs a
+    hs.png          spectrum of the height along the arc length h(s) (flat: y(s), bubble: |r(s) - centroid|),
+                    S_h ~ q^-(1+2 zeta): compensated for qEW / qKPZ, local zeta, zeta vs L
     length.png      wall length P vs size, P / size, fraction of columns / rays with overhangs
     rdensity.png    roughness density (Caballero & Giamarchi): -2 ln chi vs q^2 B, B(r) per a for
                     every L (dashed: exact q -> 0 limit), B at fixed r vs L
@@ -68,10 +70,12 @@ def sel(W, L=None, a=None, mask=None):
     return m
 
 
-def pool(W, kind, n_min, **k):
-    key = "psi" if kind == "psi" else "prof"
+def pool(W, kind, n_min, key=None, **k):
+    """Pooled spectra at fixed (L, a): key 'psi' (tangent angle), 'prof' (profile u(x) / R(theta))
+    or 'hs' (height along the arc length); default from kind: psi -> 'psi', u -> 'prof'."""
+    key = key or ("psi" if kind == "psi" else "prof")
     cache = W.setdefault("_pools", {})
-    ck = (kind, k.get("L"), k.get("a"), None if k.get("mask") is None else k["mask"].tobytes())
+    ck = (key, k.get("L"), k.get("a"), None if k.get("mask") is None else k["mask"].tobytes())
     if ck not in cache:
         cache[ck] = SP.Pooled([W[key][i] for i in np.nonzero(sel(W, **k))[0]], n_min)
     return cache[ck]
@@ -316,6 +320,89 @@ def threshold(sets, out, cfg, txt):
         ax.set_xlabel("anisotropy a"); ax.set_ylabel("extrapolated h_c")
         ax.set_title("h_c (L → ∞)", fontsize=9); ax.legend(fontsize=7)
     return save(fig, out, "threshold.png")
+
+
+# ---------------------------------------------------------------------------
+# h(s): height along the arc length
+# ---------------------------------------------------------------------------
+def hs_spectrum(sets, out, cfg, txt):
+    """S_h(q) of h(s), s the arc length (single-valued with overhangs; dh/ds = sin psi, so
+    S_h ≈ S_psi / q^2 only where the slopes are small). S_h ~ q^-(1+2 zeta)."""
+    plt = _plt()
+    qlg = cfg.get("qlarge")
+    ncol = 5 if qlg else 4
+    fig, axs = plt.subplots(len(sets), ncol, figsize=(5.7 * ncol, 4.6 * len(sets)), squeeze=False)
+    for row, W in enumerate(sets):
+        n_min, qmax = cfg[W["geometry"]]["n_min"], cfg["qmax"]
+        As, Ls = a_values(W), L_values(W)
+        Lm = max(Ls)
+        hname = "y(s)" if W["geometry"] == "flat" else "|r(s) - centroid|"
+        txt.append(f"== h(s) spectrum: {W['label']}   h = {hname} along the arc length s, S_h ~ q^-(1+2 zeta), "
+                   f"modes n >= {n_min}: zeta for q <= {qmax:g}" + (f" | q <= {qlg:g}" if qlg else ""))
+        spec = {a: pool(W, "u", n_min, key="hs", L=Lm, a=a) for a in As}
+        spec = {a: (p, p.mean_err()) for a, p in spec.items() if p.n >= 2}
+        for col, (rname, rz, _) in enumerate(ZETA_REF):
+            ax, ex = axs[row, col], 1 + 2 * rz
+            ys = []
+            for a, (p, (m, e)) in spec.items():
+                ax.errorbar(p.qc, m * p.qc ** ex, e * p.qc ** ex, fmt="o-", ms=2.5, lw=0.8, color=color_a(a),
+                            label=f"a={a:g} (n={p.n})")
+                y = m * p.qc ** ex
+                ys.append(y[(p.qc <= qmax) & np.isfinite(y) & (y > 0)])
+            ys = np.concatenate(ys) if ys else np.zeros(0)
+            if ys.size:
+                ax.set_ylim(ys.min() / 2, ys.max() * 2)
+            ax.axvspan(qmax, 3, color="0.93", zorder=-1)
+            if qlg:
+                ax.axvline(qlg, color="0.5", ls="--", lw=0.7)
+            ax.set_xscale("log"); ax.set_yscale("log"); ax.set_xlabel("q (conjugate to the arc length s)")
+            ax.set_ylabel(rf"$q^{{{ex:.2f}}} S_h$  (flat: {rname}, ζ = {rz:g})")
+            ax.set_title(f"{W['label']}, L = {Lm}: h(s) compensated for {rname}", fontsize=9); ax.legend(fontsize=7)
+        ax = axs[row, 2]
+        for a, mk in ((As[0], "o"), (As[-1], "s")):
+            for L in Ls:
+                p = pool(W, "u", n_min, key="hs", L=L, a=a)
+                if p.n < 4:
+                    continue
+                z, ze = SP.local_zeta(p, "u")
+                ok = p.qc < 0.3
+                ax.errorbar(p.qc[ok], z[ok], ze[ok], fmt=mk + ("-" if a == As[-1] else ":"), color=color_L(L, Ls),
+                            ms=2.5, lw=0.7, label=f"a={a:g}, L={L}")
+        for name, z, ls in ZETA_REF:
+            ax.axhline(z, color=REF_COLOR[name], ls=ls, lw=1.0, label=name)
+        ax.axvspan(qmax, 0.3, color="0.93", zorder=-1)
+        if qlg:
+            ax.axvline(qlg, color="0.5", ls="--", lw=0.7)
+        ax.set_xscale("log"); ax.set_ylim(0, 2); ax.set_xlabel("q"); ax.set_ylabel(r"local $\zeta_{eff}$ from $S_h$")
+        ax.set_title("local exponent (window: factor 2 in q)", fontsize=9); ax.legend(fontsize=5.5, ncol=2)
+        for a in As:
+            zs, ls_ = [], []
+            for L in Ls:
+                p = pool(W, "u", n_min, key="hs", L=L, a=a)
+                if p.n < 4:
+                    zs.append((np.nan, np.nan)); ls_.append((np.nan, np.nan))
+                    continue
+                z1 = SP.fit(p, qmax, "u")
+                z2 = SP.fit(p, qlg, "u") if qlg else (np.nan, np.nan)
+                zs.append(z1); ls_.append(z2)
+                txt.append(f"   a={a:4.2f} L={L:5d} n={p.n:4d}: zeta_h {z1[0]:.3f}±{z1[1]:.3f}"
+                           + (f" | q<={qlg:g}: {z2[0]:.3f}±{z2[1]:.3f}" if qlg else ""))
+            for c, v in ((3, zs), (4, ls_)):
+                if c < ncol:
+                    z, ze = np.array(v).T
+                    axs[row, c].errorbar(Ls, z, ze, fmt="o-", color=color_a(a), label=f"a={a:g}")
+        for c, qq in ((3, qmax), (4, qlg)):
+            if c >= ncol:
+                continue
+            ax = axs[row, c]
+            for name, zz, ls in ZETA_REF:
+                ax.axhline(zz, color=REF_COLOR[name], ls=ls, lw=1.0)
+            ax.set_xscale("log"); ax.set_xlim(min(Ls) / 1.25, max(Ls) * 1.25)
+            ax.set_xlabel("L"); ax.set_ylabel("ζ from S_h")
+            ax.set_title(f"h(s) roughness exponent (n ≥ {n_min}, q ≤ {qq:g})" + (", large scales" if c == 4 else ""),
+                         fontsize=9)
+            ax.legend(fontsize=7)
+    return save(fig, out, "hs.png")
 
 
 # ---------------------------------------------------------------------------

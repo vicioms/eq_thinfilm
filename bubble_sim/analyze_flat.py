@@ -13,6 +13,8 @@ e.g. runs/flat_D0.04_A2_analysis) with report.txt:
                  large scales q <= qlarge only (edge walls cross over from qEW to qKPZ at ~100-150 sites);
                  text: memory split
   threshold.png  <h_d>(L) = h_c + A L^(-1/nu) with nu = 4/3 (qEW), 1.733 (qKPZ) or free, var(h_d)
+  hs.png         spectrum of the height along the arc length, h(s) (y(s)), S_h ~ q^-(1+2 zeta):
+                 single-valued with overhangs; compensated for qEW / qKPZ, local zeta, zeta vs L
   length.png     wall length P ∝ L^alpha (alpha = 1 for zeta < 1, zeta for zeta > 1), overhangs
   rdensity.png   roughness density chi(q, r) (Caballero & Giamarchi 2022, analysis/rdensity.py): B(r) from
                  -2 ln chi = q^2 B(r) without a single-valued height (overhangs included: B(0) > 0),
@@ -50,7 +52,8 @@ def main():
     sets = [measure.measure_run(data.load_flat(d), args.workers) for d in args.dirs]
     txt = [f"runs: {', '.join(args.dirs)}"] + [f"  {W['label']}: {len(W['L'])} walls" for W in sets]
     figs = [figures.configs(sets, out), figures.roughness(sets, out, CFG, txt),
-            figures.threshold(sets, out, CFG, txt), figures.length(sets, out, txt),
+            figures.threshold(sets, out, CFG, txt), figures.hs_spectrum(sets, out, CFG, txt),
+            figures.length(sets, out, txt),
             figures.rdensity(sets, out, txt)]
     with open(os.path.join(out, "report.txt"), "w") as f:
         f.write("\n".join(txt) + "\n")
