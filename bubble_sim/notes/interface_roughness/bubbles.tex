@@ -1,0 +1,138 @@
+\section{Bubbles}
+\label{sec:bubbles}
+
+The system is a square box of side $L$. The initial condition is a
+circular domain with $\phi>0$ inside, of radius $R_0=L/6$, centred in
+the box. The force $F$ is increased quasistatically, and the last pinned
+configuration before the interface comes within three lattice sites of
+the box boundary is retained. We call this the depinning configuration.
+We use the closed outer contour, with area $A$ and area centroid
+$\boldsymbol c$, and define $R=(A/\pi)^{1/2}$.
+
+We also construct an area-preserving profile.
+If a ray from $\boldsymbol c$ at angle $\theta$ intersects the dominant
+contour at ordered radii $r_1<\cdots<r_{2m+1}$, its radius is
+\begin{equation}
+ h_\theta(\theta)=\Big[\sum_{j=1}^{2m+1}(-1)^{j+1}r_j(\theta)^2\Big]^{1/2},
+ \qquad \theta\in[0,2\pi).
+ \label{eq:area-radius}
+\end{equation}
+This is the radius of the occupied area in that direction, so that
+$\frac12\int_0^{2\pi}h_\theta^2\,d\theta=A$.
+Detached islands and hole boundaries are omitted.
+We sample $\lceil2\pi R\rceil$ rays, about one per lattice spacing at
+radius $R$, and use $u=R\theta$ with period $T=2\pi R$ in
+Eq.~\eqref{eq:height-modes}.
+
+\subsection{Isotropic disorder}
+\label{sec:bubble-isotropic}
+
+For $a=0$ we analyse $128,64,32,16$ realizations at
+$L=1024,2048,4096,8192$, respectively.
+Figure~\ref{fig:bubble-profiles} shows the contour, $h_\theta(\theta)$
+and $h_s(s)$ for the same realization.
+
+\begin{figure}[H]
+ \centering
+ \includegraphics[width=\linewidth]{fig7_bubble_profiles.pdf}
+ \caption{Bubble with isotropic disorder at $L=1024$,
+ with contour length $P=3118.33$ and $R=342.67$.
+ (a) Full depinning contour; the cross marks the area centroid.
+ (b) Area-preserving profile $h(\theta)$, defined from the alternating
+ sum of the squared crossing radii on each ray, versus $R\theta$.
+ (c) Height $h(s)=|\boldsymbol r(s)-\boldsymbol c|$ along the contour,
+ parametrized by arc length $s\in[0,P)$.
+ In (b,c), the means $\langle h(\theta)\rangle$ and
+ $\langle h(s)\rangle$ are subtracted, respectively.}
+ \label{fig:bubble-profiles}
+\end{figure}
+
+The mean perimeter grows approximately as
+$\mathbb E[P]\propto L^{1.21}$.
+Figure~\ref{fig:bubble-scaling}(a) compares this growth with $L$
+and $L^{1.25}$.
+Figure~\ref{fig:bubble-scaling}(b) shows $q^{3.5}S(q)$.
+The arc-length spectra for the two largest sizes nearly overlap and
+display an approximate plateau for $q\gtrsim0.03$.
+At smaller $q$ they decrease after compensation; at $L=8192$ and
+$q\leq0.03$ the effective exponent is $\zeta_s\simeq1.00$.
+The $h_\theta$ spectra increase with $q$ after compensation and retain
+a visible size dependence, as $h_x$ does for flat interfaces.
+
+\begin{figure}[H]
+ \centering
+ \includegraphics[width=\linewidth]{fig8_bubble_scaling.pdf}
+ \caption{Bubbles with isotropic disorder and $R_0=L/6$.
+ (a) Mean perimeter versus $L$.
+ Error bars give $95\%$ bootstrap intervals for the mean.
+ The black dashed and dotted lines have slopes $1$ and $1.25$, respectively.
+ (b) Compensated spectra $q^{3.5}S(q)$ for $L=4096$ and $8192$.
+ Filled symbols represent $h_\theta(\theta)$ and open symbols represent
+ $h_s(s)$.
+ A plateau corresponds to a spectral exponent $1+2\zeta=3.5$.
+ The horizontal dashed line is a guide to the eye.
+ Each contour has equal weight in the disorder average.
+ The first mode is excluded by imposing $q\geq4\pi/T_{\min}$, with
+ $T_{\min}$ the shortest period among the contours of each size.}
+ \label{fig:bubble-scaling}
+\end{figure}
+
+\subsection{Anisotropic disorder}
+\label{sec:bubble-anisotropic}
+
+For $a=1$ we use $\beta=0$, so $\hat{\boldsymbol b}$ is along the $x$
+axis, and the same system sizes and numbers of realizations as for
+$a=0$. A bubble contour contains every orientation:
+it is edge-like where its normal is parallel to $\hat{\boldsymbol b}$
+and screw-like where its normal is perpendicular to it.
+Figure~\ref{fig:bubble-aniso-profiles} shows a depinning configuration
+elongated perpendicular to $\hat{\boldsymbol b}$.
+For $L\geq2048$ the median depinning configuration extends over
+$0.86$--$0.89$ of the box height, so the extent of the screw-like
+tips is set by the box boundary.
+
+\begin{figure}[H]
+ \centering
+ \includegraphics[width=\linewidth]{fig9_bubble_anisotropic_profiles.pdf}
+ \caption{Bubble with anisotropic disorder ($a=1$, $\beta=0$) at
+ $L=1024$, with perimeter $P=2146.47$ and $R=249.66$.
+ (a) Full depinning contour; the cross marks the area centroid.
+ (b) Area-preserving profile $h(\theta)$ versus $R\theta$.
+ (c) Height $h(s)=|\boldsymbol r(s)-\boldsymbol c|$ along the contour,
+ parametrized by arc length $s\in[0,P)$.
+ In (b,c), the means $\langle h(\theta)\rangle$ and
+ $\langle h(s)\rangle$ are subtracted, respectively.}
+ \label{fig:bubble-aniso-profiles}
+\end{figure}
+
+The mean perimeter grows approximately as
+$\mathbb E[P]\propto L^{1.20}$, as shown in
+Fig.~\ref{fig:bubble-aniso-scaling}(a).
+The ratio $\mathbb E[P]/L$ increases from $2.04$ at $L=1024$
+to $3.11$ at $L=8192$.
+Figure~\ref{fig:bubble-aniso-scaling}(b) shows $q^{3.5}S(q)$.
+The arc-length spectra display an approximate plateau over the whole
+range; at $L=8192$ and $q\leq0.03$ the effective exponent is
+$\zeta_s\simeq1.33$.
+The $h_\theta$ spectra are dominated at small $q$ by the elongation of
+the contour.
+No plateau corresponding to the qKPZ exponent $\zeta=0.63$ is observed.
+
+\begin{figure}[H]
+ \centering
+ \includegraphics[width=\linewidth]{fig10_bubble_anisotropic_scaling.pdf}
+ \caption{Bubbles with anisotropic disorder ($a=1$, $\beta=0$) and
+ $R_0=L/6$.
+ (a) Mean perimeter versus $L$.
+ Error bars give $95\%$ bootstrap intervals for the mean.
+ The black dashed and dotted lines have slopes $1$ and $1.25$,
+ respectively.
+ (b) Compensated spectra $q^{3.5}S(q)$ for $L=4096$ and $8192$.
+ Filled symbols represent $h_\theta(\theta)$ and open symbols represent
+ $h_s(s)$.
+ The horizontal dashed line corresponds to $\zeta=1.25$ and the dotted
+ line to $\zeta=0.63$, with freely chosen amplitudes.
+ Each contour has equal weight in the disorder average.
+ The first mode is excluded by imposing $q\geq4\pi/T_{\min}$.}
+ \label{fig:bubble-aniso-scaling}
+\end{figure}
