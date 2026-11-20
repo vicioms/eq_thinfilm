@@ -1,0 +1,114 @@
+\subsection{Anisotropic disorder}
+\label{sec:flat-anisotropic}
+
+For $a=1$, we distinguish edge, screw and $45^\circ$ mean orientations.
+Their angles are $\beta=90^\circ$, $0^\circ$ and $45^\circ$,
+respectively, measured between $\hat{\boldsymbol b}$ and the $x$ axis.
+
+\subsubsection{Edge}
+\label{sec:flat-edge}
+
+For the edge orientation, $\hat{\boldsymbol b}$ is perpendicular to the
+mean interface direction. We use the same system sizes, aspect ratio
+and numbers of realizations as in the isotropic case.
+Figure~\ref{fig:edge-profiles} shows the contour and the two height
+representations for one depinning configuration.
+
+\begin{figure}[H]
+ \centering
+ \includegraphics[width=\linewidth]{fig3_edge_profiles.pdf}
+ \caption{Flat edge interface with anisotropic disorder ($a=1$) at
+ $L_x=1024$, with perimeter $P=1212.86$.
+ (a) Enlarged view of the full depinning contour.
+ (b) Area-preserving profile $h(x)$.
+ (c) Height $h(s)=y(s)$ along the contour, parametrized by arc length
+ $s\in[0,P)$.
+ In (b,c), the means $\langle h(x)\rangle$ and
+ $\langle h(s)\rangle$ are subtracted, respectively.}
+ \label{fig:edge-profiles}
+\end{figure}
+
+The mean perimeter grows approximately as
+$\mathbb E[P]\propto L_x^{1.006}$, as shown in
+Fig.~\ref{fig:edge-scaling}(a).
+The ratio $\mathbb E[P]/L_x$ remains close to $1.12$ at the largest sizes.
+Figure~\ref{fig:edge-scaling}(b) shows $q^{2.26}S(q)$,
+so that a plateau corresponds to the qKPZ exponent $\zeta=0.63$.
+Both height representations display an approximate plateau at small $q$.
+
+\begin{figure}[H]
+ \centering
+ \includegraphics[width=\linewidth]{fig4_edge_scaling.pdf}
+ \caption{Flat edge interfaces with anisotropic disorder ($a=1$),
+ $\hat{\boldsymbol b}$ perpendicular to the mean interface direction,
+ and $L_y=2L_x$.
+ (a) Mean perimeter versus $L_x$.
+ Error bars give $95\%$ bootstrap intervals for the mean.
+ The black dashed and dotted lines have slopes $1$ and $1.25$,
+ respectively.
+ (b) Compensated spectra $q^{2.26}S(q)$ for $L_x=1024$ and $2048$.
+ Filled symbols represent $h_x(x)$ and open symbols represent $h_s(s)$.
+ The horizontal dashed line corresponds to $\zeta=0.63$ and the dotted
+ line to $\zeta=1.25$, with freely chosen amplitudes.
+ Each contour has equal weight in the disorder average.
+ The first mode of $h_x$ is excluded by imposing $q\geq4\pi/L_x$.}
+ \label{fig:edge-scaling}
+\end{figure}
+
+
+\subsubsection{Screw}
+\label{sec:flat-screw}
+
+For the screw orientation, $\hat{\boldsymbol b}$ is parallel to the
+mean interface direction. We use the same system sizes, aspect ratio
+and numbers of realizations as above.
+Figure~\ref{fig:screw-profiles} shows a depinning configuration with
+long, nearly straight segments.
+
+\begin{figure}[H]
+ \centering
+ \includegraphics[width=\linewidth]{fig5_screw_profiles.pdf}
+ \caption{Flat screw interface with anisotropic disorder ($a=1$) at
+ $L_x=1024$, with perimeter $P=3766.36$.
+ (a) Enlarged view of the full depinning contour.
+ (b) Area-preserving profile $h(x)$.
+ (c) Height $h(s)=y(s)$ along the contour, parametrized by arc length
+ $s\in[0,P)$.
+ In (b,c), the means $\langle h(x)\rangle$ and
+ $\langle h(s)\rangle$ are subtracted, respectively.}
+ \label{fig:screw-profiles}
+\end{figure}
+
+The mean perimeter grows approximately as
+$\mathbb E[P]\propto L_x^{1.45}$, as shown in
+Fig.~\ref{fig:screw-scaling}(a).
+The ratio $\mathbb E[P]/L_x$ increases from $1.92$ at $L_x=256$
+to $4.81$ at $L_x=2048$.
+Figure~\ref{fig:screw-scaling}(b) shows $q^{3.9}S(q)$,
+so that a plateau corresponds to $\zeta=1.45$.
+At $L_x=2048$ and $q\leq0.03$, the effective exponents are
+$\zeta_x\simeq1.24$ and $\zeta_s\simeq1.37$.
+These slopes depend on the fitted range and do not establish a
+universality class for this faceted regime.
+
+\begin{figure}[H]
+ \centering
+ \includegraphics[width=\linewidth]{fig6_screw_scaling.pdf}
+ \caption{Flat screw interfaces with anisotropic disorder ($a=1$),
+ $\hat{\boldsymbol b}$ parallel to the mean interface direction,
+ and $L_y=2L_x$.
+ (a) Mean perimeter versus $L_x$.
+ Error bars give $95\%$ bootstrap intervals for the mean.
+ The black dashed and dotted lines have slopes $1.45$ and $1.25$,
+ respectively.
+ (b) Compensated spectra $q^{3.9}S(q)$ for $L_x=1024$ and $2048$.
+ Filled symbols represent $h_x(x)$ and open symbols represent $h_s(s)$.
+ The horizontal dashed line corresponds to $\zeta=1.45$ and the dotted
+ line to $\zeta=1.25$, with freely chosen amplitudes.
+ Each contour has equal weight in the disorder average.
+ The first mode of $h_x$ is excluded by imposing $q\geq4\pi/L_x$.}
+ \label{fig:screw-scaling}
+\end{figure}
+
+% \subsubsection{$45^\circ$}
+% \label{sec:flat-45}

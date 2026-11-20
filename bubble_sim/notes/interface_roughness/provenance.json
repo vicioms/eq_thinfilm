@@ -1,0 +1,8 @@
+{
+  "repository": "https://github.com/vicioms/eq_thinfilm",
+  "data_commit": "2669ac297713cf9ad6908b45ac056d583dd2affa",
+  "input_sha256": {
+    "runs/flat_D0.04_b0_A2/walls.npz": "3abfe607e245af7585952de8ed31121677799a41486b576f43bcde3abe5dccd8",
+    "runs/flat_D0.04_b90_A2/walls.npz": "5e555dee33188f35fd477e43af59ff230dce2bdef6263d2a5c56b9f70fc79405"
+  }
+}
