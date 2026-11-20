@@ -155,7 +155,7 @@ def profile_figure(example, name):
 
 def scaling_figure(report, spectra, name, second=None):
     """second: optional reference exponent drawn dotted on top of the zeta = 1.25 plateau."""
-    fig, axes = plt.subplots(1, 2, figsize=(10, 4.3), layout="constrained")
+    fig, axes = plt.subplots(1, 3, figsize=(11.5, 3.8), layout="constrained")
     ax = axes[0]
     Ls = np.array(SIZES)
     Pmean = np.array([report[L]["meanP"] for L in SIZES])
@@ -195,8 +195,27 @@ def scaling_figure(report, spectra, name, second=None):
                     Line2D([], [], c=".25", marker="o", mfc="none", ls="none", label=r"$h(s)$")])
     ax.legend(handles=handles, frameon=False, fontsize=8, ncol=2, loc="upper left")
     ax.set(xlabel=r"$q$", ylabel=r"$q^{3.5}S(q)$", title="(b) Compensated height spectra")
-    ax.set_xticks([.001, .002, .005, .01, .02, .05, .1, .2],
-                  labels=["0.001", "0.002", "0.005", "0.01", "0.02", "0.05", "0.1", "0.2"])
+    ax.set_xticks([.001, .01, .1], labels=["0.001", "0.01", "0.1"])
+    ax.xaxis.set_minor_formatter(NullFormatter())
+
+    # As the edge figure: plateau for qKPZ (zeta = 0.63), dotted zeta = 1.25.
+    ax = axes[2]
+    for L, color, marker in zip(SIZES[2:], COLORS[2:], MARKERS[2:]):
+        for kind in ("x", "s"):
+            q, values = spectra[L][kind]
+            ax.loglog(q, q**2.26*values.mean(axis=0), ls="none", marker=marker, color=color,
+                      markerfacecolor=color if kind == "x" else "none", ms=5, markeredgewidth=1)
+    q, values = spectra[SIZES[-1]]["s"]
+    anchor = np.exp(np.interp(np.log(.02), np.log(q), np.log(values.mean(axis=0))))
+    plateau = anchor*.02**2.26
+    xx = np.geomspace(.001, .15, 100)
+    ax.plot(xx, np.full_like(xx, plateau), "--", color="black", lw=1.3)
+    ax.text(.0012, plateau*.85, r"$\zeta=0.63$", fontsize=10, va="top")
+    ax.plot(xx, plateau*(xx/.02)**-1.24, ":", c="black", lw=1.6)
+    ax.text(.0012, plateau*(.0012/.02)**-1.24*.85, r"$\zeta=1.25$", fontsize=10, va="top")
+    ax.legend(handles=handles, frameon=False, fontsize=8, ncol=2, loc="upper right")
+    ax.set(xlabel=r"$q$", ylabel=r"$q^{2.26}S(q)$", title="(c) Compensated height spectra")
+    ax.set_xticks([.001, .01, .1], labels=["0.001", "0.01", "0.1"])
     ax.xaxis.set_minor_formatter(NullFormatter())
     for ext in ("pdf", "png"):
         fig.savefig(OUT / f"{name}.{ext}", dpi=200)
