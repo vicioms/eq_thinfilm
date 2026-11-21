@@ -386,6 +386,85 @@ def figure_strong():
     plt.close(fig)
 
 
+def analyse_relax():
+    """Exact long-chain thresholds (relax.json, K <= 1024): f_c(inf) from
+    f_c(K) = f_c + a K^-x over K >= 64, with x = 3/4 central and x = 1/2, 1
+    as the systematic band  -> relax_summary.json."""
+    from scipy.optimize import curve_fit
+    if not os.path.exists("relax.json"):
+        return None
+    R = json.load(open("relax.json"))
+    out = {}
+    for key, d in R.items():
+        K = np.array([r["K"] for r in d["rows"]], float)
+        m = np.array([r["mean"] for r in d["rows"]]); e = np.array([r["err"] for r in d["rows"]])
+        s = K >= 64
+        fits = {}
+        for x in (0.5, 0.75, 1.0):
+            p, c = curve_fit(lambda K, f, a: f + a * K ** -x, K[s], m[s], p0=(m[-1], 0.1),
+                             sigma=e[s], absolute_sigma=True)
+            fits[str(x)] = (float(p[0]), float(np.sqrt(c[0, 0])))
+        f0 = fits["0.75"][0]
+        lo = min(v[0] for v in fits.values()); hi = max(v[0] for v in fits.values())
+        stat = fits["0.75"][1]
+        out[key] = dict(A=d["A"], k=d["k"], K=K.tolist(), fc_K=m.tolist(), fc_K_err=e.tolist(),
+                        sd_sqrtK=[r["sd"] * np.sqrt(r["K"]) for r in d["rows"]],
+                        fc_inf=f0, fc_inf_lo=lo - stat, fc_inf_hi=hi + stat, fits=fits,
+                        f_ann=d["f_ann"], ratio=d["f_ann"] / f0,
+                        ratio_lo=d["f_ann"] / (hi + stat), ratio_hi=d["f_ann"] / (lo - stat))
+    json.dump(out, open("relax_summary.json", "w"), indent=1)
+    return out
+
+
+def figure_relax():
+    """fig9: exact thresholds of long chains across pinning strength
+    (relax_summary.json, statistics.json, strong_scan.json)."""
+    S = analyse_relax()
+    if not S:
+        return
+    st = json.load(open("statistics.json"))["models"] if os.path.exists("statistics.json") else {}
+    sc = json.load(open("strong_scan.json")) if os.path.exists("strong_scan.json") else {}
+    fig, ax = plt.subplots(1, 2, figsize=(7.2, 2.9))
+    cols = ["#2a78d6", "#eb6834", "#1baf7a", "#eda100", "#8a5cd6", "#e87ba4"]
+    for (key, d), col in zip(S.items(), cols):
+        K = np.array(d["K"]); m = np.array(d["fc_K"]); e = np.array(d["fc_K_err"])
+        ax[0].errorbar(K ** -0.75, m / d["fc_inf"], e / d["fc_inf"], color=col, marker="o", ms=3.5,
+                       lw=1.2, capsize=0, label=f"$k={d['k']:g}$")
+    ax[0].axhline(1, color="#999999", lw=0.8, ls=":")
+    ax[0].set_xlim(0, 16 ** -0.75 * 1.05)
+    ax[0].set_xlabel(r"$K^{-3/4}$")
+    ax[0].set_ylabel(r"$\langle f_c(K)\rangle/f_c(\infty)$")
+    ax[0].legend(fontsize=7, ncol=2, loc="upper left")
+    ax[0].set_title("(a) exact thresholds, $K\\leq1024$", fontsize=9, loc="left")
+    k = np.array([d["k"] for d in S.values()]); r = np.array([d["ratio"] for d in S.values()])
+    rl = np.array([d["ratio_lo"] for d in S.values()]); rh = np.array([d["ratio_hi"] for d in S.values()])
+    ax[1].errorbar(k, r, [r - rl, rh - r], color="#2a78d6", marker="o", ms=5, lw=1.6, capsize=0,
+                   label="relaxation, $K\\to\\infty$", zorder=3)
+    te = [(st[t]["A"], st[t]["f_ann_over_fc_freenu"], st[t]["f_ann_over_fc"]) for t in ("A0.3", "A0.6", "A1") if t in st]
+    if te:
+        a, r1, r2 = map(np.array, zip(*te))
+        ax[1].vlines(a * 1.04, np.minimum(r1, r2), np.maximum(r1, r2), color="#eb6834", lw=2.5,
+                     label="enumeration fits, $K\\leq64$")
+    if sc:
+        ks = np.array([v["k"] for v in sc.values()]); rs = np.array([v["f_ann"] / v["fc_inf"] for v in sc.values()])
+        ax[1].plot(ks, rs, color="#1baf7a", marker="s", ms=4, lw=1, ls="--", label="strong-pinning minimax")
+    kk = np.logspace(np.log10(8), np.log10(60), 60)
+    from annealed import f_ann as _fann
+    fa = np.array([_fann(x, 4.0, gle(1.0, x)) for x in kk])
+    ax[1].plot(kk, fa / (kk - 2.0 + 3.6 / kk), color="#999999", lw=0.9, ls=":", label=r"$f_c^{\rm ann}/(A-\frac{P}{2}+\frac{0.90P}{k})$")
+    ax[1].axhline(1.64, color="#e87ba4", lw=1, ls="--")
+    ax[1].text(0.32, 1.655, "FLRT dynamics 1.64", fontsize=7.5, color="#e87ba4")
+    ax[1].set_xscale("log"); ax[1].set_ylim(0.95, 1.75)
+    ax[1].set_xlabel(r"pinning stiffness $k=|V''|$")
+    ax[1].set_ylabel(r"$f_c^{\rm ann}/f_c$")
+    ax[1].legend(fontsize=6.5, loc="lower left")
+    ax[1].set_title("(b) annealed overshoot across strengths", fontsize=9, loc="left")
+    fig.tight_layout()
+    fig.savefig("fig9_relax.pdf", bbox_inches="tight")
+    fig.savefig("fig9_relax.png", dpi=200, bbox_inches="tight")
+    plt.close(fig)
+
+
 if __name__ == "__main__":
     import sys
     if "--torus-only" in sys.argv:
@@ -393,9 +472,13 @@ if __name__ == "__main__":
         figure_fractal()
         analyse_strong()
         figure_strong()
+        figure_relax()
+    elif "--relax-only" in sys.argv:
+        figure_relax()
     else:
         main()
         figure_torus()
         figure_fractal()
         analyse_strong()
         figure_strong()
+        figure_relax()

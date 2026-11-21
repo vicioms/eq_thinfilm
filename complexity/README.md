@@ -24,7 +24,7 @@ Disorder strengths: triangle wave with L_c = 2.2, 1.4 and 1, and Gaussian disord
 - **Zero force, fixed amplitude.** For the triangle wave, quenched = annealed within about 1%, for all equilibria and for minima. Typical equilibria carry the tilted stability exponent Λ′(1), not the Lyapunov exponent γ.
 - **Zero force, Gaussian disorder.** Σ_q(0) is 2% below annealed, because the random site amplitude is shared by all branches. A phase-annealed, amplitude-quenched operator product predicts the gap with no free parameter: 0.0067, against the measured 0.006–0.008.
 - **Finite force.** Quenched = annealed within 1–3% up to f ≈ 0.6–0.7 f_c, with no O(f²) difference. Beyond about 0.75 f_c the quenched complexity falls steeply below the annealed one and vanishes at f_c.
-- **Threshold ratio.** f_c^ann / f_c = 1.57–1.64 at the weakest disorder, against FLRT's dynamical 1.64. It is 1.5–1.58 at L_c ≤ 1.4, and 1.65–1.72 for Gaussian disorder.
+- **Threshold ratio, exactly.** No-passing relaxation gives the exact sample threshold of chains up to K = 1024 at any pinning strength. f_c^ann / f_c = 1.59 ± 0.02, 1.55 and 1.51 at L_c = 2.2, 1.4 and 1. It falls monotonically to the strong-pinning curve (1.17 at k = 6, where it matches the minimax). Extrapolated to the continuum it is 1.60–1.70, consistent with FLRT's dynamical 1.64. Enumeration gives 1.65–1.72 for Gaussian disorder at L_c = 1.4.
 - **Threshold fluctuations.** The sample threshold fluctuates as K^(−1/2), as the front of a branching process in a time-random environment does.
 - **Mechanism.** The branching structure lives in an environment shared by all branches. The bulk of the population averages that environment over u, and the leading edge does not.
 - **Theory.** Σ_q is the Legendre transform of a quenched pressure φ_q(τ), and f_c is its large-τ slope. Conditional Jensen gives exact bounds Σ_q ≤ Σ_sa ≤ Σ_ann. The Jensen gap is O(τ⁴), i.e. o(f²), while the population stays spread in u, and becomes large once it localises (onset ≈ 0.75 f_c). For Gaussian disorder, amplitude quenching lowers the threshold bound from 0.486 to 0.423.
@@ -49,8 +49,9 @@ Disorder strengths: triangle wave with L_c = 2.2, 1.4 and 1, and Gaussian disord
 - `lyap_leader.py`: the stretching rate of the critical configuration, written to `lyap_leader.json`.
 - `queue_strong.sh`, `minimax.py`: the strong-pinning runs (k = 2, 3, 6) and the minimax threshold, written to `minimax.json`.
 - `strong_exact.py`, `strong_scan.py`: the exact threshold formula for k > 2 (lattice minimax and dynamic programme), its test, and the infinite-chain thresholds, written to `strong_exact.json` and `strong_scan.json`.
+- `relax.py`: exact sample thresholds by no-passing (Middleton) forward relaxation plus bisection, K ≤ 1024 at k = 0.3–6, written to `relax.json`. `theory.py --relax-only` extrapolates them (`relax_summary.json`) and draws `fig9`.
 - `fractal_top.py`: box counting of the near-critical set in the shooting parameter, written to `fractal_top.json`.
-- `theory.py`: computes the quenched pressure from the level counts, its frozen asymptote and the near-threshold rates, and evaluates the f_sa bound. It writes `theory.json`, `table_theory.tex` and `fig5`–`fig8`.
+- `theory.py`: computes the quenched pressure from the level counts, its frozen asymptote and the near-threshold rates, and evaluates the f_sa bound. It writes `theory.json`, `table_theory.tex` and `fig5`–`fig9`.
 - `main.tex`: the note.
 
 ## Reproduce
@@ -72,6 +73,7 @@ python3 fractal_top.py
 python3 minimax.py
 python3 strong_exact.py
 python3 strong_scan.py
+python3 relax.py
 python3 theory.py
 pdflatex -interaction=nonstopmode -halt-on-error main.tex
 pdflatex -interaction=nonstopmode -halt-on-error main.tex

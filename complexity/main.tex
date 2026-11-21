@@ -43,7 +43,7 @@ For FLRT's Gaussian disorder, $\Sq(0)$ is $2\%$ below $\Sann(0)$. The reason is 
 \item \textbf{Finite force.} $\Sq(f)$ and $\Sann(f)$ (or the amplitude-quenched $\Sigma_{\rm sa}$ for Gaussian disorder) agree within $1$--$3\%$ up to $f\approx0.6$--$0.7\,f_c$. The gap grows steeply from $\approx0.75\,f_c$ (about $0.47\,f_c^{\rm ann}$).
 \item \textbf{Theory} (Sec.~\ref{sec:theory}). $\Sq$ is the Legendre transform of a quenched pressure $\varphi_q(\tau)$, and $f_c$ is its large-$\tau$ slope. Exact bounds $\Sq\le\Sigma_{\rm sa}\le\Sann$ follow from conditional Jensen. Writing the partition function as a product of population growth factors shows that the gap is $O(\tau^4)$, i.e.\ $o(f^2)$, while the population is spread in $u$. It becomes large once the population localises: a weak-to-strong-disorder transition at $f_*\approx0.75f_c$. The same population dynamics gives a transfer-operator method on the torus, valid at $K=\infty$. It reproduces the exact quenched pressure, shows that the gap is the phase variance of the one-step growth factor, and independently confirms $f_c$ and the jump.
 \item \textbf{A jump at threshold.} The quenched complexity does not vanish at $f_c$: at a force $O(1/K)$ below each sample's threshold there are still $e^{cK}$ equilibria, with $c\simeq\Lambda(1)/2$, and $e^{c_{\min}K}$ minima. The annealed complexity, by contrast, vanishes continuously at $f_c^{\rm ann}$. In the thermodynamic formalism, $f_c$ is the maximal ergodic average of the pinning force and $c$ is the entropy of the force-maximising measure. Consistent with Ledrappier--Young, $c=d\,\lambda^*$ within $10\%$, with $\lambda^*$ the Lyapunov exponent of the critical orbit and $d\approx0.28$ the fractal dimension of the near-critical set, both measured independently. At strong pinning the problem is solvable: $c\to\ln2$ (each site free to sit on either side of its force peak), $c_{\min}\to0$ and $f_c\to A-P/2$, with sample fluctuations $P/\sqrt{12K}$. For $k>2$ the threshold is given exactly by a lattice minimax over the period choices, Eq.~\eqref{eq:fcexact}, verified sample by sample. It predicts $f_c=A-P/2+0.90\,P/k$, while the annealed bound overshoots by a constant $0.316P$. Enumeration up to $k=6$ shows $c$ crossing over from $0.22/L_c$ toward $\ln2$.
-\item \textbf{Threshold.} $f_c^{\rm ann}/f_c=1.57$--$1.64$ at the weakest disorder ($L_c=2.2$), against FLRT's dynamical $1.64$; it is $1.5$--$1.58$ at $L_c\le1.4$, and $1.65$--$1.72$ for Gaussian disorder at $L_c=1.41$. Of the Gaussian ratio, a factor $1.15$ comes from the shared site amplitudes and is computed exactly. The sample threshold fluctuates as $K^{-1/2}$, the scaling of a branching front in a time-random environment.
+\item \textbf{Threshold.} Exact no-passing relaxation of chains up to $K=1024$ (Sec.~\ref{sec:relax}) gives $f_c^{\rm ann}/f_c=1.59\pm0.02$, $1.55$ and $1.51$ at $L_c=2.2$, $1.4$ and $1$, falling monotonically to the strong-pinning curve ($1.17$ at $k=6$). Extrapolated to the continuum, $L_c\to\infty$, the ratio is $1.60$--$1.70$, consistent with FLRT's dynamical $1.64$. Enumeration gives $1.65$--$1.72$ for Gaussian disorder at $L_c=1.41$; for the triangle model the relaxation picks the lower end of such ranges. Of the Gaussian ratio, a factor $1.15$ comes from the shared site amplitudes and is computed exactly. The sample threshold fluctuates as $K^{-1/2}$, the scaling of a branching front in a time-random environment.
 \end{enumerate}
 
 \section{Model}
@@ -279,6 +279,7 @@ model & $f_c^{\rm ann}$ & $f_c^{\rm ann,min}$ & $f_c$ ($\nu=4/3$) & $f_c$ (front
 \paragraph{Threshold.}
 $f_c^{\rm ann}/f_c$ is $1.57$--$1.64$ at the weakest disorder, against FLRT's dynamical $1.64\pm0.02$ (Fig.~\ref{fig:thr}b, Table~\ref{tab:thr}).
 It is $1.5$--$1.58$ at $L_c\le1.4$, where lattice corrections are larger.
+Exact thresholds of chains up to $K=1024$ (Sec.~\ref{sec:relax}) settle the extrapolation: $1.59$, $1.55$ and $1.51$ at $L_c=2.2$, $1.4$ and $1$, i.e.\ the front and free-$\nu$ fits, not the $\nu=4/3$ one.
 For Gaussian disorder at $L_c=1.41$ it is $1.65$--$1.72$: the amplitude fluctuations lower $f_c$ further.
 The spread comes from the extrapolation form: the $\nu=4/3$ fit gives the lowest $f_c$, while the branching-front and free-$\nu$ fits agree with each other.
 Counting minima tightens the bound to $f_c^{\rm ann,min}$, but it remains far from tight.
@@ -633,6 +634,56 @@ So the quenched--annealed gap is, quantitatively, the phase variance of the one-
 \label{fig:torus}
 \end{figure}
 
+\subsection{Exact thresholds of long chains: no passing}\label{sec:relax}
+
+Enumeration stops at $K\lesssim64$, and the threshold extrapolations of Table~\ref{tab:thr} differ by up to $4\%$ depending on the assumed form.
+Here the threshold is computed exactly for chains of $K=1024$ sites, at every pinning strength.
+The model is convex in the elastic coupling, so the no-passing rule (Middleton) holds: forward-only relaxation from $u\equiv0$ either stops in a stable configuration, or advances every site by a full period $P$. By the shift symmetry $u\to u+P$, the line then moves forever.
+So ``pinned at $f$'' is decided exactly, and the sample threshold follows by bisection (\texttt{relax.py}).
+Each local move solves $F_i=0$ exactly on the piecewise-linear force, so there is no time step and no tolerance beyond the bisection one ($10^{-7}A$).
+This is the polynomial-time feasibility oracle of the exact formula $f_c=A-\min\max_iL_i$ of Sec.~\ref{sec:strong}, valid at all $k$.
+
+\paragraph{Checks.}
+\begin{itemize}
+\item Against exact enumeration plus bisection on the same samples ($A=0.6$, $1$, $3$, short chains), the thresholds agree to $10^{-8}$.
+\item At $k=3$ and $6$, the relaxation gives $f_c(\infty)=1.779$ and $4.492$. The independent minimax dynamic programme of Sec.~\ref{sec:strong} gives $1.780$ and $4.489$.
+\item The means agree with the enumeration means of independent samples at every common size ($K=16$--$64$, $k=0.3$--$3$), within $1.5$ standard errors.
+\end{itemize}
+
+\begin{table}[H]
+\centering\footnotesize
+\begin{tabular}{lcccccc}
+\toprule
+$k=A$ & 0.3 & 0.6 & 1 & 2 & 3 & 6 \\
+\midrule
+$\langle f_c(1024)\rangle$ & 0.0686 & 0.1758 & 0.3474 & 0.9721 & 1.7823 & 4.4951 \\
+$f_c(\infty)$ & 0.0682(8) & 0.1749(13) & 0.3460(20) & 0.970(3) & 1.779(4) & 4.492(5) \\
+$f_c^{\rm ann}$ & 0.1084 & 0.2704 & 0.5240 & 1.3335 & 2.2696 & 5.2642 \\
+$f_c^{\rm ann}/f_c$ & 1.59(2) & 1.55(1) & 1.51(1) & 1.375(5) & 1.275(3) & 1.172(1) \\
+$f_c\,L_c^2=f_c\,k^{-4/3}$ & 0.339 & 0.346 & 0.346 & 0.385 & 0.411 & 0.412 \\
+$f_c^{\rm ann}L_c^2$ & 0.540 & 0.534 & 0.524 & 0.529 & 0.525 & 0.483 \\
+${\rm sd}\,f_c(K)\sqrt K$ ($K=1024$) & 0.10 & 0.20 & 0.31 & 0.54 & 0.61 & 0.84 \\
+\bottomrule
+\end{tabular}
+\caption{Exact long-chain thresholds by no-passing relaxation ($P=4$; $600$ samples per $K\le256$, $300$ for $K=512$, $1024$). $f_c(\infty)$ is the fit $f_c+aK^{-3/4}$ over $K\ge64$; the error spans the fits with $K^{-1/2}$ and $K^{-1}$ plus the statistical error.}
+\label{tab:relax}
+\end{table}
+
+\paragraph{Results.}
+\begin{itemize}
+\item \textbf{The ratio, exactly.} $f_c^{\rm ann}/f_c=1.59\pm0.02$ at $k=0.3$ ($L_c=2.2$), then $1.55$ and $1.51$ at $k=0.6$ and $1$. The extrapolation from $K=1024$ moves $f_c$ by only $0.5$--$1\%$, so this is no longer a matter of fit form. The $\nu=4/3$ extrapolation of the enumeration was too low; the front and free-$\nu$ fits were right.
+\item \textbf{Continuum limit.} The weak-pinning thresholds follow Larkin scaling, $f_cL_c^2\simeq0.34$ and $f_c^{\rm ann}L_c^2\simeq0.53$, with lattice corrections of opposite sign (Table~\ref{tab:relax}). Extrapolating the ratio to $k\to0$, linearly or quadratically in $1/L_c$ or $1/L_c^2$, gives $1.60$--$1.70$. FLRT's dynamical $1.64\pm0.02$ is inside this range: our static, exact thresholds are consistent with it, and the remaining difference at finite $L_c$ is a lattice effect.
+\item \textbf{One curve from weak to strong pinning.} The ratio falls monotonically with $k$ and joins the strong-pinning minimax at $k=3$--$6$, then follows $f_c^{\rm ann}/(A-P/2+0.90P/k)\to1$ (Fig.~\ref{fig:relax}b). The annealed overshoot $f_c^{\rm ann}-f_c$ grows from $0.04$ at $k=0.3$ to $0.77$ at $k=6$, and saturates at $0.316P$.
+\item \textbf{Fluctuations.} ${\rm sd}\,f_c(K)\sqrt K$ is constant from $K=16$ to $1024$ at every $k$: the $K^{-1/2}$ law of Sec.~\ref{sec:theory} holds over two decades, and tends to $P/\sqrt{12}$ only slowly at strong pinning.
+\end{itemize}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=\textwidth]{fig9_relax.pdf}
+\caption{Exact thresholds by no-passing relaxation. (a) $\langle f_c(K)\rangle/f_c(\infty)$ against $K^{-3/4}$ for $K=16$--$1024$. (b) $f_c^{\rm ann}/f_c$ against the pinning stiffness: relaxation (circles; bars span the extrapolation forms), enumeration fits of Table~\ref{tab:thr} (bars at $k\le1$), the strong-pinning minimax (squares) and its asymptote (dotted). Dashed: FLRT's dynamical $1.64$.}
+\label{fig:relax}
+\end{figure}
+
 \section{Open questions}
 
 \begin{itemize}
@@ -640,6 +691,7 @@ So the quenched--annealed gap is, quantitatively, the phase variance of the one-
 \item \textbf{Expansion in $1/k$.} The strong-pinning limit is exact at leading order. The first corrections, sites moving by $O(P/k)$ off their peaks with signs no longer decoupled, should give $c=\ln2-O(1/k)$ and the shift of $f_c$, and connect to the weak-pinning dimension.
 \item \textbf{The dimension $d$.} With $c=d\lambda^*$, the open quantity is the unstable dimension $d\approx0.28$ of the critical measure. For a hyperbolic set it solves a Bowen equation, $P_{\max}(-d\ln J^u)=0$, with the pressure restricted to the force-maximising orbits. Whether $d$ is universal in the continuum limit, and the analogous $d_{\min}=c_{\min}/\lambda^*\approx0.16$ for minima, are open.
 \item \textbf{Continuum limit.} The torus method costs the same at weak disorder, so it can give the universal curve $\Sq(f)L_c$ against $f/f_c^{\rm ann}$ and the onset as $L_c\to\infty$. A finer grid, or adaptive refinement near the edge, is needed for $f_c$ and $c$.
+\item \textbf{Weaker disorder.} The relaxation needs no enumeration and takes seconds per sample at $K=1024$, so $k=0.1$--$0.2$ ($L_c=3$--$5$) is in reach. It would pin down the continuum ratio, now $1.60$--$1.70$, and test Larkin scaling of $f_c$ directly. The same code with Gaussian amplitudes would treat FLRT's own model.
 \item \textbf{Sizes.} Larger $K$ near $f\approx0.75f_c$, and an overlap measure in the bulk of the chain rather than at the free end, would sharpen the onset.
 \item \textbf{Medium size.} Here the period of the medium is fixed while $K$ grows, as in FLRT's torus. A medium of period $\gg K^\zeta$ would test whether the localisation factor survives in an unbounded medium.
 \end{itemize}
@@ -657,6 +709,7 @@ All steps run from this folder:
 \item \texttt{python3 lyap\_leader.py} writes \texttt{lyap\_leader.json} (stretching of the critical configuration);
 \item \texttt{python3 strong\_exact.py} tests the exact threshold formula, and \texttt{python3 strong\_scan.py} gives the infinite-chain strong-pinning thresholds (\texttt{strong\_exact.json}, \texttt{strong\_scan.json});
 \item \texttt{./queue\_strong.sh} and \texttt{python3 minimax.py} give the strong-pinning runs and the minimax threshold (\texttt{strong\_pinning.json} is written by the analysis in \texttt{theory.py});
+\item \texttt{python3 relax.py} writes \texttt{relax.json} (exact thresholds by no-passing relaxation, $K\le1024$); \texttt{python3 theory.py --relax-only} writes \texttt{relax\_summary.json} (the extrapolations of Table~\ref{tab:relax}) and Fig.~\ref{fig:relax};
 \item \texttt{python3 fractal\_top.py} writes \texttt{fractal\_top.json} (box counting of the near-critical set; Fig.~\ref{fig:fractal} is drawn by \texttt{theory.py}).
 \end{itemize}
 The library code is in \texttt{qcount.py} (enumeration) and \texttt{annealed.py} (exact annealed quantities).
