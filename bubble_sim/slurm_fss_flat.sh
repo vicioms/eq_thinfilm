@@ -5,6 +5,8 @@
 #   sbatch slurm_fss_flat.sh 0      # b along x: wall line || b  (screw wall) -> runs/flat_D0.04_b0_A2
 #   sbatch slurm_fss_flat.sh 90     # b along y: wall line _|_ b (edge wall)  -> runs/flat_D0.04_b90_A2
 #   sbatch slurm_fss_flat.sh 90 4   # optional 2nd argument: aspect, box L x (aspect L), default 2
+#   sbatch slurm_fss_flat.sh 0 2 0.02 1024   # optional 3rd: Delta (default 0.04), 4th: largest L (default 2048)
+#                                            -> runs/flat_D0.02_b0_A2, L = 256 512 1024
 #
 # The wall and the box never rotate (wall along x, motion along y); the angle
 # rotates b in the noise spectrum only.
@@ -39,16 +41,24 @@
 
 set -euo pipefail
 NSHARDS=16
-DELTA=0.04
-ANGLE=${1:?usage: sbatch slurm_fss_flat.sh <burgers angle: 0 | 90 | ...> [aspect]}
+ANGLE=${1:?usage: sbatch slurm_fss_flat.sh <burgers angle: 0 | 90 | ...> [aspect] [Delta] [Lmax]}
 ASPECT=${2:-2}
+DELTA=${3:-0.04}
+LMAX=${4:-2048}
+# ramp step: 0.001 at Delta = 0.04, scaled with the threshold, h_c ~ Delta^(4/3)
+DH=$(python3 -c "print(f'{0.001 * ($DELTA / 0.04) ** (4 / 3):.2g}')")
+LS=(); SAMPLES=()
+for pair in 256:256 512:128 1024:64 2048:32; do
+    L=${pair%%:*}
+    if [ "$L" -le "$LMAX" ]; then LS+=("$L"); SAMPLES+=("$pair"); fi
+done
 OUT=runs/flat_D${DELTA}_b${ANGLE}_A${ASPECT}
 case "$ANGLE" in
     0)  ANISO=(0 0.5 1) ;;
     90) ANISO=(0.5 1) ;;
     *)  ANISO=(1) ;;
 esac
-echo "output: $OUT  burgers angle: $ANGLE  aspect: $ASPECT  a: ${ANISO[*]}"
+echo "output: $OUT  burgers angle: $ANGLE  aspect: $ASPECT  Delta: $DELTA  a: ${ANISO[*]}  L: ${LS[*]}  dh: $DH"
 
 # --- environment (edit) ------------------------------------------------------
 module load cuda/12.8
@@ -66,8 +76,8 @@ python fss_scan.py \
     --shard "$SLURM_ARRAY_TASK_ID" --nshards "$NSHARDS" \
     --outdir "$OUT" \
     --aniso "${ANISO[@]}" \
-    --L 256 512 1024 2048 \
-    --samples 256:256 512:128 1024:64 2048:32 \
+    --L "${LS[@]}" \
+    --samples "${SAMPLES[@]}" \
     --Delta "$DELTA" --w 3 --burgers-angle "$ANGLE" \
     --h-start 0 --h-step 0.005 \
-    --dh 0.001 --n-bisect 10
+    --dh "$DH" --n-bisect 10

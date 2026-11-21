@@ -1,0 +1,65 @@
+== 1. anisotropy of the force on a straight segment, R(ell) (-> 1 for ell >> w = 3)
+   ell =   1: R = -0.057
+   ell =   3: R = -0.030
+   ell =   6: R = 0.054
+   ell =  12: R = 0.284
+   ell =  24: R = 0.574
+   ell =  48: R = 0.769
+   ell =  96: R = 0.880
+
+== 2. straight-wall FRG scaling vs data (A2); h0 = isotropic (a = 0) threshold at the same L
+   L     h0      a   edge/h0 [pred (1+a)^2/3]   screw/h0 [pred (1-a)^2/3]   45/h0 [pred 1]
+    256  0.02614  0.5  1.094 [1.310]             0.883 [0.630]                -  
+    256  0.02614  1.0  1.185 [1.587]             0.700 [0.000]              0.788
+    512  0.02568  0.5  1.070 [1.310]             0.931 [0.630]                -  
+    512  0.02568  1.0  1.137 [1.587]             0.794 [0.000]              0.848
+   1024  0.02566  0.5  1.043 [1.310]             0.956 [0.630]                -  
+   1024  0.02566  1.0  1.086 [1.587]             0.861 [0.000]              0.919
+   2048  0.02559  0.5  1.027 [1.310]             0.972 [0.630]                -  
+   2048  0.02559  1.0  1.058 [1.587]             0.911 [0.000]              0.958
+
+== 3. exact symmetries: odd part (edge - screw)/2, even part (edge + screw)/2 - h0, 45° offset h45 - h0
+   L= 256  a=0.5: odd +0.00276 even -0.00031  a=1.0: odd +0.00633 even -0.00150  | a=1: h45-h0 -0.00553
+   L= 512  a=0.5: odd +0.00178 even +0.00002  a=1.0: odd +0.00441 even -0.00089  | a=1: h45-h0 -0.00390
+   L=1024  a=0.5: odd +0.00111 even -0.00002  a=1.0: odd +0.00288 even -0.00068  | a=1: h45-h0 -0.00208
+   L=2048  a=0.5: odd +0.00071 even -0.00001  a=1.0: odd +0.00188 even -0.00039  | a=1: h45-h0 -0.00107
+
+== 4. one-parameter form h = h0 [1 + a C cos 2alpha]^(2/3): C from each run
+   L      C_edge(a=.5) C_screw(a=.5) C_edge(a=1) C_screw(a=1)
+    256        0.288        0.341        0.290        0.414
+    512        0.214        0.202        0.212        0.293
+   1024        0.129        0.131        0.132        0.200
+   2048        0.082        0.084        0.088        0.130
+   mean C(L) ~ L^-0.60
+
+== 5. FSS amplitudes, <h_d> = h_inf + B L^(-3/4)  (B - B(a=0) should be odd and ~linear in a cos 2alpha)
+    b0 a=0.0: h_inf = 0.02544±0.00007  B = +0.0375  chi2/dof = 1.5
+    b0 a=0.5: h_inf = 0.02534±0.00007  B = -0.1478  chi2/dof = 0.3
+    b0 a=1.0: h_inf = 0.02450±0.00011  B = -0.4093  chi2/dof = 5.7
+   b90 a=0.5: h_inf = 0.02569±0.00009  B = +0.1887  chi2/dof = 0.2
+   b90 a=1.0: h_inf = 0.02604±0.00010  B = +0.3229  chi2/dof = 1.0
+   b45 a=1.0: h_inf = 0.02540±0.00013  B = -0.3185  chi2/dof = 8.9
+   a=0.5: B_edge - B0 = +0.1512,  B_screw - B0 = -0.1853
+   a=1.0: B_edge - B0 = +0.2854,  B_screw - B0 = -0.4468
+   a=1.0: B_45 - B0 = -0.3560  (even in a: expected ~a^2)
+
+== 6. TKD crossover for edge walls (a = 1), with the measured threshold anisotropy C(ell)
+   g(ell) = |h_c''(ell)| r_f (ell/L_c)^zeta / (c/mu),  h_c''/h_c = -(8/3) a C / (1 + a C),
+   C(ell) = min(R(ell), fitted power law of section 4): the threshold anisotropy of a segment
+   cannot exceed the anisotropy of the force it feels (power law extrapolated below ell = 256)
+   ell =    6: C = 0.054  g = 0.02
+   ell =   12: C = 0.284  g = 0.23
+   ell =   24: C = 0.574  g = 0.89
+   ell =   48: C = 0.769  g = 2.53
+   ell =   96: C = 0.614  g = 5.27
+   ell =  192: C = 0.404  g = 9.49
+   ell =  384: C = 0.266  g = 16.48
+   (g scales as r_f L_c^-zeta: L_c and r_f are Larkin estimates with O(1) prefactors)
+   ell_x (g = 1): 26 sites
+
+== 7. direct orientation smearing: <cos 2 theta> of the critical walls' tangents (chord over ell = 6)
+   orientation-smearing model: edge needs <cos2theta> = C, screw needs -<cos2theta> = C
+   edge  a=0.5: L=256: +0.587  L=512: +0.527  L=1024: +0.512  L=2048: +0.459
+   edge  a=1.0: L=256: +0.686  L=512: +0.657  L=1024: +0.657  L=2048: +0.652
+   screw a=0.5: L=256: +0.068  L=512: -0.164  L=1024: -0.298  L=2048: -0.383
+   screw a=1.0: L=256: -0.113  L=512: -0.349  L=1024: -0.511  L=2048: -0.563
