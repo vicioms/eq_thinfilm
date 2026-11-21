@@ -1,0 +1,24 @@
+m=64 f=0.185
+  relaxed  lowest eigenvalues 2.22e-02 4.14e-02 1.38e-01;  trigger extra force 0.0000
+  relaxed  lowest eigenvalues 1.58e-02 7.38e-02 1.52e-01;  trigger extra force 0.0000
+  relaxed  lowest eigenvalues 7.74e-03 4.42e-02 1.23e-01;  trigger extra force 0.0000
+  relaxed  lowest eigenvalues 1.44e-02 6.46e-02 1.28e-01;  trigger extra force 0.0001
+  relaxed: mean trigger 0.0000
+  fresh    lowest eigenvalues 2.79e-02 4.82e-02 1.29e-01;  trigger extra force 0.0008
+  fresh    lowest eigenvalues 1.29e-02 4.96e-02 1.52e-01;  trigger extra force 0.0040
+  fresh    lowest eigenvalues 3.73e-02 6.57e-02 1.47e-01;  trigger extra force 0.0020
+  fresh    lowest eigenvalues 3.94e-02 7.28e-02 1.39e-01;  trigger extra force 0.0010
+  fresh: mean trigger 0.0019
+  (204s)
+m=1024 f=0.088
+  relaxed  lowest eigenvalues 3.29e-02 7.26e-02 1.36e-01;  trigger extra force 0.0014
+  relaxed  lowest eigenvalues 3.00e-02 7.35e-02 1.44e-01;  trigger extra force 0.0002
+  relaxed  lowest eigenvalues 2.00e-02 5.06e-02 1.45e-01;  trigger extra force 0.0004
+  relaxed  lowest eigenvalues 3.92e-02 6.38e-02 1.43e-01;  trigger extra force 0.0007
+  relaxed: mean trigger 0.0007
+  fresh    lowest eigenvalues 2.25e-02 8.26e-02 1.64e-01;  trigger extra force 0.0045
+  fresh    lowest eigenvalues 3.27e-02 7.92e-02 1.70e-01;  trigger extra force 0.0082
+  fresh    lowest eigenvalues 2.72e-02 5.68e-02 1.59e-01;  trigger extra force 0.0022
+  fresh    lowest eigenvalues 2.90e-02 5.91e-02 1.50e-01;  trigger extra force 0.0038
+  fresh: mean trigger 0.0047
+  (233s)

@@ -1,0 +1,8 @@
+21:42:52 patchy 16384 0.189 alive 0.0 v - act - 114s
+21:44:54 patchy 16384 0.19 alive 0.0 v - act - 122s
+21:47:41 patchy 16384 0.192 alive 0.0 v - act - 166s
+21:50:02 patchy 16384 0.193 alive 0.0625 v 0.0067 act 0.09 141s
+21:55:27 patchy 16384 0.195 alive 0.6875 v 0.015 act 0.191 325s
+22:00:06 patchy 16384 0.196 alive 1.0 v 0.0219 act 0.272 279s
+22:01:31 patchy 16384 0.2 alive 1.0 v 0.0577 act 0.644 85s
+22:02:44 patchy 16384 0.205 alive 1.0 v 0.0813 act 0.807 73s

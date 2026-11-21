@@ -1,0 +1,3 @@
+21:10:47 gap 64.0 32768 0.188 alive 0.0 median t/m 515.625
+21:14:12 gap 64.0 32768 0.191 alive 0.3125 median t/m 943.75
+21:18:52 gap 64.0 32768 0.194 alive 1.0 median t/m inf

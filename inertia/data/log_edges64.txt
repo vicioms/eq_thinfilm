@@ -1,0 +1,7 @@
+21:06:58 edge 64.0 0.18 l_h start 4128.0 end 832.0 early s -0.4896 c 0.125 7s
+21:07:03 edge 64.0 0.186 l_h start 4128.0 end 1696.0 early s -0.2708 c 0.125 5s
+21:07:07 edge 64.0 0.19 l_h start 4128.0 end 2648.0 early s -0.1146 c 0.125 4s
+21:07:12 edge 64.0 0.194 l_h start 4128.0 end 3260.0 early s -0.0979 c 0.125 5s
+21:07:23 edge 64.0 0.198 l_h start 4128.0 end 4060.0 early s -0.0562 c 0.125 10s
+21:07:42 edge 64.0 0.204 l_h start 4128.0 end 4292.0 early s -0.0229 c 0.125 19s
+21:07:53 edge 64.0 0.215 l_h start 4128.0 end 4780.0 early s 0.0646 c 0.125 12s

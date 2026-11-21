@@ -1,0 +1,14 @@
+17:45:12 edge 1024.0 0.08 l_h start 4120.0 end 0.0 early s -0.1302 c 0.0312 101s
+17:46:29 edge 1024.0 0.086 l_h start 4120.0 end 0.0 early s -0.0673 c 0.0312 77s
+17:47:44 edge 1024.0 0.09 l_h start 4120.0 end 488.0 early s -0.0109 c 0.0312 75s
+17:48:51 edge 1024.0 0.094 l_h start 4120.0 end 5828.0 early s 0.0111 c 0.0312 66s
+17:50:08 edge 1024.0 0.098 l_h start 4120.0 end 6980.0 early s 0.0238 c 0.0312 77s
+17:51:32 edge 1024.0 0.105 l_h start 4116.0 end 7456.0 early s 0.0273 c 0.0312 84s
+17:52:50 edge 1024.0 0.12 l_h start 4128.0 end 7720.0 early s 0.0289 c 0.0312 78s
+17:53:16 edge 256.0 0.12 l_h start 4120.0 end 0.0 early s -0.3328 c 0.0625 26s
+17:53:32 edge 256.0 0.128 l_h start 4120.0 end 176.0 early s -0.1349 c 0.0625 16s
+17:53:56 edge 256.0 0.134 l_h start 4124.0 end 2692.0 early s -0.0203 c 0.0625 24s
+17:54:31 edge 256.0 0.14 l_h start 4124.0 end 4880.0 early s 0.0203 c 0.0625 34s
+17:54:58 edge 256.0 0.146 l_h start 4124.0 end 5556.0 early s 0.0411 c 0.0625 27s
+17:55:18 edge 256.0 0.155 l_h start 4120.0 end 5728.0 early s 0.0495 c 0.0625 20s
+17:55:43 edge 256.0 0.17 l_h start 4124.0 end 5828.0 early s 0.0526 c 0.0625 25s

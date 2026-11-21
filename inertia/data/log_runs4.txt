@@ -1,0 +1,57 @@
+17:45:42 cross 1.0 0.0 down 0.3153 up 0.3102 225s
+17:48:39 cross 1.0 0.5 down 0.3153 up 0.3102 177s
+17:51:40 cross 1.0 1.0 down 0.3152 up 0.3107 181s
+17:53:40 cross 1.0 2.0 down 0.3117 up 0.3063 120s
+17:55:42 cross 1.0 3.0 down 0.3061 up 0.3022 122s
+17:57:22 cross 1.0 4.0 down 0.2988 up 0.2973 99s
+17:58:55 cross 1.0 6.0 down 0.2878 up 0.2882 94s
+18:00:27 cross 1.0 8.0 down 0.2791 up 0.2792 91s
+18:01:59 cross 1.0 11.0 down 0.266 up 0.2669 92s
+18:03:46 cross 1.0 16.0 down 0.2496 up 0.2525 107s
+18:06:15 cross -1.0 0.0 down 0.5225 up 0.5135 149s
+18:08:14 cross -1.0 0.5 down 0.5193 up 0.5123 119s
+18:09:51 cross -1.0 1.0 down 0.5115 up 0.5049 97s
+18:11:25 cross -1.0 2.0 down 0.4878 up 0.482 94s
+18:12:59 cross -1.0 3.0 down 0.4658 up 0.463 94s
+18:14:31 cross -1.0 4.0 down 0.4476 up 0.4438 92s
+18:15:57 cross -1.0 6.0 down 0.4186 up 0.4352 86s
+18:17:18 cross -1.0 8.0 down 0.3957 up 0.4352 81s
+18:19:24 cross -1.0 11.0 down 0.3708 up 0.4352 126s
+18:20:41 cross -1.0 16.0 down 0.3381 up 0.4352 77s
+18:20:44 heavy 16384.0 1024 0.034 alive 0.0 median t/m 13.0 v 0.0025 3s
+18:20:48 heavy 16384.0 1024 0.037 alive 0.0 median t/m 18.0 v 0.0049 4s
+18:21:03 heavy 16384.0 1024 0.04 alive 0.0 median t/m 61.5 v 0.0095 15s
+18:21:40 heavy 16384.0 1024 0.042 alive 1.0 median t/m inf v 0.018 37s
+18:22:18 heavy 16384.0 1024 0.044 alive 1.0 median t/m inf v 0.0227 39s
+18:22:31 heavy 16384.0 4096 0.034 alive 0.0 median t/m 14.0 v 0.0022 13s
+18:22:49 heavy 16384.0 4096 0.037 alive 0.0 median t/m 19.5 v 0.0043 18s
+18:23:51 heavy 16384.0 4096 0.04 alive 0.0 median t/m 71.0 v 0.0087 62s
+18:26:08 heavy 16384.0 4096 0.042 alive 1.0 median t/m inf v 0.018 137s
+18:28:17 heavy 16384.0 4096 0.044 alive 1.0 median t/m inf v 0.0227 130s
+18:28:18 gap 256.0 1024 0.128 alive 0.0 median t/m 50.0 1s
+18:28:19 gap 256.0 1024 0.132 alive 0.0 median t/m 100.0 1s
+18:28:21 gap 256.0 1024 0.134 alive 0.0 median t/m 206.5 2s
+18:28:24 gap 256.0 1024 0.136 alive 0.0 median t/m 289.5 3s
+18:28:28 gap 256.0 1024 0.138 alive 0.125 median t/m 471.0 4s
+18:28:31 gap 256.0 4096 0.128 alive 0.0 median t/m 84.0 3s
+18:28:37 gap 256.0 4096 0.132 alive 0.0 median t/m 151.5 5s
+18:28:46 gap 256.0 4096 0.134 alive 0.0 median t/m 214.5 9s
+18:28:56 gap 256.0 4096 0.136 alive 0.0 median t/m 297.0 10s
+18:29:23 gap 256.0 4096 0.138 alive 0.375 median t/m 716.5 27s
+18:29:36 gap 256.0 16384 0.128 alive 0.0 median t/m 95.5 14s
+18:30:00 gap 256.0 16384 0.132 alive 0.0 median t/m 202.5 24s
+18:30:40 gap 256.0 16384 0.134 alive 0.0 median t/m 291.5 40s
+18:31:42 gap 256.0 16384 0.136 alive 0.0 median t/m 513.0 62s
+18:33:26 gap 256.0 16384 0.138 alive 0.875 median t/m inf 104s
+18:33:26 gap 64.0 1024 0.18 alive 0.0 median t/m 90.625 0s
+18:33:27 gap 64.0 1024 0.188 alive 0.0 median t/m 242.1875 1s
+18:33:28 gap 64.0 1024 0.194 alive 0.0 median t/m 643.75 1s
+18:33:30 gap 64.0 1024 0.198 alive 0.6875 median t/m inf 2s
+18:33:32 gap 64.0 4096 0.18 alive 0.0 median t/m 153.125 1s
+18:33:35 gap 64.0 4096 0.188 alive 0.0 median t/m 410.9375 3s
+18:33:41 gap 64.0 4096 0.194 alive 0.5625 median t/m inf 6s
+18:33:48 gap 64.0 4096 0.198 alive 0.9375 median t/m inf 7s
+18:33:55 gap 64.0 16384 0.18 alive 0.0 median t/m 192.1875 6s
+18:34:09 gap 64.0 16384 0.188 alive 0.0 median t/m 401.5625 14s
+18:34:35 gap 64.0 16384 0.194 alive 1.0 median t/m inf 26s
+18:35:03 gap 64.0 16384 0.198 alive 1.0 median t/m inf 28s
