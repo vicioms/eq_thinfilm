@@ -110,5 +110,62 @@ universality class for this faceted regime.
  \label{fig:screw-scaling}
 \end{figure}
 
-% \subsubsection{$45^\circ$}
-% \label{sec:flat-45}
+\subsubsection{\texorpdfstring{$45^\circ$}{45 degrees}}
+\label{sec:flat-45}
+
+For the $45^\circ$ orientation, $\hat{\boldsymbol b}$ makes an angle of
+$45^\circ$ with the mean interface direction. We use the same system
+sizes, aspect ratio and numbers of realizations as above.
+Figure~\ref{fig:diagonal-profiles} shows a depinning configuration with
+long segments and a large-scale tilt.
+At $L_x=2048$, about $88\%$ of the contour length has its tangent within
+$45^\circ$ of the direction perpendicular to $\hat{\boldsymbol b}$,
+and about $1\%$ within $15^\circ$ of $\hat{\boldsymbol b}$.
+
+\begin{figure}[H]
+ \centering
+ \includegraphics[width=\linewidth]{fig15_diagonal_profiles.pdf}
+ \caption{Flat $45^\circ$ interface with anisotropic disorder ($a=1$) at
+ $L_x=1024$, with perimeter $P=3262.98$.
+ (a) Enlarged view of the full depinning contour.
+ (b) Area-preserving profile $h(x)$.
+ (c) Height $h(s)=y(s)$ along the contour, parametrized by arc length
+ $s\in[0,P)$.
+ In (b,c), the means $\langle h(x)\rangle$ and
+ $\langle h(s)\rangle$ are subtracted, respectively.}
+ \label{fig:diagonal-profiles}
+\end{figure}
+
+The mean perimeter grows approximately as
+$\mathbb E[P]\propto L_x^{1.44}$, as shown in
+Fig.~\ref{fig:diagonal-scaling}(a), close to the screw case.
+The ratio $\mathbb E[P]/L_x$ increases from $1.43$ at $L_x=256$
+to $3.56$ at $L_x=2048$.
+Figure~\ref{fig:diagonal-scaling}(b) shows $q^{3.9}S(q)$,
+as for the screw orientation.
+At $L_x=2048$ and $q\leq0.03$, the effective exponents are
+$\zeta_x\simeq0.55$ and $\zeta_s\simeq1.10$.
+The two height representations differ strongly, since $32\%$ and
+$46\%$ of the columns cross the contour more than once at $L_x=1024$
+and $2048$, respectively.
+As for the screw orientation, these slopes do not establish a
+universality class.
+
+\begin{figure}[H]
+ \centering
+ \includegraphics[width=\linewidth]{fig16_diagonal_scaling.pdf}
+ \caption{Flat $45^\circ$ interfaces with anisotropic disorder ($a=1$),
+ $\hat{\boldsymbol b}$ at $45^\circ$ from the mean interface direction,
+ and $L_y=2L_x$.
+ (a) Mean perimeter versus $L_x$.
+ Error bars give $95\%$ bootstrap intervals for the mean.
+ The black dashed and dotted lines have slopes $1.45$ and $1.25$,
+ respectively.
+ (b) Compensated spectra $q^{3.9}S(q)$ for $L_x=1024$ and $2048$.
+ Filled symbols represent $h_x(x)$ and open symbols represent $h_s(s)$.
+ The horizontal dashed line corresponds to $\zeta=1.45$ and the dotted
+ line to $\zeta=1.25$, with freely chosen amplitudes.
+ Each contour has equal weight in the disorder average.
+ The first mode of $h_x$ is excluded by imposing $q\geq4\pi/L_x$.}
+ \label{fig:diagonal-scaling}
+\end{figure}

@@ -2,7 +2,7 @@
 
 Working note on contour geometry and roughness in isotropic and anisotropic disorder, for flat interfaces and future bubble analysis.
 
-Read [roughness_note.pdf](roughness_note.pdf). The current results cover flat isotropic, edge, and screw interfaces, and isotropic and anisotropic bubbles. The 45-degree analysis will be added later.
+Read [roughness_note.pdf](roughness_note.pdf). The current results cover flat isotropic, edge, screw, and 45-degree interfaces, and isotropic and anisotropic bubbles.
 
 ## Contents
 
@@ -12,14 +12,15 @@ Read [roughness_note.pdf](roughness_note.pdf). The current results cover flat is
 - `fig5` and `fig6`: anisotropic screw results.
 - `fig7` and `fig8`: isotropic bubble results.
 - `fig9` and `fig10`: anisotropic bubble results.
+- `fig15` and `fig16`: anisotropic 45-degree results.
 - `fig11` to `fig14`: local width of arcs of bubble contours about their mean line (`fig11`, `fig13`) and about a fitted cubic (`fig12`, `fig14`), isotropic and anisotropic.
-- `make_figures.py`, `make_edge_figures.py`, `make_screw_figures.py`, `make_bubble_figures.py`, `make_bubble_arc_figure.py`: analysis and plotting scripts using saved contours only.
-- `statistics.json`, `edge_statistics.json`, `screw_statistics.json`, `bubble_statistics.json`, `bubble_arc_width.json`: measured quantities and fitting ranges.
+- `make_figures.py`, `make_edge_figures.py`, `make_screw_figures.py`, `make_diagonal_figures.py`, `make_bubble_figures.py`, `make_bubble_arc_figure.py`: analysis and plotting scripts using saved contours only.
+- `statistics.json`, `edge_statistics.json`, `screw_statistics.json`, `diagonal_statistics.json`, `bubble_statistics.json`, `bubble_arc_width.json`: measured quantities and fitting ranges.
 - `provenance.json`: input snapshot and SHA-256 checksums.
 
 Each figure is provided as PDF and PNG. All cases use the same contour extraction, area-preserving h(x), arc-length h(s), and equal-realization spectral averaging. Sizes are 256, 512, 1024, and 2048 with 256, 128, 64, and 32 realizations, respectively. Bubbles use 1024, 2048, 4096, and 8192 with 128, 64, 32, and 16 realizations, area-preserving radius h(theta), and arc-length h(s) = |r(s) - c|. Spectral panels show the two largest sizes.
 
-The screw perimeter panel compares slopes 1.45 and 1.25. Its spectral panel shows q^3.9 S(q), testing zeta = 1.45, with a second reference at zeta = 1.25. Reference exponents are visual guides, not imposed fits.
+The screw and 45-degree perimeter panels compare slopes 1.45 and 1.25. Their spectral panels show q^3.9 S(q), testing zeta = 1.45, with a second reference at zeta = 1.25. Reference exponents are visual guides, not imposed fits.
 
 ## Reproduce figures
 
@@ -29,6 +30,7 @@ Requires Python 3, NumPy, and Matplotlib. With the saved `walls.npz` and `contou
 python3 make_figures.py
 python3 make_edge_figures.py
 python3 make_screw_figures.py
+python3 make_diagonal_figures.py
 python3 make_bubble_figures.py
 python3 make_bubble_arc_figure.py
 ```
