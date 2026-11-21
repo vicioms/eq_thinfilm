@@ -1,0 +1,14 @@
+17:17:00 life 1024.0 1024 0.094 alive 0.875 median t inf v 0.0333 act 0.691 15s
+17:17:17 life 1024.0 1024 0.096 alive 1.0 median t inf v 0.0409 act 0.753 17s
+17:17:34 life 1024.0 1024 0.098 alive 1.0 median t inf v 0.0463 act 0.782 16s
+17:18:46 life 1024.0 4096 0.094 alive 0.9375 median t inf v 0.0325 act 0.668 72s
+17:19:58 life 1024.0 4096 0.096 alive 1.0 median t inf v 0.0413 act 0.754 72s
+17:20:59 life 1024.0 4096 0.098 alive 1.0 median t inf v 0.0465 act 0.783 61s
+17:21:03 life 256.0 1024 0.132 alive 0.0 median t 25472.0 v 0.0168 act 0.352 4s
+17:21:10 life 256.0 1024 0.136 alive 0.5 median t inf v 0.0253 act 0.468 8s
+17:21:18 life 256.0 1024 0.14 alive 1.0 median t inf v 0.0497 act 0.742 8s
+17:21:27 life 256.0 1024 0.144 alive 1.0 median t inf v 0.064 act 0.826 9s
+17:21:44 life 256.0 4096 0.132 alive 0.125 median t 32256.0 v 0.0133 act 0.279 17s
+17:22:07 life 256.0 4096 0.136 alive 1.0 median t inf v 0.0253 act 0.459 23s
+17:22:32 life 256.0 4096 0.14 alive 1.0 median t inf v 0.0489 act 0.729 24s
+17:22:55 life 256.0 4096 0.144 alive 1.0 median t inf v 0.0645 act 0.828 23s

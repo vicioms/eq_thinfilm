@@ -1,0 +1,58 @@
+17:02:24 rb 0.0 down 0.5148 up 0.5137 20+13s
+17:03:11 rb 1.0 down 0.5058 up 0.5035 36+11s
+17:03:21 rb 4.0 down 0.439 up 0.4468 4+6s
+17:03:25 rb 16.0 down 0.3288 up 0.3419 1+4s
+17:03:30 rb 64.0 down 0.2139 up 0.2555 1+3s
+17:03:44 rb 256.0 down 0.1346 up 0.2008 5+10s
+17:04:22 rb 1024.0 down 0.0853 up 0.1702 20+17s
+17:05:45 rb 4096.0 down 0.0529 up 0.1475 39+44s
+17:07:10 heavy 16384.0 down 0.0343 up 0.0899 59+26s
+17:12:30 heavy 65536.0 down 0.0211 up 0.0824 231+90s
+17:12:31 life 1024.0 512 0.072 alive 0.0 median t 12800.0 1s
+17:12:32 life 1024.0 512 0.076 alive 0.0 median t 14336.0 1s
+17:12:33 life 1024.0 512 0.08 alive 0.0 median t 18432.0 1s
+17:12:34 life 1024.0 512 0.084 alive 0.0 median t 22528.0 1s
+17:12:36 life 1024.0 512 0.088 alive 0.0 median t 41984.0 2s
+17:12:41 life 1024.0 512 0.092 alive 0.125 median t 156160.0 5s
+17:12:43 life 1024.0 1024 0.072 alive 0.0 median t 13312.0 1s
+17:12:44 life 1024.0 1024 0.076 alive 0.0 median t 17920.0 1s
+17:12:46 life 1024.0 1024 0.08 alive 0.0 median t 20992.0 2s
+17:12:48 life 1024.0 1024 0.084 alive 0.0 median t 25088.0 2s
+17:12:50 life 1024.0 1024 0.088 alive 0.0 median t 43520.0 3s
+17:13:00 life 1024.0 1024 0.092 alive 0.1875 median t 137216.0 9s
+17:13:02 life 1024.0 2048 0.072 alive 0.0 median t 13824.0 2s
+17:13:04 life 1024.0 2048 0.076 alive 0.0 median t 16384.0 2s
+17:13:07 life 1024.0 2048 0.08 alive 0.0 median t 21504.0 3s
+17:13:11 life 1024.0 2048 0.084 alive 0.0 median t 31232.0 4s
+17:13:17 life 1024.0 2048 0.088 alive 0.0 median t 48640.0 6s
+17:13:46 life 1024.0 2048 0.092 alive 0.125 median t 132096.0 29s
+17:13:51 life 1024.0 4096 0.072 alive 0.0 median t 15360.0 6s
+17:13:59 life 1024.0 4096 0.076 alive 0.0 median t 18432.0 8s
+17:14:10 life 1024.0 4096 0.08 alive 0.0 median t 24576.0 10s
+17:14:22 life 1024.0 4096 0.084 alive 0.0 median t 32768.0 12s
+17:14:40 life 1024.0 4096 0.088 alive 0.0 median t 56832.0 19s
+17:15:32 life 1024.0 4096 0.092 alive 0.25 median t 158208.0 51s
+17:15:32 life 256.0 512 0.108 alive 0.0 median t 3968.0 1s
+17:15:33 life 256.0 512 0.112 alive 0.0 median t 4096.0 0s
+17:15:33 life 256.0 512 0.116 alive 0.0 median t 5376.0 0s
+17:15:34 life 256.0 512 0.12 alive 0.0 median t 6656.0 1s
+17:15:35 life 256.0 512 0.124 alive 0.0 median t 8320.0 1s
+17:15:36 life 256.0 512 0.128 alive 0.0 median t 11264.0 1s
+17:15:37 life 256.0 1024 0.108 alive 0.0 median t 4736.0 1s
+17:15:38 life 256.0 1024 0.112 alive 0.0 median t 5632.0 1s
+17:15:39 life 256.0 1024 0.116 alive 0.0 median t 7296.0 1s
+17:15:41 life 256.0 1024 0.12 alive 0.0 median t 7936.0 1s
+17:15:42 life 256.0 1024 0.124 alive 0.0 median t 9856.0 1s
+17:15:44 life 256.0 1024 0.128 alive 0.0 median t 14848.0 3s
+17:15:46 life 256.0 2048 0.108 alive 0.0 median t 5376.0 2s
+17:15:49 life 256.0 2048 0.112 alive 0.0 median t 6912.0 2s
+17:15:51 life 256.0 2048 0.116 alive 0.0 median t 7424.0 2s
+17:15:54 life 256.0 2048 0.12 alive 0.0 median t 8192.0 3s
+17:15:58 life 256.0 2048 0.124 alive 0.0 median t 12928.0 4s
+17:16:02 life 256.0 2048 0.128 alive 0.0 median t 19072.0 4s
+17:16:06 life 256.0 4096 0.108 alive 0.0 median t 5632.0 3s
+17:16:09 life 256.0 4096 0.112 alive 0.0 median t 6400.0 4s
+17:16:14 life 256.0 4096 0.116 alive 0.0 median t 8704.0 5s
+17:16:19 life 256.0 4096 0.12 alive 0.0 median t 9856.0 5s
+17:16:26 life 256.0 4096 0.124 alive 0.0 median t 13056.0 7s
+17:16:34 life 256.0 4096 0.128 alive 0.0 median t 20096.0 9s
