@@ -22,12 +22,13 @@
 \begin{quote}\small
 \textbf{Abstract.}
 We study an elastic line with mass $m$ and damping $\eta$, driven through random-field or random-bond disorder.
-Inertia leaves the static threshold $\fcs$ and the large-scale qEW exponents untouched, but it breaks no-passing.
+Below $M\approx0.5$, where single jumps do not overshoot, inertia changes nothing: the line visits the same metastable states, and avalanches keep the qEW exponents (measured $\tau=1.06$--$1.17$, against $1.11$). Above it, inertia breaks no-passing and lowers the force at which the line stops, by an amount that does not shrink with scale while the critical window does.
 For $M=\kappa m/(\eta L_c)^2\gtrsim5$ it replaces the continuous qEW threshold by the end of a hot, radiating sliding branch.
 A parameter-free closure, in which the temperature is fixed by the exact power balance, predicts that branch and its minimum $f_{\min}(M)$.
-The long-time, large-$L$ threshold lies 2--3\% below $f_{\min}$ for every mass tested ($M=23$ to $6\times10^3$).
-Near it, sliding and pinned regions coexist; their edges move at up to the sound speed.
+The long-time, large-$L$ threshold lies 1--2.5\% below $f_{\min}$ for every mass tested ($M=23$ to $6\times10^3$).
+Between the two, sliding and pinned regions coexist, with edges moving at up to the sound speed, and this patchy sliding ends continuously, like an absorbing-state transition.
 At large $M$ the threshold decays as $m^{-3/10}$ (random field) or $m^{-5/14}$ (random bond).
+The hot sliding line is Edwards--Wilkinson rough ($\zeta=1/2$), with a temperature that depends on scale; its large-scale value is predicted from the zero-frequency force noise and the differential friction.
 Hysteresis between ramp-up and ramp-down is a finite-size, finite-time effect.
 \end{quote}
 
@@ -110,8 +111,9 @@ What is missing is a theory, for true inertia in a finite-dimensional line, of t
 \item[Q4] How does the threshold scale with mass, and does the disorder class matter?
 \item[Q5] Where does the crossover from qEW happen at small $M$, and is it universal?
 \item[Q6] What does displacement (well) driving show?
+\item[Q7] What are the roughness and avalanche exponents ($\zeta$, $\tau$), and does functional RG give them?
 \end{description}
-Sections~\ref{sec:exact}--\ref{sec:theory} give exact results and the theory; Sec.~\ref{sec:num} tests them; Sec.~\ref{sec:answers} answers Q1--Q6.
+Sections~\ref{sec:exact}--\ref{sec:theory} give exact results and the theory; Sec.~\ref{sec:num} tests them; Sec.~\ref{sec:answers} answers Q1--Q7.
 
 \section{Exact results}
 \label{sec:exact}
@@ -238,6 +240,21 @@ The threshold is the force $f_0$ at which the hot/pinned edge speed $s(f)$ vanis
 Domains of size $\ell_0$ below $f_0$ die in $\tau\simeq\ell_0/|s|\propto(f_0-f)^{-1}$ if $s$ is linear through zero.
 This differs from a bistable system with a Maxwell point between two spinodals: here the pinned state offers essentially no resistance.
 
+\subsection{Exponents: where functional RG applies}
+\label{sec:frg}
+The answer depends on the regime.
+\begin{itemize}
+\item \textbf{Small $M$.} At the qEW fixed point $x\to bx$, $t\to b^zt$; the ratio of inertial to viscous terms scales as $M_\ell=M(L_c/\ell)^{z}$, so the mass is irrelevant with eigenvalue $-z$. At one loop the flow of $\Delta$ involves the response only through $\int_0^\infty R_q(t)\,dt=1/\lambda_q$, which is independent of $m$; the cusp sign $\Delta'(0^+)$ comes from time ordering, valid while the motion is forward on average. Hence $\zeta\simeq1.25$, $z\simeq1.43$, $\tau=2-2/(d+\zeta)\simeq1.11$ in $d=1$, with corrections $\propto(\ell/\ell_*)^{-z}$, $\ell_*=L_cM^{1/z}$: avalanches smaller than $s_*\sim\ell_*^{1+\zeta}$ are inertial. The argument is perturbative in the dynamics and assumes the line passes through the same metastable states as at $m=0$. That holds exactly while single jumps are overdamped ($M\lesssim0.5$), where velocities stay non-negative and no-passing survives. Above it, overshoots let the line skip states, which shifts the force at which it stops: a change in the sequence of states, not a small dynamical correction, and the flow above does not see it (Sec.~\ref{sec:tau}). Functional RG expands around a cold fixed point and cannot see the hot branch, nor where the transition stops being continuous.
+\item \textbf{Hot sliding line.} At large scales the moving line sees the disorder as noise varying in time. Statistical tilt symmetry forbids a KPZ term and protects $\kappa$, so the line is Edwards--Wilkinson, $\zeta=1/2$. Mode $q$ is driven by the single-site force noise $S_\xi(\omega)$ (sites are independent) and damped by $\eta_{\rm eff}$:
+\begin{equation}
+S(q)=\int\frac{d\omega}{2\pi}\frac{S_\xi(\omega)}{|\lambda_q-m\omega^2-i\eta_{\rm eff}\omega|^2},\qquad
+T_{\rm lw}\equiv\lim_{q\to0}\lambda_qS(q)=\frac{S_\xi(0)}{2\eta_{\rm eff}}.
+\label{eq:Tlw}
+\end{equation}
+The temperature thus depends on scale: underdamped modes feel the noise at their own frequency, $T(q)\approx S_\xi(\omega_q)/2\eta$, while the slow modes feel its zero-frequency part, which is dominated by the time a site lingers in one disorder cell. At second order $S_\xi(0)=\hat\Delta(0)/\bar v$ and $\eta_{\rm eff}=\eta$, giving $T_{\rm lw}=A^2/6\eta\bar v$ for random field, and zero for random bond ($\hat\Delta(0)=0$). Averaging $T(q)$ over the band returns $T_{\rm kin}$ of Sec.~\ref{sec:theory}.
+\item \textbf{End of patchy sliding.} The continuous transition at $f_\infty$ (Sec.~\ref{sec:patchy}) is an absorbing-state transition, whose exponents come from the corresponding field theory, not from the elastic one. The candidates are directed percolation (heat as the only slow field) and conserved directed percolation, if activity couples to the conserved elastic stress; in $d=1$ the latter maps onto qEW depinning. Avalanche sizes do not separate them: directed percolation gives $\tau=1+\delta/(1+\theta+\delta)\simeq1.108$, against $1.11$ for qEW; $\nu_\perp$ ($1.10$ against $1.33$) and $z$ ($1.58$ against $1.43$) do.
+\end{itemize}
+
 \section{Numerical tests}
 \label{sec:num}
 
@@ -269,7 +286,7 @@ For uniformly sliding lines at $m=64$--4096 (Fig.~\ref{fig:edges}a,b, \texttt{ch
 \item \textbf{Alternative.} A closure using the self-consistently driven spectrum $S_{\delta u}=S_F\,\mathrm{Im}\chi/\eta\omega$ (\texttt{sc\_noneq.py}) fits $B$ better at short lags, but its noise sustains itself at low $v$, violating the power balance by factors of 2--100; its energy-based minimum lies 8--11\% above the measured threshold.
 \item \textbf{Hybrid.} Taking the shape of $B$ from the driven spectrum but its amplitude from the exact power balance (\texttt{sc\_hybrid.py}, \texttt{notes\_hybrid\_closure.md}) keeps the energy balance exact and fits the long-lag $B$ (0.83--0.93 of measured, against 0.5--0.7), and it reproduces the flat low-velocity part of the measured flow curve, the patchy region, to 3--7\%. But it has no sharp minimum at $m=256$ and a shallow one 6\% below the measured threshold at $m=1024$, and it keeps a finite ``hot'' friction as $v\to0$.
 \end{itemize}
-The equilibrium-shaped closure is uncontrolled; its accuracy partly comes from compensating errors, and its numbers carry a systematic of order 10\%. It remains the best threshold predictor (2--3\% above $f_\infty$), while the hybrid describes the patchy sliding just below $f_{\min}$. Enforcing the exact power balance is common to both and is what makes them work.
+The equilibrium-shaped closure is uncontrolled; its accuracy partly comes from compensating errors, and its numbers carry a systematic of order 10\%. It remains the best threshold predictor (1--2.5\% above $f_\infty$), while the hybrid describes the patchy sliding just below $f_{\min}$. Enforcing the exact power balance is common to both and is what makes them work.
 
 \subsection{Finite-time thresholds and collapse (Q1, Q3, Q4)}
 
@@ -354,7 +371,7 @@ At $m\ge256$ this confirms the invasion mechanism of Sec.~\ref{sec:invasion}; at
 Runs of $1000m$ at $L$ up to 16384 ($m=256$) and 32768 ($m=64$) (Fig.~\ref{fig:gap}):
 \begin{itemize}
 \item $m=256$: all lines stop at $0.974f_{\min}$ (median $513m$), 88\% slide at $0.989f_{\min}$, bracketing $f_0$.
-\item $m=64$: with $1000m$ the switch appears at $0.95$--$0.97f_{\min}$; longer runs place it at $0.97f_{\min}$ (Sec.~\ref{sec:patchy}).
+\item $m=64$: with $1000m$ the switch appears at $0.95$--$0.97f_{\min}$; runs of $12000m$ at $L=65536$ place it at $0.986f_{\min}$ (Sec.~\ref{sec:patchy}).
 \item $m=16384$ ($200m$ runs): every line stops at $0.97f_{\min}$ and slides at $1.02f_{\min}$.
 \end{itemize}
 
@@ -373,12 +390,15 @@ Runs of $1000m$ at $L$ up to 16384 ($m=256$) and 32768 ($m=64$) (Fig.~\ref{fig:g
 \end{figure}
 
 \paragraph{Exploratory front model.}
-A deterministic coarse-grained front with the closure friction $F(v,T)$, a static release threshold and temperature carried by sound (\texttt{front\_model.py}) reproduces the saturation of $s$ near $c$, but puts the zero at $1.07f_{\min}$ as a jump. The smooth crossing below $f_{\min}$ needs a fluctuating ingredient absent from a mean-field front.
+A deterministic coarse-grained front with the closure friction $F(v,T)$, a static release threshold and temperature carried by sound (\texttt{front\_model.py}) reproduces the saturation of $s$ near $c$, but puts the zero at $1.07f_{\min}$ as a jump. A stochastic version (\texttt{front\_model\_stoch.py}, \texttt{notes\_front\_model\_stoch.md}) uses blocks of size $\sqrt m$. Each block carries its own temperature, which obeys the local power balance and supplies its own noise. Stuck blocks are released only by noise and by the heat and load of their neighbours, and the number of modes per block is the only free parameter. The model reproduces the closure's $f_{\min}$ to 0.1\%. Noise lowers the zero of $s$ to $1.03$--$1.05f_{\min}$ but never below $f_{\min}$. The end of sliding stays a jump, from no activity to an active fraction of 0.9 and from $s\approx0$ to $0.7c$, with no patchy steady state. Local thermal noise alone thus makes the hot/cold system bistable. The continuous end below $f_{\min}$ needs quenched heterogeneity that keeps hot patches alive, which a block-averaged model lacks.
 
 \subsection{Just below $f_{\min}$: patchy sliding}
 \label{sec:patchy}
 
-At $m=64$ ($M=23$) a fine force grid with runs of $2000m$ ($L=16384$, 16 samples, \texttt{patchy.py}) resolves the end of sliding (Fig.~\ref{fig:gap}b uses the earlier $1000m$ runs):
+At $m=64$ ($M=23$), where $f_{\min}=0.2008$, the end of sliding was followed in three steps. Each step showed the previous one to be limited by run length.
+
+\paragraph{Fixed-time survival.}
+With a fine force grid and runs of $2000m$ ($L=16384$, 16 samples, \texttt{patchy.py}), lines still slide in patches down to $0.96f_{\min}$:
 
 \begin{center}\small
 \begin{tabular}{cccc}
@@ -395,12 +415,50 @@ $\le0.956$ & 0 & -- & -- \\
 \end{tabular}
 \end{center}
 
+\paragraph{Size dependence.}
+At $0.974$ and $0.976f_{\min}$, the survivors' active fraction after $4000m$ falls with $L$ (0.25, 0.12, 0.10 and 0.22, 0.19, 0.14 for $L=4096$, 16384, 65536; \texttt{endslide.py}, \texttt{endslide\_L.py}; Fig.~\ref{fig:endslide}b). Fixed-time survivor averages cannot separate the scenarios, however: in a small system only unusually active lines survive, at a first-order end as at a critical one.
+
+\paragraph{Activity decay at large $L$.}
+The decisive measurement is the decay of the active fraction $\rho(t)$, averaged over all lines (stopped lines count as zero), at $L=65536$ and up to $12000m$ (\texttt{endslide\_t.py}; Fig.~\ref{fig:endslide}a). At an absorbing-state critical point $\rho\sim t^{-\delta}$ (directed percolation: $\delta=0.159$); a jump would show a plateau on the sliding side.
 \begin{itemize}
-\item \textbf{Threshold.} The long-time threshold is $f_\infty\simeq0.97f_{\min}$, the same ratio as at $m=256$, 1024 and 16384. The earlier impression of sliding down to $0.95f_{\min}$ came from runs of $1000m$.
-\item \textbf{Patchy state.} Between $f_\infty$ and $f_{\min}$ the line slides in patches: the active fraction drops from $0.8$ to $0.2$ and $\bar v$ falls from $\approx v_{\min}$ ($0.068$) to $\approx0.015$ before sliding dies. Whether $\bar v$ reaches zero continuously or with a small jump is beyond this resolution.
-\item \textbf{Not fragility.} Lines that stopped inertially are \emph{more} stable than overdamped-relaxed ones (extra force to trigger the first avalanche, $L=4096$, 4 samples: $0.0019$ against $\lesssim10^{-4}$ at $m=64$, $f=0.185$; $0.0047$ against $0.0007$ at $m=1024$, $f=0.088$; comparable lowest Hessian eigenvalues; \texttt{marginality.py}), as expected if inertia skips shallow minima. Patches survive below $f_{\min}$ because the hot state is sustained locally, not because pinned regions are fragile.
-\item \textbf{Edge experiment at $m=64$.} A uniformly hot half turns patchy by itself below $f_{\min}$, so the ``edge speed'' there ($f_0=1.03f_{\min}$) records this conversion, not edge retreat.
+\item $0.974$ and $0.976f_{\min}$: $\rho$ falls faster than any power law, roughly exponentially with decay times $\approx1000m$ and $1500m$. Every line stops, after $3700m$ to $11000m$; one of 12 is still sliding at $12000m$. The patches seen at $2000$--$4000m$ are transients.
+\item $0.984f_{\min}$: $\rho$ still bends down ($0.29\to0.14$ between $3000m$ and $9000m$, local slope $0.7$); no line has stopped yet.
+\item $0.989f_{\min}$: $\rho$ decays as a slow power law with slope $\approx0.10$, shallower than $\delta$, with no plateau ($0.46\to0.41$ over the same window).
 \end{itemize}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=\textwidth]{fig10_endslide.pdf}
+\caption{End of sliding at $m=64$. (a) Active fraction averaged over all lines, $L=65536$, 4--6 samples; dotted: directed-percolation slope $t^{-0.159}$. (b) Survivors' active fraction after $4000m$, against $L$.}
+\label{fig:endslide}
+\end{figure}
+
+\begin{itemize}
+\item \textbf{Threshold.} $f_\infty=(0.986\pm0.003)f_{\min}$ at $m=64$. This agrees with the edge-speed zero at $m=256$ and 1024 ($0.975$--$0.981f_{\min}$) and with the bracket $0.974$--$0.989f_{\min}$ at $m=256$. Earlier estimates of $0.95$ and then $0.97f_{\min}$ came from runs of $1000m$ and $2000m$.
+\item \textbf{Order of the transition.} The data favour a continuous, absorbing-state end. The decay is a slow power law just above $f_\infty$ and bends down just below, with no plateau on either side. The exponent is not resolved: the bracketing slopes, $0.10$ and $0.7$, straddle $\delta_{\rm DP}=0.159$. The patchy sliding between $f_\infty$ and $f_{\min}$ is the active phase near this point, with an active fraction falling from $0.8$ to about $0.4$ at $0.989f_{\min}$.
+\item \textbf{Lifetimes.} Below $f_\infty$ sliding is transient, but lifetimes reach $10^4m$ within 1\% of $f_\infty$. This is far longer than the $(f_{\min}-f)^{-1}$ law measured further below, and is the critical slowing down of the transition.
+\item \textbf{Not fragility.} Lines that stopped inertially are \emph{more} stable than overdamped-relaxed ones. The extra force needed to trigger the first avalanche ($L=4096$, 4 samples; \texttt{marginality.py}) is $0.0019$, against $\lesssim10^{-4}$, at $m=64$, $f=0.185$, and $0.0047$, against $0.0007$, at $m=1024$, $f=0.088$. The lowest Hessian eigenvalues are comparable. This is what one expects if inertia skips shallow minima. Patches survive below $f_{\min}$ because the hot state is sustained locally, not because pinned regions are fragile.
+\item \textbf{Edge experiment at $m=64$.} Below $f_{\min}$ a uniformly hot half turns patchy by itself. The ``edge speed'' there ($f_0=1.03f_{\min}$) records this conversion, not edge retreat.
+\end{itemize}
+
+\subsection{Roughness of the hot sliding line (Q7)}
+\label{sec:rough}
+Structure factors were measured in the hot state at $L=2048$ (8 samples, $3\times10^5$ to relax, $6\times10^5$ to measure; \texttt{sq.py}, \texttt{sq\_near.py}), and the single-site force correlator $C(t)$ and displacement spread $B(t)=\langle[\delta u_i(t)-\delta u_i(0)]^2\rangle$ were recorded directly (\texttt{sq\_diag.py}; Fig.~\ref{fig:rough}).
+\begin{itemize}
+\item \textbf{$\zeta=1/2$.} For random field, $T(q)=\lambda_qS(q)$ is flat over two decades at small $q$, so $S\propto q^{-2}$. Each mode is in equipartition, $\lambda_qS(q)\simeq m\langle|\dot u_q|^2\rangle/L$, at a temperature that depends on scale: at $m=1024$, $f=0.12$ it falls from $T_{\rm lw}=5.0$ to $1.9$ at the lattice scale, while $T_{\rm kin}=2.8$.
+\item \textbf{Random bond.} The large-scale temperature is suppressed fifty-fold ($0.01$ against $0.5$ at the lattice scale), as $\hat\Delta(0)=0$ predicts; the small residual comes from higher orders.
+\item \textbf{Bare second order} gets the short scales right but underestimates $T_{\rm lw}$ by a factor of $2.6$--$3.3$. Gaussian smearing with the closure's $B=Tb(t)$, even made self-consistent, recovers only part of it.
+\item \textbf{Noise.} Gaussian smearing of $\Delta$ with the \emph{measured} $B(t)$ reproduces the measured $C(t)$ at all lags and $S_\xi(0)$ to 1--4\%. The measured $B(t)$ grows much faster than the closure's, nearly linearly at long lags: sites linger and backtrack, and $S_\xi(0)$ exceeds $\hat\Delta(0)/\bar v$ by a factor of 1.6--2.1.
+\item \textbf{Damping.} The slow modes are damped by $\eta_{\rm eff}=S_\xi(0)/2T_{\rm lw}=0.60$--$0.67$, matched within 10\% by the differential friction at fixed temperature, $\eta+\partial_vF_{\rm pin}|_T$ from the closure ($0.56$--$0.65$). The full slope $df/dv$, which lets $T$ follow $v$, fails at low $v$ ($0.44$ against $0.63$), consistent with the measured $T_{\rm kin}$ barely changing with $v$.
+\item \textbf{Prediction.} With measured $S_\xi(0)$ and the closure $\eta_{\rm eff}$, Eq.~\eqref{eq:Tlw} gives $T_{\rm lw}=10.6$, $7.3$, $5.4$ ($m=1024$, $f=0.10$, $0.11$, $0.12$) and $3.7$ ($m=256$, $f=0.17$), against measured $10.9$, $6.5$, $5.0$ and $3.7$. Approaching $f_{\min}$, $T_{\rm lw}$ grows through the noise, $S_\xi(0)\propto\bar v^{-1.3}$, not through $\eta_{\rm eff}\to0$.
+\end{itemize}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=\textwidth]{fig11_roughness.pdf}
+\caption{Hot sliding line. (a) Mode temperatures $\lambda_qS(q)$; lines: bare second order. (b) Single-site force correlator at $m=1024$, $f=0.12$: measured, Gaussian smearing with the measured $B(t)$, and bare. (c) Large-scale temperature against $\bar v$: measured, Eq.~\eqref{eq:Tlw} with measured $S_\xi(0)$ and $\eta_{\rm eff}=\eta+\partial_vF_{\rm pin}|_T$, bare $A^2/6\eta\bar v$, and $T_{\rm kin}$.}
+\label{fig:rough}
+\end{figure}
 
 \subsection{Heavy lines and random-bond disorder (Q4)}
 
@@ -449,16 +507,58 @@ With $k_0=0.01$, $\dot w=10^{-3}$, $L=1024$ (Fig.~\ref{fig:well}):
 \label{fig:well}
 \end{figure}
 
+\subsection{Avalanches under slow driving (Q6, Q7)}
+\label{sec:aval}
+The well ($k_0=3\times10^{-3}$, $\xi=k_0^{-1/2}\simeq18$, $L=512$, 12 samples) advances at $\dot w=10^{-5}$ after fast loading into the steady state; an avalanche is an interval with $\bar v>3\dot w$, its size $s=L\int(\bar v-\dot w)\,dt$ (\texttt{aval.py}). The detected avalanches carry the whole advance. A heavy site that jumps rings in its new well and splits one event into fragments, so fragments closer than $4m$ in time are merged (\texttt{aval\_merge.py}); the mean spacing of events is ten times longer. Results (Fig.~\ref{fig:aval}):
+\begin{itemize}
+\item \textbf{$M\lesssim0.4$: no effect.} $m=1$ gives the same avalanches as $m=0$, event for event, and the same mean force ($0.260$): the mass is irrelevant, as the RG argument of Sec.~\ref{sec:frg} predicts. With $\xi\simeq18$ the power law spans under two decades and the fitted $\tau$ ($0.7$--$1.0$) is set by the cutoff, so $\tau$ itself is not resolved here.
+\item \textbf{$M\gtrsim6$: stick--slip.} The distribution turns bimodal: cold avalanches, cut off more sharply as $m$ grows (90th percentile $320$ and $215$ at $m=256$, 1024), and system-spanning slips that move every site by $5.6$, $8.1$, $13$ and $27$ (median, $m=16$, 64, 256, 1024) and carry $52$, $80$, $91$ and $91\%$ of the advance.
+\item \textbf{Slips are a spring block on the hot branch.} A block pulled by a spring against kinetic friction $f_k$ slips from $f_{\rm on}$ to $2f_k-f_{\rm on}$. Taking $f_k=(f_{\rm on}+f_{\rm stop})/2$ gives $0.89$, $1.00$ and $1.14f_{\min}$ at $m=64$, 256 and 1024: the slips ride the hot sliding branch. Arrest comes at $0.72$--$0.83f_{\min}$, as for finite ramps ($\fd\simeq0.85f_{\min}$).
+\item \textbf{Overloading.} Slips start at $0.96$, $1.17$ and $1.56f_{\min}$. A slip needs a hot nucleus, and nuclei come from cold avalanches; these shrink with $m$ while the nucleus size grows with the inertial length $\ell_m=2\sqrt{\kappa m}/\eta$, so the line is loaded further above $f_0$ before one forms. The mean force falls from $0.260$ ($m\le1$) to $0.180$, $0.139$ and $0.107$ ($m=64$, 256, 1024), close to $f_{\min}$.
+\end{itemize}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=\textwidth]{fig12_avalanches.pdf}
+\caption{Slow well driving, $k_0=3\times10^{-3}$, $L=512$. (a) Size distributions, fragments closer than $4m$ merged; dotted: $s=4L$. (b) Force against well position, one sample. (c) Onset, arrest and their mean for the slips ($s>4L$), in units of $f_{\min}$; dotted: $f_\infty=0.986f_{\min}$.}
+\label{fig:aval}
+\end{figure}
+
+\subsection{Avalanche exponents (Q7)}
+\label{sec:tau}
+A softer well ($k_0=5\times10^{-4}$, $\xi\simeq45$, $L=2048$, 12 samples, $\dot w=10^{-5}$; \texttt{aval.py tau}) extends the power law to three decades, $3\lesssim s\lesssim3\times10^3$; the time step $0.1$ gives the same statistics as $0.05$. About $10^3$ events per mass are recorded at $m\le2$. Comparing with the stiffer well of Sec.~\ref{sec:aval} gives the moments at two values of $\xi$ (Fig.~\ref{fig:tau}, \texttt{analyze7.py}).
+\begin{itemize}
+\item \textbf{The cutoff biases a direct fit.} In a well, $s^{\tau}P(s)$ rises by a factor of about two just below the cutoff (Fig.~\ref{fig:tau}a), as the functional RG predicts for the cutoff function. A fit to $s^{-\tau}e^{-s/s_c}$ absorbs that bump into a low exponent, $\tau=0.98\pm0.02$, even though the same fitter recovers $\tau=1.115\pm0.011$ on synthetic data drawn with $1.11$.
+\item \textbf{$\tau$ at $m=0$ and $m=1$.} Three estimates avoid the bump:
+\begin{itemize}
+\item a pure power law far below the cutoff ($3\le s\le300$) gives $\tau=1.06\pm0.03$;
+\item the moment relation $\langle s\rangle\propto S_m^{2-\tau}$, $S_m=\langle s^2\rangle/2\langle s\rangle$, between the two wells gives $\tau=1.17\pm0.04$ with $\langle s\rangle$ from the detected events;
+\item the same relation gives $1.09$ with $\langle s\rangle=L\Delta w/n$ from the sum rule, which counts the creep below the velocity threshold (15\% of the advance in the soft well).
+\end{itemize}
+These estimates bracket the qEW value $1.11$, so $\tau=1.1\pm0.05$. Sizes grow with duration as $s\sim T^{1.6\text{--}1.7}$, against $(1+\zeta)/z=1.57$. Between the two wells $S_m\propto\xi^{1+\zeta}$ gives $\zeta_{\rm eff}=0.96$. That is below $1.25$, as expected for $\xi\le45$, and the two values of $\xi$ cannot extrapolate further. Durations defined by the velocity threshold are dominated by the bump, and their exponent ($0.8$, against $1.17$) is not resolved.
+\item \textbf{$m=1$ is $m=0$, event for event.} 86\% of the $m=0$ avalanches with $s>10$ recur at $m=1$ at the same well position with the same size to within 2\%; the rest differ in how fragments are merged. At $m=2$ only 34\% do. This brackets the onset of overshoot at $M=0.37$--$0.74$, consistent with $M\approx0.5$ from the flow curves and thresholds.
+\item \textbf{Above the onset, inertia matters more at larger $\xi$.} The mean force falls below its $m=0$ value by $\Delta f=0.006$ ($m=4$) and $0.034$ ($m=16$) at $\xi\simeq18$, and by $0.007$ and $0.044$ at $\xi\simeq45$. The width of the critical window, the spread $\sigma_f$ of the force at $m=0$, shrinks from $0.009$ to $0.002$. So the shift grows from $0.6\sigma_f$ to $3.3\sigma_f$ at $m=4$, and from $3.7\sigma_f$ to $20\sigma_f$ at $m=16$ (Fig.~\ref{fig:tau}d). Large events take over: events with $s>L$ carry 77\% of the advance at $m=4$ for $\xi\simeq18$, and 90\% at $\xi\simeq45$. $\zeta_{\rm eff}$ rises (1.08 at $m=4$, 1.43 at $m=16$), the moment estimate of $\tau$ falls to $\approx1.0$, and $s\sim T^2$ replaces $T^{1.57}$. $T^2$ is the inertial scaling: a front spreading at fixed speed while every site behind it moves at fixed velocity.
+\end{itemize}
+The mass therefore splits the problem in two. Below the overshoot onset ($M\lesssim0.5$), avalanches are the qEW ones at every scale. Above it, the threshold shift is a relevant perturbation: the crossover to stick--slip moves to smaller $M$ as $\xi$ grows, from $M\approx6$ at $\xi\simeq18$ towards the onset itself. The data cover only two values of $\xi$, so they do not show whether every $M>0.5$ ends in stick--slip as $\xi\to\infty$, but the trend points that way.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=\textwidth]{fig13_tau.pdf}
+\caption{Avalanche exponents. (a) $s^{1.11}P(s)$ in the soft well ($\xi\simeq45$, $L=2048$); a flat stretch means qEW $\tau$, and the rise below the cutoff is the bump of the cutoff function. (b) $\langle s\rangle$ against $S_m$ for $\xi\simeq18$ and $45$; filled: detected events, open: sum rule; dotted: slope $2-1.11$. (c) Mean size at given duration; guides $T^{1.57}$ (qEW) and $T^2$. (d) Shift of the mean force below its $m=0$ value, in units of the $m=0$ force spread, at both well stiffnesses.}
+\label{fig:tau}
+\end{figure}
+
 \section{Answers}
 \label{sec:answers}
 
 \begin{description}
-\item[Q1] For $M\gtrsim5$ the threshold is set by the end of a hot, radiating sliding branch. The parameter-free closure predicts it, $f_{\min}(M)$; the long-time threshold is $f_\infty\simeq(0.97$--$0.98)f_{\min}$ at every mass tested, where hot/pinned edges stop advancing. For $M\lesssim0.5$ the threshold is the qEW $\fcs$.
-\item[Q2] Not continuous in the qEW sense. Within $2$--$3\%$ below $f_{\min}$ the line slides in patches and $\bar v$ falls from $\approx v_{\min}$ to a small value ($\approx0.2v_{\min}$ at $m=64$) before sliding stops; whether the last step is a small jump or continuous is not resolved.
-\item[Q3] No, within our resolution. Ramp-up/ramp-down hysteresis shrinks as $\sim L^{-1/2}$, and sliding below the threshold decays in a finite time $\propto(f_0-f)^{-1}$ that hardly grows with $L$.
+\item[Q1] For $M\gtrsim5$ the threshold is set by the end of a hot, radiating sliding branch. The parameter-free closure predicts it, $f_{\min}(M)$; the long-time threshold is $f_\infty\simeq(0.975$--$0.99)f_{\min}$ at every mass tested ($0.986f_{\min}$ at $m=64$), where hot/pinned edges stop advancing. For $M\lesssim0.5$ the threshold is the qEW $\fcs$.
+\item[Q2] Not continuous in the qEW sense: the uniform hot branch ends at $f_{\min}$ with finite $v_{\min}$. Within about $1.5\%$ below $f_{\min}$ the line slides in patches, and this patchy sliding ends continuously at $f_\infty$, like an absorbing-state transition: just above $f_\infty$ the activity decays as a slow power law, just below it bends down, and neither side shows a plateau ($m=64$). The exponents are not resolved.
+\item[Q3] No, within our resolution. Ramp-up/ramp-down hysteresis shrinks as $\sim L^{-1/2}$, and sliding below the threshold decays in a finite time, $\propto(f_0-f)^{-1}$ well below $f_\infty$, growing to $\sim10^4m$ within 1\% of it.
 \item[Q4] $f_*\propto m^{-1/4}$ is pre-asymptotic; Debye--Waller smearing gives $f_{\min}\propto m^{-3/10}$ (RF) and $m^{-5/14}$ (RB). The disorder enters through $\langle F^2\rangle$ and the small-$k$ form of $\hat\Delta$; thresholds collapse in $M$.
 \item[Q5] The shift switches on at $M\approx0.5$ for RF, earlier for RB; the onset depends on the stiffness of the microscopic wells and is not universal.
-\item[Q6] Displacement driving turns the finite-size hysteresis into stick--slip around $f_{\min}$.
+\item[Q6] Displacement driving turns the finite-size hysteresis into stick--slip. For $M\gtrsim6$, system-spanning slips carry most of the advance; they behave like a spring block on the hot branch, with kinetic friction $\simeq f_{\min}$, and start from an overload that grows with $m$ (up to $1.56f_{\min}$ at $m=1024$).
+\item[Q7] It depends on the regime. For $M\lesssim0.5$ the mass is irrelevant and the exponents are those of qEW ($\zeta\simeq1.25$, $\tau\simeq1.11$). The hot sliding line is Edwards--Wilkinson, $\zeta=1/2$, with a temperature that depends on scale; its large-scale value $T_{\rm lw}=S_\xi(0)/2\eta_{\rm eff}$ is $1.8$ to $4.3$ times $T_{\rm kin}$ and is predicted within about 10\%. The end of patchy sliding needs an absorbing-state theory; there $\tau$ cannot tell the candidate classes apart, but $\nu_\perp$ and $z$ can. Under slow driving, avalanches at $M\lesssim0.4$ are those of $m=0$, event for event, with $\tau=1.1\pm0.05$ from three estimators that avoid the bump of the cutoff function, and $s\sim T^{1.6}$. Above the overshoot onset the force shift grows relative to the critical window as $\xi$ grows, the crossover to stick--slip moves to smaller $M$, and $s\sim T^2$; for $M\gtrsim6$ the distribution is bimodal, with cut-off cold avalanches and characteristic slips, so there is no single $\tau$.
 \end{description}
 
 \begin{center}\small
@@ -467,8 +567,8 @@ With $k_0=0.01$, $\dot w=10^{-3}$, $L=1024$ (Fig.~\ref{fig:well}):
 regime & threshold & sliding state \\
 \midrule
 $M\lesssim0.5$ & $\fd\simeq\fu\simeq\fcs$ & qEW, continuous \\
-$0.5\lesssim M\lesssim5$ & shift from overshoot of single jumps; onset non-universal & qEW-like at large scale \\
-$M\gtrsim20$ & $f_\infty\simeq(0.97$--$0.98)f_{\min}$, edge-speed zero; patchy sliding in between & hot radiating string, $T\simeq\langle F^2\rangle\sqrt{m/\kappa}/2\eta$ (pre-asymptotic) \\
+$0.5\lesssim M\lesssim5$ & shift from overshoot of single jumps; onset non-universal & qEW-like at small scale; the shift grows relative to the critical window with $\xi$, towards stick--slip \\
+$M\gtrsim20$ & $f_\infty\simeq(0.975$--$0.99)f_{\min}$, edge-speed zero; continuous absorbing-type end of patchy sliding; under slow driving, stick--slip with $f_k\simeq f_{\min}$ & hot radiating string, $T\simeq\langle F^2\rangle\sqrt{m/\kappa}/2\eta$ (pre-asymptotic); EW at large scales, $\zeta=1/2$, $T_{\rm lw}=S_\xi(0)/2\eta_{\rm eff}$ \\
 $M\gg1$ & $f_{\min}\propto m^{-3/10}$ (RF), $m^{-5/14}$ (RB) & $T\propto m^{2/(4+a)}$ \\
 finite $L$, $t$ & ramp hysteresis $\sim L^{-1/2}$; lifetimes $\propto(f_0-f)^{-1}$ & domains with edges at $\lesssim c$ \\
 \bottomrule
@@ -478,8 +578,10 @@ finite $L$, $t$ & ramp hysteresis $\sim L^{-1/2}$; lifetimes $\propto(f_0-f)^{-1
 \section{Open points}
 
 \begin{itemize}
-\item \textbf{End of sliding.} Whether $\bar v$ and the active fraction vanish continuously at $f_\infty$ (with absorbing-state exponents) or with a small jump needs longer runs and a finer grid in the last 1\% above $f_\infty$.
-\item \textbf{A stochastic front theory.} The smooth zero of $s(f)$ below $f_{\min}$ requires fluctuating release of marginal sites; a front theory including it would also give the ramp-up nucleation size.
+\item \textbf{Avalanche exponents.} At $M\lesssim0.4$, $\tau=1.1\pm0.05$ is consistent with qEW; separating 1.08 from 1.11, and getting $\zeta$ and the duration exponent, needs $\xi\gtrsim100$ and a third stiffness. Above the onset, whether every $M>0.5$ ends in stick--slip as $\xi\to\infty$ needs the same series of wells at $m=2$--4. The nucleation size that sets the overload has not been measured directly.
+\item \textbf{A theory of $S_\xi(0)$.} The lingering and backtracking of single sites that doubles the zero-frequency noise is not captured by the closure's Gaussian displacement statistics.
+\item \textbf{Universality of the end of sliding.} The end at $f_\infty$ looks continuous; whether it is in the directed-percolation class (the disorder is quenched in $u$ but seen as time-dependent by a moving patch) needs spreading experiments from a single hot seed at $f_\infty$, and $\rho(t)$ over more than two decades.
+\item \textbf{A front theory with quenched heterogeneity.} A block model with local thermal noise gives a jump above $f_{\min}$, not the measured continuous end below it. The missing ingredient is quenched: the strength of pinned regions varies from place to place, so some hot patches survive while others die. A front theory with it would also give the ramp-up nucleation size.
 \item \textbf{A controlled closure.} The equilibrium-shaped closure predicts the threshold, the hybrid the patchy branch below it; neither describes both, nor the pinned state at $v\to0$. A closure that becomes cold when the line stops, for example with a spatially resolved temperature, is the natural next step.
 \end{itemize}
 
@@ -487,10 +589,11 @@ finite $L$, $t$ & ramp hysteresis $\sim L^{-1/2}$; lifetimes $\propto(f_0-f)^{-1
 From this folder:
 \begin{enumerate}
 \item \texttt{python3 runs.py kymo well flow thresholds}, \texttt{python3 runs2.py rb heavy life}, \texttt{python3 runs3.py}, \texttt{python3 runs4.py cross heavy gap};
-\item \texttt{python3 edges.py 1024 256 64}, \texttt{python3 run\_gap64.py}, \texttt{python3 patchy.py}, \texttt{python3 marginality.py}, \texttt{python3 check\_closure.py};
-\item exploratory: \texttt{python3 sc\_noneq.py}, \texttt{python3 sc\_hybrid.py}, \texttt{python3 front\_model.py} (see \texttt{notes\_*.md});
+\item \texttt{python3 edges.py 1024 256 64}, \texttt{python3 run\_gap64.py}, \texttt{python3 patchy.py}, \texttt{python3 marginality.py}, \texttt{python3 check\_closure.py}, \texttt{python3 endslide.py}, \texttt{python3 endslide\_L.py}, \texttt{python3 endslide\_t.py} and \texttt{python3 endslide\_t.py 0.1975 0.1985};
+\item \texttt{python3 sq.py run}, \texttt{python3 sq.py theory}, \texttt{python3 sq\_near.py 0.10 0.105 0.11}, \texttt{python3 sq\_diag.py 1024 0.12} (and $1024$ $0.10$, $1024$ $0.11$, $256$ $0.17$), \texttt{python3 aval.py scan}, \texttt{python3 aval.py tau};
+\item exploratory: \texttt{python3 sc\_noneq.py}, \texttt{python3 sc\_hybrid.py}, \texttt{python3 front\_model.py}, \texttt{python3 front\_model\_stoch.py} (see \texttt{notes\_*.md});
 \item \texttt{python3 sc\_run.py}, \texttt{python3 sc\_run2.py};
-\item \texttt{python3 analyze.py}, \texttt{python3 analyze2.py}, \texttt{python3 analyze3.py}.
+\item \texttt{python3 analyze.py}, \texttt{python3 analyze2.py}, \texttt{python3 analyze3.py}, \texttt{python3 analyze4.py}, \texttt{python3 analyze5.py}, \texttt{python3 analyze6.py}, \texttt{python3 analyze7.py}.
 \end{enumerate}
 Set \texttt{NUMBA\_NUM\_THREADS} to limit the load. Code: \texttt{sim.py} (integrator; $A<0$ selects RB), \texttt{protocols.py} (flow, ramps, lifetimes, well), \texttt{linresp.py} (second order), \texttt{sc.py} (closure).
 

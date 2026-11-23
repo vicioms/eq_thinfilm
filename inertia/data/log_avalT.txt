@@ -1,0 +1,6 @@
+10:22:12 tau m 0 n 1057 median 87.6 p90 2879 max 21127 tau_ML[3,p90] 1.03 <f> 0.2911 707s
+10:35:45 tau m 1 n 1155 median 68.8 p90 2596 max 23571 tau_ML[3,p90] 1.04 <f> 0.2910 813s
+10:50:42 tau m 2 n 1151 median 60.9 p90 2761 max 23526 tau_ML[3,p90] 1.04 <f> 0.2899 897s
+11:04:15 tau m 4 n 954 median 31.1 p90 3213 max 22941 tau_ML[3,p90] 1.05 <f> 0.2838 813s
+11:16:09 tau m 8 n 804 median 19.2 p90 3749 max 33761 tau_ML[3,p90] 1.08 <f> 0.2695 714s
+11:24:21 tau m 16 n 561 median 9.1 p90 4908 max 44380 tau_ML[3,p90] 1.13 <f> 0.2474 492s

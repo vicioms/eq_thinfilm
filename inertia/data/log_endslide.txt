@@ -1,0 +1,6 @@
+22:18:47 endslide 0.1945 alive 0.083 v 0.008 sd_v - act 0.103 median stop/m 2269.0 122s
+22:20:45 endslide 0.195 alive 0.0 v - sd_v - act - median stop/m 2234.0 118s
+22:22:57 endslide 0.1955 alive 0.417 v 0.0098 sd_v 0.0037 act 0.124 median stop/m 2453.0 132s
+22:25:34 endslide 0.196 alive 0.583 v 0.0155 sd_v 0.0029 act 0.193 median stop/m 3166.0 156s
+22:28:21 endslide 0.197 alive 0.917 v 0.024 sd_v 0.0056 act 0.291 median stop/m 2869.0 168s
+22:30:53 endslide 0.1985 alive 1.0 v 0.043 sd_v 0.0036 act 0.499 median stop/m - 151s

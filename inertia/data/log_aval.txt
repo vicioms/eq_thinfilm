@@ -1,0 +1,7 @@
+09:39:46 aval m 0 n 1829 median 56.1 p90 632 max 4081 tau_ML[3,p90] 0.96 <f> 0.2599 612s
+09:48:41 aval m 1 n 2029 median 43.1 p90 582 max 4078 tau_ML[3,p90] 0.97 <f> 0.2599 535s
+09:52:12 aval m 4 n 2616 median 9.0 p90 445 max 4772 tau_ML[3,p90] 0.99 <f> 0.2541 211s
+09:53:58 aval m 16 n 2274 median 1.5 p90 410 max 6247 tau_ML[3,p90] 1.14 <f> 0.2255 106s
+09:54:51 aval m 64 n 2077 median 1.6 p90 125 max 9828 tau_ML[3,p90] 1.58 <f> 0.1802 53s
+09:55:46 aval m 256 n 2532 median 1.8 p90 25 max 21559 tau_ML[3,p90] 1.71 <f> 0.1385 55s
+09:56:39 aval m 1024 n 3076 median 2.4 p90 23 max 23963 tau_ML[3,p90] 1.69 <f> 0.1069 53s

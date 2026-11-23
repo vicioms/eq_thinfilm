@@ -1,0 +1,4 @@
+22:31:58 endL 4096 0.1955 alive 0.083 v 0.0197 act 0.245 median stop/m 1912.0 38s
+22:32:48 endL 4096 0.196 alive 0.25 v 0.0173 act 0.216 median stop/m 2575.0 50s
+22:43:39 endL 65536 0.1955 alive 0.667 v 0.0081 act 0.103 median stop/m 3564.0 651s
+22:56:53 endL 65536 0.196 alive 1.0 v 0.011 act 0.137 median stop/m - 795s

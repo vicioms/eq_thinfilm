@@ -141,7 +141,7 @@ def well(m, L, seeds, k0, wdot, T, w0=0.0, A=1.0, eta=1.0, kappa=1.0, dt=None, n
 
 
 def lifetimes(m, L, seeds, f, f_prep, T_prep, T_max, A=1.0, eta=1.0, kappa=1.0, dt=None,
-              chunk=None, vact=0.02, dstop=0.01, T_skip=None):
+              chunk=None, vact=0.02, dstop=0.01, T_skip=None, trace=False):
     """Quench a sliding line from f_prep to f and record when it stops.
 
     Returns t_stop[S] (inf if still sliding at T_max), and the time-averaged mean
@@ -159,6 +159,7 @@ def lifetimes(m, L, seeds, f, f_prep, T_prep, T_max, A=1.0, eta=1.0, kappa=1.0, 
     tstop = np.full(S, np.inf)
     alive = np.ones(S, bool)
     vsum = np.zeros(S); asum = np.zeros(S); nacc = np.zeros(S)
+    tr_t, tr_a = [], []   # optional activity trace: per chunk, active fraction of every line (0 if stopped)
     t = 0.0
     while alive.any() and t < T_max:
         idx = np.where(alive)[0]
@@ -167,6 +168,8 @@ def lifetimes(m, L, seeds, f, f_prep, T_prep, T_max, A=1.0, eta=1.0, kappa=1.0, 
                               kappa, dt, 0.0, False)
         U[idx], V[idx] = Ua, Va
         t += ns * dt
+        if trace:
+            tr_t.append(t); tr_a.append((np.abs(V) > vact).mean(axis=1) * alive)
         for j, s in enumerate(idx):
             disp = ub[j, -1] - ub[j, 0]
             if disp < dstop:
@@ -177,4 +180,7 @@ def lifetimes(m, L, seeds, f, f_prep, T_prep, T_max, A=1.0, eta=1.0, kappa=1.0, 
                 asum[s] += (np.abs(V[s]) > vact).mean()
                 nacc[s] += 1
     with np.errstate(invalid='ignore', divide='ignore'):
-        return dict(tstop=tstop, v=vsum / nacc, act=asum / nacc, nacc=nacc)
+        out = dict(tstop=tstop, v=vsum / nacc, act=asum / nacc, nacc=nacc)
+    if trace:
+        out.update(trace_t=np.array(tr_t), trace_act=np.array(tr_a))
+    return out
