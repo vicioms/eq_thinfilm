@@ -465,6 +465,60 @@ def figure_relax():
     plt.close(fig)
 
 
+def figure_replica():
+    """fig10: replicated Kac-Rice, n = 2 (replica.json from replica.py, theory.json,
+    level counts) -> replica_summary.json."""
+    from scipy.optimize import brentq
+    if not os.path.exists("replica.json"):
+        return
+    R = json.load(open("replica.json")); th = json.load(open("theory.json"))
+    tags = {"0.3": "A0.3", "0.6": "A0.6", "1.0": "A1"}
+    cols = {"0.3": "#2a78d6", "0.6": "#eb6834", "1.0": "#1baf7a"}
+    summ = {}
+    fig, ax = plt.subplots(1, 2, figsize=(7.2, 2.9))
+    for key, rows in R.items():
+        A = float(key); tag = tags[key]; col = cols[key]
+        x = np.array([r["tauA"] for r in rows]); o = np.argsort(x); x = x[o]
+        l2 = np.array([r["Lambda2"] for r in rows])[o]; e2 = np.array([r["Lambda2_err"] for r in rows])[o]
+        L = np.array([r["Lambda"] for r in rows])[o]; L2t = np.array([r["Lambda_2tau"] for r in rows])[o]
+        L1 = gle(1.0, A)
+        xx = brentq(lambda y: y / np.tanh(y) - np.exp(L1), 1e-3, 20)
+        ax[0].errorbar(x, l2 - 2 * L, e2, color=col, marker="o", ms=4, lw=1.4, capsize=0, label=f"$A={A:g}$")
+        ax[0].plot(x, np.maximum(L2t - 2 * L, 0), color=col, lw=0.9, ls="--")
+        ax[0].axvline(xx, color=col, lw=0.6, ls=":")
+        # Gaussian closure: Var ln Z / K from the level counts
+        data = load(tag); Ks = np.array(list(data)); s2 = []
+        for xv in x:
+            tau = max(xv, 1e-9) / A
+            var = [lnZ(data[K]["N"].astype(float), data[K]["f"] * K, tau).var() for K in Ks]
+            s2.append(float(np.polyfit(Ks[-4:], var[-4:], 1)[0]))
+        s2 = np.array(s2)
+        d = th[tag]; tq = np.array(d["tau"]) * A
+        gap = np.interp(x, tq, d["gap"]); gerr = np.interp(x, tq, d["gap_err"])
+        ax[1].errorbar(x, gap, gerr, color=col, marker="o", ms=4, lw=0, elinewidth=1, capsize=0)
+        ax[1].plot(x, s2 / 2, color=col, lw=1.2, ls="-")
+        ax[1].plot(x, (l2 - 2 * L) / 2, color=col, lw=1, ls="--")
+        summ[key] = dict(A=A, tauA=x.tolist(), Lambda2=l2.tolist(), Lambda2_err=e2.tolist(), Lambda=L.tolist(),
+                         Lambda_2tau=L2t.tolist(), excess=(l2 - 2 * L).tolist(), sigma2=s2.tolist(),
+                         gap=gap.tolist(), gap_err=gerr.tolist(), x_L2=xx)
+    ax[0].set_yscale("symlog", linthresh=1e-3); ax[0].set_ylim(0, None)
+    ax[0].set_xlabel(r"$\tau A$"); ax[0].set_ylabel(r"$\Lambda_2(\tau)-2\Lambda(\tau)$")
+    ax[0].legend(fontsize=7, loc="upper left")
+    ax[0].set_title("(a) pair moment: excess over $\\langle Z\\rangle^2$", fontsize=9, loc="left")
+    ax[1].set_xlim(0, 2.6); ax[1].set_ylim(-0.005, 0.25)
+    ax[1].set_xlabel(r"$\tau A$"); ax[1].set_ylabel(r"$\Lambda-\varphi_q$")
+    ax[1].plot([], [], color="#555555", marker="o", lw=0, label="measured gap")
+    ax[1].plot([], [], color="#555555", lw=1.2, label=r"${\rm Var}\ln Z/2K$")
+    ax[1].plot([], [], color="#555555", lw=1, ls="--", label=r"$(\Lambda_2-2\Lambda)/2$")
+    ax[1].legend(fontsize=7, loc="upper left")
+    ax[1].set_title("(b) replica Gaussian closure", fontsize=9, loc="left")
+    fig.tight_layout()
+    fig.savefig("fig10_replica.pdf", bbox_inches="tight")
+    fig.savefig("fig10_replica.png", dpi=200, bbox_inches="tight")
+    plt.close(fig)
+    json.dump(summ, open("replica_summary.json", "w"), indent=1)
+
+
 if __name__ == "__main__":
     import sys
     if "--torus-only" in sys.argv:
@@ -473,8 +527,11 @@ if __name__ == "__main__":
         analyse_strong()
         figure_strong()
         figure_relax()
+        figure_replica()
     elif "--relax-only" in sys.argv:
         figure_relax()
+    elif "--replica-only" in sys.argv:
+        figure_replica()
     else:
         main()
         figure_torus()
@@ -482,3 +539,4 @@ if __name__ == "__main__":
         analyse_strong()
         figure_strong()
         figure_relax()
+        figure_replica()
