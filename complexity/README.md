@@ -30,6 +30,7 @@ Disorder strengths: triangle wave with L_c = 2.2, 1.4 and 1, and Gaussian disord
 - **Theory.** Σ_q is the Legendre transform of a quenched pressure φ_q(τ), and f_c is its large-τ slope. Conditional Jensen gives exact bounds Σ_q ≤ Σ_sa ≤ Σ_ann. The Jensen gap is O(τ⁴), i.e. o(f²), while the population stays spread in u, and becomes large once it localises (onset ≈ 0.75 f_c). For Gaussian disorder, amplitude quenching lowers the threshold bound from 0.486 to 0.423.
 - **Torus transfer operators.** The same population dynamics is a product of random positive operators on the torus (u, w) mod P, which can be iterated at K = ∞. It reproduces the exact quenched pressure through the onset. It shows that the gap is the one-step Jensen term, i.e. the phase variance of the population's growth. It also confirms f_c and the jump as the grid is refined.
 - **Replicated Kac–Rice.** ⟨Z^n⟩ of the counting partition function is an exact n-replica transfer operator on the offsets between replicas. Locked replicas close the second-moment window at x coth x = e^{Λ(1)} (x = τA), which is f_ann/√2 in the continuum. Below that, the pair operator, Var ln Z and the measured gap satisfy the replica Gaussian closure Λ − φ_q = σ²/2 = (Λ₂ − 2Λ)/2 to within errors, including the lattice gap at f = 0. The closure gives only a third of the drop from f_ann to f_c, and one-step RSB with independent clusters gives none. So f_ann/f_c comes from correlations between clusters of near-critical strands that meet again in the shared environment.
+- **Rigorous bounds below the annealed threshold.** Fractional moments with a change of measure give φ_q ≤ Λ_Q + d(P‖Q) for any tilted disorder law Q. Tilting the law of the phase second differences, for which Λ_Q is an exact transfer operator, proves f_c < f_ann. The bound is 0.1074, 0.2621 and 0.4887 at A = 0.3, 0.6 and 1 with one step of memory, closing 2.5–20% of the gap. It converges slowly at weak pinning, because the relevant phase correlations span L_c sites.
 - **Jump at threshold.** The quenched complexity does not vanish at f_c. At a force O(1/K) below each sample's threshold there are still e^{cK} equilibria, with c ≈ Λ(1)/2, and exponentially many minima.
 - **Strong pinning (solvable).** As k → ∞, c → ln 2, because each site can sit on either side of its force peak. Also c_min → 0 and f_c → A − P/2, with sample fluctuations P/√(12K). Enumeration up to k = 6 shows c crossing over from 0.22/L_c toward ln 2.
 - **Exact threshold for k > 2.** Minima have every site on a rising branch, so the depinning threshold is a lattice minimax over period choices. It is verified on 540 samples to 3·10⁻⁹. A linear-time dynamic programme extends it to K = 320 and predicts f_c = A − P/2 + 0.90 P/k. The annealed bound overshoots by a constant 0.316 P.
@@ -51,6 +52,7 @@ Disorder strengths: triangle wave with L_c = 2.2, 1.4 and 1, and Gaussian disord
 - `queue_strong.sh`, `minimax.py`: the strong-pinning runs (k = 2, 3, 6) and the minimax threshold, written to `minimax.json`.
 - `strong_exact.py`, `strong_scan.py`: the exact threshold formula for k > 2 (lattice minimax and dynamic programme), its test, and the infinite-chain thresholds, written to `strong_exact.json` and `strong_scan.json`.
 - `replica.py`: the pair moment Λ₂(τ) of the replicated Kac–Rice operator by population dynamics (`--check` tests n = 1 against the exact Λ), written to `replica.json`. `theory.py --replica-only` writes `replica_summary.json` and `fig10`.
+- `fracbound.py`, `fracbound2.py`: the change-of-measure bounds with iid and Markov tilts of the phase second differences, written to `fracbound.json` and `fracbound2.json`.
 - `relax.py`: exact sample thresholds by no-passing (Middleton) forward relaxation plus bisection, K ≤ 1024 at k = 0.3–6, written to `relax.json`. `theory.py --relax-only` extrapolates them (`relax_summary.json`) and draws `fig9`.
 - `fractal_top.py`: box counting of the near-critical set in the shooting parameter, written to `fractal_top.json`.
 - `theory.py`: computes the quenched pressure from the level counts, its frozen asymptote and the near-threshold rates, and evaluates the f_sa bound. It writes `theory.json`, `table_theory.tex` and `fig5`–`fig10`.
@@ -77,6 +79,8 @@ python3 strong_exact.py
 python3 strong_scan.py
 python3 relax.py
 python3 replica.py
+python3 fracbound.py
+python3 fracbound2.py
 python3 theory.py
 pdflatex -interaction=nonstopmode -halt-on-error main.tex
 pdflatex -interaction=nonstopmode -halt-on-error main.tex

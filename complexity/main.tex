@@ -42,7 +42,7 @@ We keep their reduction (stationarity, Gelfand--Yaglom determinant along a 1D ch
 For FLRT's Gaussian disorder, $\Sq(0)$ is $2\%$ below $\Sann(0)$. The reason is the random site amplitude $|\xi_i|$, which is shared by all branches. A parameter-free theory, annealed over the phases and quenched over the amplitudes, predicts a rate gap of $0.0067\pm0.0002$, against the measured $0.006$--$0.008$.
 \item \textbf{Finite force.} $\Sq(f)$ and $\Sann(f)$ (or the amplitude-quenched $\Sigma_{\rm sa}$ for Gaussian disorder) agree within $1$--$3\%$ up to $f\approx0.6$--$0.7\,f_c$. The gap grows steeply from $\approx0.75\,f_c$ (about $0.47\,f_c^{\rm ann}$).
 \item \textbf{Theory} (Sec.~\ref{sec:theory}). $\Sq$ is the Legendre transform of a quenched pressure $\varphi_q(\tau)$, and $f_c$ is its large-$\tau$ slope. Exact bounds $\Sq\le\Sigma_{\rm sa}\le\Sann$ follow from conditional Jensen. Writing the partition function as a product of population growth factors shows that the gap is $O(\tau^4)$, i.e.\ $o(f^2)$, while the population is spread in $u$. It becomes large once the population localises: a weak-to-strong-disorder transition at $f_*\approx0.75f_c$. The same population dynamics gives a transfer-operator method on the torus, valid at $K=\infty$. It reproduces the exact quenched pressure, shows that the gap is the phase variance of the one-step growth factor, and independently confirms $f_c$ and the jump.
-\item \textbf{Replicated Kac--Rice} (Sec.~\ref{sec:replica}). The moments $\langle Z^n\rangle$ of the counting partition function are exact $n$-replica transfer operators on the offsets between replicas. Locked replicas close the second-moment window at $x\coth x=e^{\Lambda(1)}$ ($x=\tau A$), i.e.\ at $f_c^{\rm ann}/\sqrt2$ in the continuum. Below it, the pair operator, ${\rm Var}\ln Z$ and the measured gap satisfy the replica Gaussian closure $\Lambda-\varphi_q=\sigma^2/2=(\Lambda_2-2\Lambda)/2$ to within errors, including the lattice gap at $f=0$. The closure gives only a third of the drop from $f_c^{\rm ann}$ to $f_c$, and a one-step RSB with independent clusters gives none (Derrida--Spohn). So the threshold ratio is set entirely by correlations between clusters of near-critical strands that meet again in the shared environment.
+\item \textbf{Replicated Kac--Rice} (Sec.~\ref{sec:replica}). The moments $\langle Z^n\rangle$ of the counting partition function are exact $n$-replica transfer operators on the offsets between replicas. Locked replicas close the second-moment window at $x\coth x=e^{\Lambda(1)}$ ($x=\tau A$), i.e.\ at $f_c^{\rm ann}/\sqrt2$ in the continuum. Below it, the pair operator, ${\rm Var}\ln Z$ and the measured gap satisfy the replica Gaussian closure $\Lambda-\varphi_q=\sigma^2/2=(\Lambda_2-2\Lambda)/2$ to within errors, including the lattice gap at $f=0$. The closure gives only a third of the drop from $f_c^{\rm ann}$ to $f_c$, and a one-step RSB with independent clusters gives none (Derrida--Spohn). So the threshold ratio is set entirely by correlations between clusters of near-critical strands that meet again in the shared environment. A change-of-measure bound (fractional moments with a tilted disorder law, Sec.~\ref{sec:fracbound}) proves $f_c<f_c^{\rm ann}$ rigorously, closing $2.5$--$20\%$ of the gap with one step of phase memory. It converges slowly at weak pinning, because the relevant phase correlations span $L_c$ sites.
 \item \textbf{A jump at threshold.} The quenched complexity does not vanish at $f_c$: at a force $O(1/K)$ below each sample's threshold there are still $e^{cK}$ equilibria, with $c\simeq\Lambda(1)/2$, and $e^{c_{\min}K}$ minima. The annealed complexity, by contrast, vanishes continuously at $f_c^{\rm ann}$. In the thermodynamic formalism, $f_c$ is the maximal ergodic average of the pinning force and $c$ is the entropy of the force-maximising measure. Consistent with Ledrappier--Young, $c=d\,\lambda^*$ within $10\%$, with $\lambda^*$ the Lyapunov exponent of the critical orbit and $d\approx0.28$ the fractal dimension of the near-critical set, both measured independently. At strong pinning the problem is solvable: $c\to\ln2$ (each site free to sit on either side of its force peak), $c_{\min}\to0$ and $f_c\to A-P/2$, with sample fluctuations $P/\sqrt{12K}$. For $k>2$ the threshold is given exactly by a lattice minimax over the period choices, Eq.~\eqref{eq:fcexact}, verified sample by sample. It predicts $f_c=A-P/2+0.90\,P/k$, while the annealed bound overshoots by a constant $0.316P$. Enumeration up to $k=6$ shows $c$ crossing over from $0.22/L_c$ toward $\ln2$.
 \item \textbf{Threshold.} Exact no-passing relaxation of chains up to $K=1024$ (Sec.~\ref{sec:relax}) gives $f_c^{\rm ann}/f_c=1.59\pm0.02$, $1.55$ and $1.51$ at $L_c=2.2$, $1.4$ and $1$, falling monotonically to the strong-pinning curve ($1.17$ at $k=6$). Extrapolated to the continuum, $L_c\to\infty$, the ratio is $1.60$--$1.70$, consistent with FLRT's dynamical $1.64$. Enumeration gives $1.65$--$1.72$ for Gaussian disorder at $L_c=1.41$; for the triangle model the relaxation picks the lower end of such ranges. Of the Gaussian ratio, a factor $1.15$ comes from the shared site amplitudes and is computed exactly. The sample threshold fluctuates as $K^{-1/2}$, the scaling of a branching front in a time-random environment.
 \end{enumerate}
@@ -486,7 +486,7 @@ The gap keeps following $\sigma^2/2$ up to $\tau A\approx1$, while $\varepsilon/
 \item A one-step RSB ansatz in which the $n$ replicas form $n/m$ independent clusters of $m$ locked replicas gives $\langle Z^n\rangle\asymp e^{K(n/m)\Lambda(m\tau)}$, hence $\varphi_q=\min_{0<m\le1}\Lambda(m\tau)/m$. This is Derrida--Spohn freezing: $f_c=f_c^{\rm ann}$ and $c=0$. It is the exact answer on a tree, where clusters never meet again.
 \end{itemize}
 So the whole ratio $f_c^{\rm ann}/f_c\approx1.6$ comes from correlations \emph{between} clusters, i.e.\ from distinct near-critical strands meeting again in the shared, bounded environment on the torus. This is the replica form of the localisation mechanism of Sec.~7.3. It is also consistent with the positive jump $c$ (Sec.~\ref{sec:jump}): the frozen phase is a non-trivial cluster of strands, not a single one.
-A quantitative theory of $f_c$ needs this inter-cluster interaction at $m<1$. The fractional-moment bound $\varphi_q\le\inf_{0<m\le1}\Lambda_m/m$, evaluated with coarse-grained blocks, is the rigorous route.
+A quantitative theory of $f_c$ needs this inter-cluster interaction at $m<1$. The next subsection turns it into rigorous bounds.
 
 \begin{figure}[H]
 \centering
@@ -494,6 +494,62 @@ A quantitative theory of $f_c$ needs this inter-cluster interaction at $m<1$. Th
 \caption{Replicated Kac--Rice, triangle model. (a) Excess of the pair moment over $\langle Z\rangle^2$ (markers), the locked-pair value $\Lambda(2\tau)-2\Lambda(\tau)$ (dashed) and the second-moment boundary $x_\times$ of Eq.~\eqref{eq:L2} (dotted). (b) Measured quenched--annealed gap (markers), ${\rm Var}\ln Z_K/2K$ (solid) and $(\Lambda_2-2\Lambda)/2$ (dashed): the Gaussian closure, Eq.~\eqref{eq:closure}.}
 \label{fig:replica}
 \end{figure}
+
+\subsection{Fractional moments and change of measure: rigorous bounds below the annealed threshold}\label{sec:fracbound}
+
+\paragraph{The bound.}
+For any positive function $G$ of the disorder and $0<m<1$, Jensen and Hölder give
+\[
+\langle\ln Z\rangle\le\frac1m\ln\langle Z^m\rangle\le\frac{1-m}{m}\ln\big\langle G^{-m/(1-m)}\big\rangle+\ln\langle GZ\rangle .
+\]
+Take $G=dQ/dP$ for a second disorder law $Q$. The first term increases with $m$, so the best choice is $m\to0$, where it becomes the relative entropy:
+\begin{equation}
+\varphi_q(\tau)\le B_Q(\tau)\equiv\Lambda_Q(\tau)+d(P\|Q),\qquad f_c\le\inf_\tau\frac{B_Q(\tau)}{\tau}.
+\label{eq:cmbound}
+\end{equation}
+Here $\Lambda_Q$ is the annealed rate under $Q$ and $d$ the relative entropy per site. $Q=P$ gives back the annealed bounds.
+The family is complete: block tilts $G=\mathbf 1_E+\delta$, with $E$ the event that $\ln Z$ is typical on a block, make Eq.~\eqref{eq:cmbound} tight as the block length grows. What matters in practice is how fast it converges.
+
+\paragraph{A computable family.}
+Phases $\phi_i$ iid uniform are equivalent to second differences $V_i=\phi_i-2\phi_{i-1}+\phi_{i-2}$ iid uniform on $[0,P)$.
+A strand's position relative to the phase, $\theta_i=u_i-\phi_i$, obeys the shooting map
+\begin{equation}
+\theta_{i+1}=2\theta_i-\theta_{i-1}+g(\theta_i)-V_{i+1}\pmod P ,
+\end{equation}
+so tilting the law of the $V_i$ changes which orbits are available.
+\begin{itemize}
+\item \textbf{iid tilt}, $V_i\sim h(v)/P$: $d=-\langle\ln h\rangle$, and $\Lambda_Q$ is the top eigenvalue of an operator on $(\theta_i,\theta_{i-1})$ and the tangent direction (\texttt{fracbound.py}; $96^2\times48$ grid, exact $\Lambda$ reproduced to $2\times10^{-4}$ at $h=1$).
+\item \textbf{Markov tilt}, $V_{i+1}|V_i\sim h(V_i,V_{i+1})/P$: $V_i$ is fixed by $(\theta_i,\theta_{i-1},\theta_{i-2})$, so the operator acts on three positions and the tangent (\texttt{fracbound2.py}; $48^3\times24$ grid).
+\end{itemize}
+We optimise $\ln h$ over Fourier modes up to order 4 (iid) and 2 in each argument (Markov), jointly with $\tau$ for the threshold. The grid error of the flat operator is subtracted.
+
+\begin{table}[H]
+\centering\footnotesize
+\begin{tabular}{lccc}
+\toprule
+$A$ & 0.3 & 0.6 & 1 \\
+\midrule
+$f_c^{\rm ann}$ & 0.1084 & 0.2704 & 0.5240 \\
+bound, iid tilt & 0.1080 & 0.2660 & 0.4990 \\
+bound, Markov tilt & 0.1074 & 0.2621 & 0.4887 \\
+exact $f_c$ (Sec.~\ref{sec:relax}) & 0.0682 & 0.1749 & 0.3460 \\
+fraction of $f_c^{\rm ann}-f_c$ closed (iid, Markov) & 1\%, 2.5\% & 5\%, 9\% & 14\%, 20\% \\
+\midrule
+$\Lambda-B$ at $\tau A=1,\,2,\,3$ (iid) & 0.001, 0.017, 0.074 & 0.002, 0.026, 0.095 & 0.008, 0.047, 0.138 \\
+measured $\Lambda-\varphi_q$ at $\tau A=1,\,2,\,3$ & 0.028, 0.242, 0.625 & 0.021, 0.184, 0.515 & 0.017, 0.135, 0.402 \\
+\bottomrule
+\end{tabular}
+\caption{Change-of-measure bounds, Eq.~\eqref{eq:cmbound}, for the triangle model.}
+\label{tab:cmbound}
+\end{table}
+
+\paragraph{Results.}
+\begin{itemize}
+\item \textbf{The annealed threshold is not sharp.} Every tilt gives $f_c<f_c^{\rm ann}$ rigorously, up to the grid discretisation. With one step of memory the ratio is bounded below by $f_c^{\rm ann}/f_c\ge1.009$, $1.032$ and $1.072$ at $A=0.3$, $0.6$ and $1$. The bound needs no simulation of the quenched problem: only the top eigenvalue of an annealed operator.
+\item \textbf{The gain grows with pinning strength}, from $1\%$ to $20\%$ of the true gap at $A=0.3\to1$. The pressure bound closes $4\%$, $10\%$ and $47\%$ of the measured gap at $\tau A=1$ (for $A=0.3$, $0.6$, $1$), and $12$--$34\%$ at $\tau A=3$.
+\item \textbf{The gain grows with memory.} Adding one step of memory to the tilt doubles the part of the gap closed at weak pinning. The orbits that set $f_c$ are correlated over $L_c$ sites ($2.2$, $1.4$ and $1$ here), and a tilt only sees as many consecutive phases as its memory. Single-site tilts therefore fail at weak pinning, the regime FLRT consider. This is the same statement as the replica one: the gap lives in correlations between strands over many sites, not in the single-site law.
+\end{itemize}
+So the rigorous route works, and it is quantitative at moderate pinning. At weak pinning, Eq.~\eqref{eq:cmbound} needs tilts with memory of order $L_c$, for example block tilts that penalise phase sequences admitting a long high-force orbit. Their annealed rate then requires the transfer operator over a block of $L_c$ positions.
 
 \subsection{Frozen phase and a jump at threshold}\label{sec:jump}
 
@@ -782,7 +838,7 @@ ${\rm sd}\,f_c(K)\sqrt K$ ($K=1024$) & 0.10 & 0.20 & 0.31 & 0.54 & 0.61 & 0.84 \
 \item \textbf{Medium size.} Here the period of the medium is fixed while $K$ grows, as in FLRT's torus. A medium of period $\gg K^\zeta$ would test whether the localisation factor survives in an unbounded medium.
 \end{itemize}
 
-\paragraph{Reproduce.}
+\paragraph{Reproduce.}\sloppy
 All steps run from this folder:
 \begin{itemize}
 \item \texttt{./queue\_levels.sh} and \texttt{./queue\_cos.sh} write the exact counts to \texttt{data\_levels/};
@@ -796,6 +852,7 @@ All steps run from this folder:
 \item \texttt{python3 strong\_exact.py} tests the exact threshold formula, and \texttt{python3 strong\_scan.py} gives the infinite-chain strong-pinning thresholds (\texttt{strong\_exact.json}, \texttt{strong\_scan.json});
 \item \texttt{./queue\_strong.sh} and \texttt{python3 minimax.py} give the strong-pinning runs and the minimax threshold (\texttt{strong\_pinning.json} is written by the analysis in \texttt{theory.py});
 \item \texttt{python3 replica.py} writes \texttt{replica.json} (pair moment $\Lambda_2(\tau)$ by population dynamics; \texttt{--check} tests $n=1$ against the exact $\Lambda$); \texttt{python3 theory.py --replica-only} writes \texttt{replica\_summary.json} and Fig.~\ref{fig:replica};
+\item \texttt{python3 fracbound.py} and \texttt{python3 fracbound2.py} write \texttt{fracbound.json} and \texttt{fracbound2.json} (change-of-measure bounds, iid and Markov tilts; \texttt{fracbound.py --check} tests $h=1$ against the exact $\Lambda$);
 \item \texttt{python3 relax.py} writes \texttt{relax.json} (exact thresholds by no-passing relaxation, $K\le1024$); \texttt{python3 theory.py --relax-only} writes \texttt{relax\_summary.json} (the extrapolations of Table~\ref{tab:relax}) and Fig.~\ref{fig:relax};
 \item \texttt{python3 fractal\_top.py} writes \texttt{fractal\_top.json} (box counting of the near-critical set; Fig.~\ref{fig:fractal} is drawn by \texttt{theory.py}).
 \end{itemize}
