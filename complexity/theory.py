@@ -519,6 +519,64 @@ def figure_replica():
     json.dump(summ, open("replica_summary.json", "w"), indent=1)
 
 
+def figure_block():
+    """fig11: block change-of-measure bounds (blockbound.json from blockbound.py,
+    fracbound.json for the single-site tilt, theory.json) -> block_summary.json.
+    A point is kept when B at the two population sizes agrees within 2 sigma
+    and its error is below 0.01 (heavy tails make larger errors unreliable)."""
+    if not os.path.exists("blockbound.json"):
+        return
+    R = json.load(open("blockbound.json")); th = json.load(open("theory.json"))
+    fb = json.load(open("fracbound.json")) if os.path.exists("fracbound.json") else {}
+    tags = {"0.3": "A0.3", "0.6": "A0.6", "1.0": "A1"}
+    cols = {"0.3": "#2a78d6", "0.6": "#eb6834", "1.0": "#1baf7a"}
+    summ = {}
+    fig, ax = plt.subplots(1, 2, figsize=(7.2, 2.9))
+    for key, rows in R.items():
+        A = float(key); d = th[tags[key]]; tq = np.array(d["tau"]) * A; col = cols[key]
+        out = []
+        for r in rows:
+            b1, b2 = r["B"]; e1, e2 = r["B_err"]
+            gap = float(np.interp(r["tauA"], tq, d["gap"]))
+            out.append(dict(l=r["l"], tauA=r["tauA"], B=b2, B_err=e2, Lambda=r["Lambda"], gap=gap,
+                            closed=(r["Lambda"] - b2) / gap, converged=bool(abs(b2 - b1) < 2 * np.hypot(e1, e2) and e2 < 0.01),
+                            f_bound=b2 / r["tau"], ElnZb=r["ElnZb"]))
+        for tA, ls in ((2.0, "-"), (3.0, "--")):
+            pts = sorted([o for o in out if o["tauA"] == tA and o["converged"]], key=lambda o: o["l"])
+            ls_ = [o["l"] for o in pts]; cl = [o["closed"] for o in pts]
+            if key in fb:
+                p = [q for q in fb[key]["pressure"] if q["tauA"] == tA]
+                if p:
+                    ls_ = [1] + ls_; cl = [(p[0]["Lambda"] - p[0]["B"]) / float(np.interp(tA, tq, d["gap"]))] + cl
+            ax[0].plot(ls_, cl, color=col, ls=ls, marker="o", ms=3.5, lw=1.3,
+                       label=f"$A={A:g}$" if tA == 2.0 else None)
+        good = [o for o in out if o["converged"] and o["tauA"] <= 3.0]
+        best = min(good, key=lambda o: o["f_bound"]) if good else None
+        summ[key] = dict(A=A, rows=out, f_bound=best["f_bound"] if best else None,
+                         f_bound_at=dict(l=best["l"], tauA=best["tauA"]) if best else None)
+        if key == "0.6":
+            x = np.linspace(0, 4, 200)
+            ax[1].plot(x, [np.interp(v, tq, d["Lambda"]) for v in x], color="#888888", lw=1, label=r"$\Lambda$ (annealed)")
+            ax[1].plot(x, [np.interp(v, tq, d["phi_q"]) for v in x], color="#222222", lw=1.4, label=r"$\varphi_q$ (measured)")
+            for l, mk in ((4, "s"), (8, "^"), (16, "o")):
+                pts = sorted([o for o in out if o["l"] == l and o["converged"]], key=lambda o: o["tauA"])
+                ax[1].errorbar([o["tauA"] for o in pts], [o["B"] for o in pts], [o["B_err"] for o in pts], color=col,
+                               marker=mk, ms=3.5, lw=0.9, capsize=0, mfc="white" if l < 16 else col, label=f"$B$, $\\ell={l}$")
+    ax[0].set_xscale("log", base=2); ax[0].set_ylim(0, 1)
+    ax[0].set_xlabel(r"block length $\ell$ (1 = single-site tilt)"); ax[0].set_ylabel(r"$(\Lambda-B)/(\Lambda-\varphi_q)$")
+    ax[0].plot([], [], color="#555555", ls="-", label=r"$\tau A=2$"); ax[0].plot([], [], color="#555555", ls="--", label=r"$\tau A=3$")
+    ax[0].legend(fontsize=7, loc="upper left", ncol=2)
+    ax[0].set_title("(a) fraction of the pressure gap closed", fontsize=9, loc="left")
+    ax[1].set_xlabel(r"$\tau A$"); ax[1].set_ylabel("pressure per site")
+    ax[1].legend(fontsize=7, loc="upper left")
+    ax[1].set_title("(b) bounds on $\\varphi_q$, $A=0.6$", fontsize=9, loc="left")
+    fig.tight_layout()
+    fig.savefig("fig11_block.pdf", bbox_inches="tight")
+    fig.savefig("fig11_block.png", dpi=200, bbox_inches="tight")
+    plt.close(fig)
+    json.dump(summ, open("block_summary.json", "w"), indent=1)
+
+
 if __name__ == "__main__":
     import sys
     if "--torus-only" in sys.argv:
@@ -528,10 +586,13 @@ if __name__ == "__main__":
         figure_strong()
         figure_relax()
         figure_replica()
+        figure_block()
     elif "--relax-only" in sys.argv:
         figure_relax()
     elif "--replica-only" in sys.argv:
         figure_replica()
+    elif "--block-only" in sys.argv:
+        figure_block()
     else:
         main()
         figure_torus()
@@ -540,3 +601,4 @@ if __name__ == "__main__":
         figure_strong()
         figure_relax()
         figure_replica()
+        figure_block()
