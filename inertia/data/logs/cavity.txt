@@ -1,0 +1,25 @@
+13:45:32 m 1024 v 0.0891 it 0: f 0.1214 S_xi(0) 5.993 eta_eff 0.480 gamma -0.350 T_lw 6.239 Tkin 2.734 v_site 0.0890  92s
+13:46:44 m 1024 v 0.0891 it 1: f 0.1191 S_xi(0) 5.689 eta_eff 0.727 gamma -0.452 T_lw 3.912 Tkin 3.570 v_site 0.0887  72s
+13:48:04 m 1024 v 0.0891 it 2: f 0.1186 S_xi(0) 6.063 eta_eff 0.847 gamma -0.344 T_lw 3.580 Tkin 3.077 v_site 0.0886  79s
+13:49:11 m 1024 v 0.0891 it 3: f 0.1192 S_xi(0) 5.529 eta_eff 0.701 gamma -0.230 T_lw 3.943 Tkin 2.691 v_site 0.0892  68s
+13:50:28 m 1024 v 0.0891 it 4: f 0.1202 S_xi(0) 6.100 eta_eff 0.705 gamma -0.271 T_lw 4.327 Tkin 2.856 v_site 0.0889  77s
+13:51:36 m 1024 v 0.0891 it 5: f 0.1201 S_xi(0) 6.211 eta_eff 0.606 gamma -0.286 T_lw 5.128 Tkin 2.969 v_site 0.0896  68s
+13:52:47 m 1024 v 0.0708 it 0: f 0.1053 S_xi(0) 7.372 eta_eff 0.861 gamma -0.350 T_lw 4.280 Tkin 3.269 v_site 0.0706  71s
+13:54:01 m 1024 v 0.0708 it 1: f 0.1091 S_xi(0) 7.725 eta_eff 0.490 gamma -0.223 T_lw 7.880 Tkin 2.983 v_site 0.0704  74s
+13:55:26 m 1024 v 0.0708 it 2: f 0.1030 S_xi(0) 7.949 eta_eff 1.031 gamma -0.395 T_lw 3.854 Tkin 3.756 v_site 0.0702  85s
+13:56:48 m 1024 v 0.0708 it 3: f 0.1109 S_xi(0) 7.451 eta_eff 0.595 gamma -0.139 T_lw 6.260 Tkin 2.743 v_site 0.0709  82s
+13:58:09 m 1024 v 0.0708 it 4: f 0.1077 S_xi(0) 8.191 eta_eff 0.659 gamma -0.299 T_lw 6.217 Tkin 3.349 v_site 0.0705  81s
+13:59:23 m 1024 v 0.0708 it 5: f 0.1088 S_xi(0) 9.106 eta_eff 0.505 gamma -0.324 T_lw 9.013 Tkin 3.519 v_site 0.0715  74s
+14:00:35 m 1024 v 0.0512 it 0: f 0.0893 S_xi(0) 14.767 eta_eff 0.367 gamma -0.350 T_lw 20.121 Tkin 4.197 v_site 0.0510  71s
+14:01:47 m 1024 v 0.0512 it 1: f 0.0811 S_xi(0) 13.799 eta_eff 0.982 gamma -0.520 T_lw 7.026 Tkin 5.362 v_site 0.0505  72s
+14:02:54 m 1024 v 0.0512 it 2: f 0.0936 S_xi(0) 12.481 eta_eff 0.871 gamma -0.219 T_lw 7.167 Tkin 3.220 v_site 0.0506  68s
+14:04:00 m 1024 v 0.0512 it 3: f 0.0946 S_xi(0) 12.904 eta_eff 0.755 gamma -0.165 T_lw 8.543 Tkin 3.101 v_site 0.0514  66s
+14:05:06 m 1024 v 0.0512 it 4: f 0.0945 S_xi(0) 14.189 eta_eff 0.463 gamma -0.213 T_lw 15.334 Tkin 3.304 v_site 0.0508  66s
+14:06:16 m 1024 v 0.0512 it 5: f 0.0827 S_xi(0) 13.169 eta_eff 0.989 gamma -0.408 T_lw 6.658 Tkin 4.319 v_site 0.0521  69s
+14:07:29 m 256 v 0.1169 it 0: f 0.1689 S_xi(0) 4.864 eta_eff 0.638 gamma -0.350 T_lw 3.809 Tkin 1.884 v_site 0.1168  74s
+14:08:34 m 256 v 0.1169 it 1: f 0.1703 S_xi(0) 4.982 eta_eff 0.584 gamma -0.357 T_lw 4.265 Tkin 1.946 v_site 0.1165  65s
+14:09:38 m 256 v 0.1169 it 2: f 0.1678 S_xi(0) 5.275 eta_eff 0.678 gamma -0.392 T_lw 3.892 Tkin 2.076 v_site 0.1164  64s
+14:10:43 m 256 v 0.1169 it 3: f 0.1696 S_xi(0) 5.123 eta_eff 0.672 gamma -0.350 T_lw 3.812 Tkin 1.963 v_site 0.1170  65s
+14:11:48 m 256 v 0.1169 it 4: f 0.1686 S_xi(0) 4.821 eta_eff 0.699 gamma -0.337 T_lw 3.450 Tkin 1.942 v_site 0.1166  66s
+14:12:55 m 256 v 0.1169 it 5: f 0.1704 S_xi(0) 4.320 eta_eff 0.682 gamma -0.316 T_lw 3.165 Tkin 1.880 v_site 0.1174  66s
+done

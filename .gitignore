@@ -6,3 +6,12 @@ interface_data/
 __pycache__/
 .DS_Store
 .ipynb_checkpoints/
+
+# Overleaf (ShareLaTeX) clone of the paper, versioned separately
+inertia/paper/
+
+# LaTeX build files of the inertia note
+inertia/notes/*.aux
+inertia/notes/*.log
+inertia/notes/*.out
+inertia/notes/*.toc

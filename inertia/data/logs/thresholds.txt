@@ -1,0 +1,35 @@
+11:52:27 vhist 64.0 0.198 rho(0.02) 0.4185870361328125
+11:52:35 vhist 64.0 0.25 rho(0.02) 0.95244287109375
+11:53:58 vhist 1024.0 0.093 rho(0.02) 3.7841796875e-05
+11:55:18 vhist 1024.0 0.12 rho(0.02) 0.9244271240234375
+11:55:18 done vhist 186s
+11:57:21 spread base t/m 500 alive 45/96
+11:58:43 spread base t/m 1000 alive 38/96
+11:59:52 spread base t/m 1500 alive 35/96
+12:00:52 spread base t/m 2000 alive 29/96
+12:00:52 done spread 333s
+12:01:43 spread narrow t/m 500 alive 17/96
+12:02:15 spread narrow t/m 1000 alive 13/96
+12:02:49 spread narrow t/m 1500 alive 13/96
+12:03:20 spread narrow t/m 2000 alive 10/96
+12:03:20 done spread 148s
+12:06:14 spread wide t/m 500 alive 65/96
+12:08:21 spread wide t/m 1000 alive 53/96
+12:10:08 spread wide t/m 1500 alive 49/96
+12:11:53 spread wide t/m 2000 alive 47/96
+12:11:53 done spread 512s
+12:12:43 subs 0.1908 dead 12 of 12 t/m 1250
+12:12:43 done subs 49s
+12:15:39 spread sub0.1908 t/m 500 alive 68/96
+12:17:54 spread sub0.1908 t/m 1000 alive 66/96
+12:20:07 spread sub0.1908 t/m 1500 alive 58/96
+12:22:18 spread sub0.1908 t/m 2000 alive 58/96
+12:22:18 done spread 573s
+12:31:23 aval c 1.5 m 4.0 events 2887
+12:33:54 aval c 1.5 m 64.0 events 2561
+12:36:42 aval c 1.5 m 1024.0 events 4554
+12:36:42 done aval 864s
+12:45:32 aval c 10.0 m 4.0 events 2191
+12:47:41 aval c 10.0 m 64.0 events 1360
+12:49:46 aval c 10.0 m 1024.0 events 1260
+12:49:46 done aval 783s
