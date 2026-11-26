@@ -9,7 +9,7 @@ from matplotlib.lines import Line2D
 from matplotlib.ticker import NullFormatter
 import numpy as np
 
-from make_figures import decode, profiles, common_bins, spectral_fit, SIZES, COLORS, MARKERS
+from make_figures import decode, profiles, common_bins, spectral_fit, mode_spectra, mode_panel, SIZES, COLORS, MARKERS
 
 ROOT = Path(__file__).resolve().parents[2]
 OUT = Path(__file__).resolve().parent
@@ -87,27 +87,13 @@ def main():
     ax.yaxis.set_minor_formatter(NullFormatter())
 
     ax=axes[1]
-    for L,color,marker in zip(SIZES[2:],COLORS[2:],MARKERS[2:]):
-        for kind in ("x","s"):
-            q,values=spectra[L][kind]
-            ax.loglog(q,q**3.9*values.mean(axis=0),ls="none",marker=marker,color=color,
-                      markerfacecolor=color if kind=="x" else "none",ms=5,markeredgewidth=1)
-    q,values=spectra[2048]["s"]
-    anchor=np.exp(np.interp(np.log(.02),np.log(q),np.log(values.mean(axis=0))))
-    plateau=anchor*.02**3.9
-    xx=np.geomspace(.006,.15,100)
-    ax.plot(xx,np.full_like(xx,plateau),"--",color="black",lw=1.3)
-    ax.text(.007,plateau*1.18,r"$\zeta=1.45$",fontsize=10,va="bottom")
-    ax.plot(xx,plateau*(xx/.02)**.4,":",c="black",lw=1.6)
-    ax.text(.04,plateau*(.04/.02)**.4*.65,r"$\zeta=1.25$",fontsize=10,va="top")
+    mode_panel(ax,{L:mode_spectra(groups[L],L) for L in SIZES[2:]},SIZES[2:],[(1.45, "--", 2), (1.25, ":", .5)])
     handles=[Line2D([],[],c=c,marker=m,ls="none",label=fr"$L_x={L}$")
              for L,c,m in zip(SIZES[2:],COLORS[2:],MARKERS[2:])]
     handles.extend([Line2D([],[],c=".25",marker="o",ls="none",label=r"$h(x)$"),
                     Line2D([],[],c=".25",marker="o",mfc="none",ls="none",label=r"$h(s)$")])
-    ax.legend(handles=handles,frameon=False,fontsize=8,ncol=2,loc="upper left")
-    ax.set(xlabel=r"$q$",ylabel=r"$q^{3.9}S(q)$",title="(b) Compensated height spectra")
-    ax.set_xticks([.006,.01,.02,.05,.1,.2],labels=["0.006","0.01","0.02","0.05","0.1","0.2"])
-    ax.xaxis.set_minor_formatter(NullFormatter())
+    ax.legend(handles=handles,frameon=False,fontsize=8,ncol=2,loc="upper right")
+    ax.set(title="(b) Height spectra")
     for ext in ("pdf","png"):
         fig.savefig(OUT/f"fig16_diagonal_scaling.{ext}",dpi=200)
     plt.close(fig)

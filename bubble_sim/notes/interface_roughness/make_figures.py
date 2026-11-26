@@ -109,6 +109,44 @@ def spectral_fit(q, values, low, high, draws):
                 bins=int(take.sum()), q_actual=q[take][[0,-1]].tolist())
 
 
+MODES = 45/2048   # modes 2 <= n <= MODES*L shown in the spectral panels, q_x = 2 pi n / L <= 0.14
+
+
+def mode_spectra(rows, L):
+    """S(n) = <|h_n|^2> at fixed mode index n, equal weight per contour (|h_n|^2 = S_i(q_n)/T)."""
+    n = np.arange(2, int(MODES*L)+1)
+    return n, {kind: np.mean([r["S"+kind][n]*r["q"+kind][1]/(2*np.pi) for r in rows], axis=0)
+               for kind in ("x", "s")}
+
+
+def mode_panel(ax, modes, sizes, references, kinds=("x", "s")):
+    """Raw spectra versus n, filled h(x) and open h(s); references: (zeta, linestyle, factor)
+    lines n^-(1+2 zeta), factor > 1 times above (< 1: below) every point shown, labelled at their
+    upper left (above) or lower right (below) end."""
+    for L, color, marker in zip(sizes, COLORS[-len(sizes):], MARKERS[-len(sizes):]):
+        n, S = modes[L]
+        for kind in kinds:
+            ax.loglog(n, S[kind], ls="none", marker=marker, color=color,
+                      markerfacecolor=color if kind == "x" else "none", ms=5, markeredgewidth=1)
+    n = modes[sizes[-1]][0]
+    nn = np.geomspace(n[0], n[-1], 100)
+    for zeta, ls, factor in references:
+        ratio = np.concatenate([S[kind]*m**(1+2*zeta) for m, S in (modes[L] for L in sizes) for kind in kinds])
+        line = factor*(ratio.max() if factor > 1 else ratio.min())*nn**-(1+2*zeta)
+        ax.plot(nn, line, ls, c="black", lw=1.3 if ls == "--" else 1.6)
+        low, high = ax.get_ylim()
+        if factor > 1:
+            ax.text(nn[0]*1.05, line[0]*1.3, fr"$\zeta={zeta:g}$", fontsize=10, ha="left", va="bottom")
+            ax.set_ylim(low, max(high, line[0]*25))
+        else:
+            ax.text(nn[-1], line[-1]*.7, fr"$\zeta={zeta:g}$", fontsize=10, ha="right", va="top")
+            ax.set_ylim(min(low, line[-1]*.04), high)
+    ax.set(xlabel=r"Fourier mode $n$", ylabel=r"$S(n)$")
+    ticks = [t for t in (2, 4, 8, 16, 32, 64, 128) if t <= n[-1]]
+    ax.set_xticks(ticks, labels=[str(t) for t in ticks])
+    ax.xaxis.set_minor_formatter(NullFormatter())
+
+
 def main():
     plt.rcParams.update({"font.size":10, "axes.spines.top":False, "axes.spines.right":False,
                          "font.family":"DejaVu Sans", "pdf.fonttype":42})
@@ -192,26 +230,13 @@ def main():
     ax.yaxis.set_minor_formatter(NullFormatter())
 
     ax = axes[1]
-    for L,color,marker in zip(SIZES[2:],COLORS[2:],MARKERS[2:]):
-        for kind in ("x","s"):
-            q,values=spectra[L][kind]
-            ax.loglog(q,q**3.5*values.mean(axis=0),linestyle="none",marker=marker,color=color,
-                      markerfacecolor=color if kind=="x" else "none",ms=5,
-                      markeredgewidth=1)
-    q,values=spectra[2048]["s"]
-    anchor=np.exp(np.interp(np.log(.03),np.log(q),np.log(values.mean(axis=0))))
-    xx=np.geomspace(.006,.15,100)
-    plateau = anchor*.03**3.5
-    ax.plot(xx, np.full_like(xx, plateau), "--", color="black", lw=1.3)
-    ax.text(.007, plateau*1.12, r"$\zeta=1.25$", fontsize=10)
+    mode_panel(ax, {L: mode_spectra(groups[L], L) for L in SIZES[2:]}, SIZES[2:], [(1.25, "--", 2)])
     handles=[Line2D([],[],c=c,marker=m,ls="none",label=fr"$L_x={L}$")
              for L,c,m in zip(SIZES[2:],COLORS[2:],MARKERS[2:])]
     handles.extend([Line2D([],[],c=".25",marker="o",ls="none",label=r"$h(x)$"),
                     Line2D([],[],c=".25",marker="o",mfc="none",ls="none",label=r"$h(s)$")])
-    ax.legend(handles=handles,frameon=False,fontsize=8,ncol=2,loc="upper left")
-    ax.set(xlabel=r"$q$",ylabel=r"$q^{3.5}S(q)$",title="(b) Compensated height spectra")
-    ax.set_xticks([.006,.01,.02,.05,.1,.2],labels=["0.006","0.01","0.02","0.05","0.1","0.2"])
-    ax.xaxis.set_minor_formatter(NullFormatter())
+    ax.legend(handles=handles,frameon=False,fontsize=8,ncol=2,loc="lower left")
+    ax.set(title="(b) Height spectra")
     for ext in ("pdf","png"):
         fig.savefig(OUT/f"fig2_scaling.{ext}",dpi=200)
     plt.close(fig)
