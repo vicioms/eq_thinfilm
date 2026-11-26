@@ -7,6 +7,11 @@
 #   sbatch slurm_fss_flat.sh 90 4   # optional 2nd argument: aspect, box L x (aspect L), default 2
 #   sbatch slurm_fss_flat.sh 0 2 0.02 1024   # optional 3rd: Delta (default 0.04), 4th: largest L (default 2048)
 #                                            -> runs/flat_D0.02_b0_A2, L = 256 512 1024
+#   optional environment overrides (sbatch exports the submitting environment):
+#     SAMPLES="512:64 1024:32"   L:n pairs, replace the default 256:256 512:128 1024:64 2048:32 (and Lmax)
+#     ANISO="1"                  values of a, replace the default for the angle
+#   e.g. SAMPLES="4096:32" ANISO=1 sbatch slurm_fss_flat.sh 90   (adds L = 4096 to runs/flat_D0.04_b90_A2)
+#   The overhang runs of the phase-field wall note are in submit_edge_overhangs.sh.
 #
 # The wall and the box never rotate (wall along x, motion along y); the angle
 # rotates b in the noise spectrum only.
@@ -47,18 +52,28 @@ DELTA=${3:-0.04}
 LMAX=${4:-2048}
 # ramp step: 0.001 at Delta = 0.04, scaled with the threshold, h_c ~ Delta^(4/3)
 DH=$(python3 -c "print(f'{0.001 * ($DELTA / 0.04) ** (4 / 3):.2g}')")
+PAIRS=${SAMPLES:-}
+ANISO_SET=${ANISO:-}
 LS=(); SAMPLES=()
-for pair in 256:256 512:128 1024:64 2048:32; do
-    L=${pair%%:*}
-    if [ "$L" -le "$LMAX" ]; then LS+=("$L"); SAMPLES+=("$pair"); fi
-done
+if [ -n "$PAIRS" ]; then
+    for pair in $PAIRS; do LS+=("${pair%%:*}"); SAMPLES+=("$pair"); done
+else
+    for pair in 256:256 512:128 1024:64 2048:32; do
+        L=${pair%%:*}
+        if [ "$L" -le "$LMAX" ]; then LS+=("$L"); SAMPLES+=("$pair"); fi
+    done
+fi
 OUT=runs/flat_D${DELTA}_b${ANGLE}_A${ASPECT}
-case "$ANGLE" in
-    0)  ANISO=(0 0.5 1) ;;
-    90) ANISO=(0.5 1) ;;
-    *)  ANISO=(1) ;;
-esac
-echo "output: $OUT  burgers angle: $ANGLE  aspect: $ASPECT  Delta: $DELTA  a: ${ANISO[*]}  L: ${LS[*]}  dh: $DH"
+if [ -n "$ANISO_SET" ]; then
+    read -r -a ANISO <<< "$ANISO_SET"
+else
+    case "$ANGLE" in
+        0)  ANISO=(0 0.5 1) ;;
+        90) ANISO=(0.5 1) ;;
+        *)  ANISO=(1) ;;
+    esac
+fi
+echo "output: $OUT  burgers angle: $ANGLE  aspect: $ASPECT  Delta: $DELTA  a: ${ANISO[*]}  L:n ${SAMPLES[*]}  dh: $DH"
 
 # --- environment (edit) ------------------------------------------------------
 module load cuda/12.8
