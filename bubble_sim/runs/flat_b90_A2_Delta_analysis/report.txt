@@ -1,5 +1,5 @@
 runs: runs/flat_D0.04_b90_A2, runs/flat_D0.08_b90_A2, runs/flat_D0.16_b90_A2
-  edge walls (line ⊥ b), Ly/L = 2: 960 walls
+  edge walls (line ⊥ b), Ly/L = 2: 992 walls
   edge walls (line ⊥ b), Ly/L = 2: 96 walls
   edge walls (line ⊥ b), Ly/L = 2: 96 walls
 == roughness: edge walls (line ⊥ b), Ly/L = 2
@@ -12,53 +12,55 @@ runs: runs/flat_D0.04_b90_A2, runs/flat_D0.08_b90_A2, runs/flat_D0.16_b90_A2
    a=1.00 L=  512 n= 128: intrinsic 0.926±0.036 | profile 0.767±0.027 | travel<458: 0.912±0.036, >: 0.929±0.061 | q<=0.03: nan±nan, nan±nan
    a=1.00 L= 1024 n=  64: intrinsic 0.835±0.024 | profile 0.716±0.029 | travel<1088: 0.788±0.039, >: 0.854±0.031 | q<=0.03: 0.583±0.081, 0.590±0.123
    a=1.00 L= 2048 n=  32: intrinsic 0.784±0.026 | profile 0.682±0.025 | travel<1408: 0.760±0.021, >: 0.802±0.048 | q<=0.03: 0.652±0.049, 0.637±0.065
+   a=1.00 L= 4096 n=  32: intrinsic 0.825±0.019 | profile 0.718±0.011 | travel<4443: 0.848±0.028, >: 0.797±0.019 | q<=0.03: 0.728±0.036, 0.689±0.036
 == roughness: edge walls (line ⊥ b), Ly/L = 2
    zeta from pooled spectra, modes n >= 2 up to q = 0.1; intrinsic S_psi ~ q^(1-2 zeta) | profile (u(x)) S ~ q^-(1+2 zeta) | intrinsic split at the median travel (memory) | large scales q <= 0.03: intrinsic, profile
-   a=1.00 L=  512 n=  64: intrinsic 1.143±0.042 | profile 0.013±0.072 | travel<405: 1.194±0.046, >: 1.066±0.068 | q<=0.03: nan±nan, nan±nan
-   a=1.00 L= 1024 n=  32: intrinsic 1.056±0.034 | profile 0.067±0.063 | travel<850: 1.001±0.044, >: 1.072±0.039 | q<=0.03: 0.839±0.100, -0.456±0.236
+   a=1.00 L=  512 n=  64: intrinsic 1.143±0.037 | profile 0.013±0.072 | travel<405: 1.194±0.048, >: 1.066±0.063 | q<=0.03: nan±nan, nan±nan
+   a=1.00 L= 1024 n=  32: intrinsic 1.056±0.032 | profile 0.067±0.062 | travel<850: 1.001±0.046, >: 1.072±0.039 | q<=0.03: 0.839±0.096, -0.456±0.216
 == roughness: edge walls (line ⊥ b), Ly/L = 2
    zeta from pooled spectra, modes n >= 2 up to q = 0.1; intrinsic S_psi ~ q^(1-2 zeta) | profile (u(x)) S ~ q^-(1+2 zeta) | intrinsic split at the median travel (memory) | large scales q <= 0.03: intrinsic, profile
-   a=1.00 L=  512 n=  64: intrinsic 1.159±0.019 | profile -0.080±0.054 | travel<217: 1.177±0.026, >: 1.149±0.024 | q<=0.03: 1.079±0.058, nan±nan
-   a=1.00 L= 1024 n=  32: intrinsic 1.092±0.007 | profile 0.043±0.055 | travel<501: 1.097±0.010, >: 1.091±0.013 | q<=0.03: 1.040±0.016, 0.435±0.285
+   a=1.00 L=  512 n=  64: intrinsic 1.159±0.018 | profile -0.080±0.050 | travel<217: 1.177±0.027, >: 1.149±0.025 | q<=0.03: 1.079±0.060, nan±nan
+   a=1.00 L= 1024 n=  32: intrinsic 1.092±0.007 | profile 0.043±0.060 | travel<501: 1.097±0.010, >: 1.091±0.013 | q<=0.03: 1.040±0.016, 0.435±0.281
 == threshold: edge walls (line ⊥ b), Ly/L = 2   (<h_d> = h_c + A L^(-1/nu), L >= 0)
    a=0.50: L=256: 0.02859±0.00013  L=512: 0.02748±0.00011  L=1024: 0.02675±0.00008  L=2048: 0.02628±0.00008
           nu(var) = 1.31±0.09;  h_c[qEW] = 0.02569±0.00009 (chi2/dof 0.2);  h_c[qKPZ] = 0.02527±0.00011 (chi2/dof 0.0);  h_c[free, 1/nu = 0.62±0.20] = 0.02541±0.00054 (chi2/dof 0.0)
-   a=1.00: L=256: 0.03097±0.00016  L=512: 0.02920±0.00014  L=1024: 0.02786±0.00011  L=2048: 0.02707±0.00008
-          nu(var) = 1.15±0.08;  h_c[qEW] = 0.02604±0.00010 (chi2/dof 1.0);  h_c[qKPZ] = 0.02537±0.00012 (chi2/dof 0.2);  h_c[free, 1/nu = 0.57±0.14] = 0.02532±0.00074 (chi2/dof 0.3)
+   a=1.00: L=256: 0.03097±0.00016  L=512: 0.02920±0.00014  L=1024: 0.02786±0.00011  L=2048: 0.02707±0.00008  L=4096: 0.02648±0.00007
+          nu(var) = 1.38±0.08;  h_c[qEW] = 0.02591±0.00007 (chi2/dof 1.8);  h_c[qKPZ] = 0.02535±0.00008 (chi2/dof 0.1);  h_c[free, 1/nu = 0.56±0.08] = 0.02528±0.00038 (chi2/dof 0.2)
 == threshold: edge walls (line ⊥ b), Ly/L = 2   (<h_d> = h_c + A L^(-1/nu), L >= 0)
    a=1.00: L=512: 0.05527±0.00033  L=1024: 0.05361±0.00034
-          nu(var) = 2.21±7.50
+          nu(var) = 2.21±5.01
 == threshold: edge walls (line ⊥ b), Ly/L = 2   (<h_d> = h_c + A L^(-1/nu), L >= 0)
    a=1.00: L=512: 0.07599±0.00044  L=1024: 0.07236±0.00039
-          nu(var) = 1.44±1.60
+          nu(var) = 1.44±1.68
 == h(s) spectrum: edge walls (line ⊥ b), Ly/L = 2   h = y(s) along the arc length s, S_h ~ q^-(1+2 zeta), modes n >= 2: zeta for q <= 0.1 | q <= 0.03
    a=0.50 L=  256 n= 256: zeta_h 1.021±0.071 | q<=0.03: nan±nan
-   a=0.50 L=  512 n= 128: zeta_h 1.036±0.035 | q<=0.03: nan±nan
+   a=0.50 L=  512 n= 128: zeta_h 1.036±0.033 | q<=0.03: nan±nan
    a=0.50 L= 1024 n=  64: zeta_h 0.949±0.024 | q<=0.03: 0.720±0.084
-   a=0.50 L= 2048 n=  32: zeta_h 0.993±0.020 | q<=0.03: 0.859±0.068
-   a=1.00 L=  256 n= 256: zeta_h 0.981±0.063 | q<=0.03: nan±nan
-   a=1.00 L=  512 n= 128: zeta_h 0.907±0.028 | q<=0.03: nan±nan
-   a=1.00 L= 1024 n=  64: zeta_h 0.832±0.024 | q<=0.03: 0.594±0.083
-   a=1.00 L= 2048 n=  32: zeta_h 0.785±0.028 | q<=0.03: 0.657±0.053
+   a=0.50 L= 2048 n=  32: zeta_h 0.993±0.019 | q<=0.03: 0.859±0.067
+   a=1.00 L=  256 n= 256: zeta_h 0.981±0.059 | q<=0.03: nan±nan
+   a=1.00 L=  512 n= 128: zeta_h 0.907±0.027 | q<=0.03: nan±nan
+   a=1.00 L= 1024 n=  64: zeta_h 0.832±0.025 | q<=0.03: 0.594±0.091
+   a=1.00 L= 2048 n=  32: zeta_h 0.785±0.028 | q<=0.03: 0.657±0.055
+   a=1.00 L= 4096 n=  32: zeta_h 0.805±0.010 | q<=0.03: 0.712±0.034
 == h(s) spectrum: edge walls (line ⊥ b), Ly/L = 2   h = y(s) along the arc length s, S_h ~ q^-(1+2 zeta), modes n >= 2: zeta for q <= 0.1 | q <= 0.03
-   a=1.00 L=  512 n=  64: zeta_h 0.930±0.045 | q<=0.03: nan±nan
-   a=1.00 L= 1024 n=  32: zeta_h 0.804±0.025 | q<=0.03: 0.682±0.090
+   a=1.00 L=  512 n=  64: zeta_h 0.930±0.044 | q<=0.03: nan±nan
+   a=1.00 L= 1024 n=  32: zeta_h 0.804±0.025 | q<=0.03: 0.682±0.098
 == h(s) spectrum: edge walls (line ⊥ b), Ly/L = 2   h = y(s) along the arc length s, S_h ~ q^-(1+2 zeta), modes n >= 2: zeta for q <= 0.1 | q <= 0.03
-   a=1.00 L=  512 n=  64: zeta_h 0.760±0.029 | q<=0.03: 0.835±0.093
-   a=1.00 L= 1024 n=  32: zeta_h 0.708±0.012 | q<=0.03: 0.673±0.018
+   a=1.00 L=  512 n=  64: zeta_h 0.760±0.026 | q<=0.03: 0.835±0.094
+   a=1.00 L= 1024 n=  32: zeta_h 0.708±0.012 | q<=0.03: 0.673±0.020
 == length: edge walls (line ⊥ b), Ly/L = 2   P ∝ L^alpha (P/L; overhangs = fraction of columns crossing the wall more than once)
    a=0.50: alpha = 1.044±0.005; local 1.05±0.01 1.04±0.02 1.03±0.02
           L=256: 1.153  L=512: 1.195  L=1024: 1.231  L=2048: 1.255
           overhangs: L=256: 0.002  L=512: 0.004  L=1024: 0.016  L=2048: 0.020
-   a=1.00: alpha = 1.009±0.002; local 1.02±0.01 1.00±0.01 1.00±0.01
-          L=256: 1.107  L=512: 1.122  L=1024: 1.120  L=2048: 1.122
-          overhangs: L=256: 0.000  L=512: 0.001  L=1024: 0.001  L=2048: 0.001
+   a=1.00: alpha = 1.007±0.001; local 1.02±0.01 1.00±0.01 1.00±0.01 1.01±0.01
+          L=256: 1.107  L=512: 1.122  L=1024: 1.120  L=2048: 1.122  L=4096: 1.127
+          overhangs: L=256: 0.000  L=512: 0.001  L=1024: 0.001  L=2048: 0.001  L=4096: 0.002
 == length: edge walls (line ⊥ b), Ly/L = 2   P ∝ L^alpha (P/L; overhangs = fraction of columns crossing the wall more than once)
-   a=1.00: alpha = 1.073±0.042; local 1.06±0.05
+   a=1.00: alpha = 1.073±0.044; local 1.06±0.05
           L=512: 1.389  L=1024: 1.447
           overhangs: L=512: 0.208  L=1024: 0.460
 == length: edge walls (line ⊥ b), Ly/L = 2   P ∝ L^alpha (P/L; overhangs = fraction of columns crossing the wall more than once)
-   a=1.00: alpha = 1.840±0.132; local 1.85±0.15
+   a=1.00: alpha = 1.840±0.135; local 1.85±0.14
           L=512: 2.831  L=1024: 5.089
           overhangs: L=512: 0.957  L=1024: 0.990
 == roughness density (Caballero-Giamarchi): edge walls (line ⊥ b), Ly/L = 2   B(r) = slope of -2 ln chi(q, r) vs q^2 at q -> 0 (= exact <Δu^2> + B(0), u the signed height); local slope d lnB/d ln r of B - B(0) (2 zeta for zeta < 1; 2 for zeta > 1); B(32) - B(0) vs L ∝ L^(2 zeta - 2) for zeta > 1; B(0) = overhangs
@@ -71,7 +73,8 @@ runs: runs/flat_D0.04_b90_A2, runs/flat_D0.08_b90_A2, runs/flat_D0.16_b90_A2
    a=1.00 L=  512 n= 128: B(0) = 2.77 | slope r 2-16: 1.83  16-128: 1.24  16-64: 1.37 | B(32) - B(0) = 155.6 | max |B - Bdir| / Bdir = 1.4e-09
    a=1.00 L= 1024 n=  64: B(0) = 1.33 | slope r 2-16: 1.82  16-128: 1.30  32-128: 1.21 | B(32) - B(0) = 159.8 | max |B - Bdir| / Bdir = 5.1e-09
    a=1.00 L= 2048 n=  32: B(0) = 0.434 | slope r 2-16: 1.83  16-128: 1.34  64-256: 1.14 | B(32) - B(0) = 163.7 | max |B - Bdir| / Bdir = 8.3e-09
-          B(32) - B(0) ∝ L^0.11  -> zeta = 1.05 if anomalous (zeta > 1); local 0.27 0.04 0.03
+   a=1.00 L= 4096 n=  32: B(0) = 15.5 | slope r 2-16: 1.83  16-128: 1.40  128-512: 1.12 | B(32) - B(0) = 175.4 | max |B - Bdir| / Bdir = 8.0e-09
+          B(32) - B(0) ∝ L^0.10  -> zeta = 1.05 if anomalous (zeta > 1); local 0.27 0.04 0.03 0.10
 == roughness density (Caballero-Giamarchi): edge walls (line ⊥ b), Ly/L = 2   B(r) = slope of -2 ln chi(q, r) vs q^2 at q -> 0 (= exact <Δu^2> + B(0), u the signed height); local slope d lnB/d ln r of B - B(0) (2 zeta for zeta < 1; 2 for zeta > 1); B(32) - B(0) vs L ∝ L^(2 zeta - 2) for zeta > 1; B(0) = overhangs
    a=1.00 L=  512 n=  64: B(0) = 277 | slope r 2-16: 1.61  16-128: 1.23  16-64: 1.33 | B(32) - B(0) = 292.9 | max |B - Bdir| / Bdir = 2.2e-09
    a=1.00 L= 1024 n=  32: B(0) = 285 | slope r 2-16: 1.66  16-128: 1.26  32-128: 1.19 | B(32) - B(0) = 311.8 | max |B - Bdir| / Bdir = 3.4e-09

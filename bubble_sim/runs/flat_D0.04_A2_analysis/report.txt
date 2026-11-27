@@ -1,7 +1,7 @@
 runs: runs/flat_D0.04_b0_A2, runs/flat_D0.04_b45_A2, runs/flat_D0.04_b90_A2
   screw walls (line ∥ b), Ly/L = 2: 1440 walls
   walls, b at 45°, Ly/L = 2: 480 walls
-  edge walls (line ⊥ b), Ly/L = 2: 960 walls
+  edge walls (line ⊥ b), Ly/L = 2: 992 walls
 == roughness: screw walls (line ∥ b), Ly/L = 2
    zeta from pooled spectra, modes n >= 2 up to q = 0.1; intrinsic S_psi ~ q^(1-2 zeta) | profile (u(x)) S ~ q^-(1+2 zeta) | intrinsic split at the median travel (memory) | large scales q <= 0.03: intrinsic, profile
    a=0.00 L=  256 n= 256: intrinsic 1.297±0.042 | profile 0.967±0.073 | travel<225: 1.301±0.062, >: 1.316±0.057 | q<=0.03: nan±nan, nan±nan
@@ -32,6 +32,7 @@ runs: runs/flat_D0.04_b0_A2, runs/flat_D0.04_b45_A2, runs/flat_D0.04_b90_A2
    a=1.00 L=  512 n= 128: intrinsic 0.926±0.036 | profile 0.767±0.030 | travel<458: 0.912±0.035, >: 0.929±0.059 | q<=0.03: nan±nan, nan±nan
    a=1.00 L= 1024 n=  64: intrinsic 0.835±0.022 | profile 0.716±0.029 | travel<1088: 0.788±0.037, >: 0.854±0.030 | q<=0.03: 0.583±0.088, 0.590±0.126
    a=1.00 L= 2048 n=  32: intrinsic 0.784±0.027 | profile 0.682±0.025 | travel<1408: 0.760±0.021, >: 0.802±0.044 | q<=0.03: 0.652±0.048, 0.637±0.061
+   a=1.00 L= 4096 n=  32: intrinsic 0.825±0.018 | profile 0.718±0.011 | travel<4443: 0.848±0.029, >: 0.797±0.017 | q<=0.03: 0.728±0.037, 0.689±0.036
 == threshold: screw walls (line ∥ b), Ly/L = 2   (<h_d> = h_c + A L^(-1/nu), L >= 0)
    a=0.00: L=256: 0.02614±0.00012  L=512: 0.02568±0.00008  L=1024: 0.02566±0.00007  L=2048: 0.02559±0.00006
           nu(var) = 1.20±0.09;  h_c[qEW] = 0.02544±0.00007 (chi2/dof 1.5);  h_c[qKPZ] = 0.02537±0.00009 (chi2/dof 1.9);  h_c[free, 1/nu = 2.62±1.67] = 0.02560±0.00005 (chi2/dof 0.4)
@@ -45,56 +46,57 @@ runs: runs/flat_D0.04_b0_A2, runs/flat_D0.04_b45_A2, runs/flat_D0.04_b90_A2
 == threshold: edge walls (line ⊥ b), Ly/L = 2   (<h_d> = h_c + A L^(-1/nu), L >= 0)
    a=0.50: L=256: 0.02859±0.00013  L=512: 0.02748±0.00011  L=1024: 0.02675±0.00008  L=2048: 0.02628±0.00008
           nu(var) = 1.31±0.10;  h_c[qEW] = 0.02569±0.00009 (chi2/dof 0.2);  h_c[qKPZ] = 0.02527±0.00011 (chi2/dof 0.0);  h_c[free, 1/nu = 0.62±0.20] = 0.02541±0.00054 (chi2/dof 0.0)
-   a=1.00: L=256: 0.03097±0.00016  L=512: 0.02920±0.00014  L=1024: 0.02786±0.00011  L=2048: 0.02707±0.00008
-          nu(var) = 1.15±0.08;  h_c[qEW] = 0.02604±0.00010 (chi2/dof 1.0);  h_c[qKPZ] = 0.02537±0.00012 (chi2/dof 0.2);  h_c[free, 1/nu = 0.57±0.14] = 0.02532±0.00074 (chi2/dof 0.3)
+   a=1.00: L=256: 0.03097±0.00016  L=512: 0.02920±0.00014  L=1024: 0.02786±0.00011  L=2048: 0.02707±0.00008  L=4096: 0.02648±0.00007
+          nu(var) = 1.38±0.08;  h_c[qEW] = 0.02591±0.00007 (chi2/dof 1.8);  h_c[qKPZ] = 0.02535±0.00008 (chi2/dof 0.1);  h_c[free, 1/nu = 0.56±0.08] = 0.02528±0.00038 (chi2/dof 0.2)
 == h(s) spectrum: screw walls (line ∥ b), Ly/L = 2   h = y(s) along the arc length s, S_h ~ q^-(1+2 zeta), modes n >= 2: zeta for q <= 0.1 | q <= 0.03
-   a=0.00 L=  256 n= 256: zeta_h 1.271±0.045 | q<=0.03: nan±nan
+   a=0.00 L=  256 n= 256: zeta_h 1.271±0.049 | q<=0.03: nan±nan
    a=0.00 L=  512 n= 128: zeta_h 1.216±0.031 | q<=0.03: nan±nan
-   a=0.00 L= 1024 n=  64: zeta_h 1.144±0.021 | q<=0.03: 1.213±0.070
-   a=0.00 L= 2048 n=  32: zeta_h 1.138±0.010 | q<=0.03: 1.026±0.037
+   a=0.00 L= 1024 n=  64: zeta_h 1.144±0.021 | q<=0.03: 1.213±0.069
+   a=0.00 L= 2048 n=  32: zeta_h 1.138±0.011 | q<=0.03: 1.026±0.034
    a=0.50 L=  256 n= 256: zeta_h 1.294±0.044 | q<=0.03: nan±nan
-   a=0.50 L=  512 n= 128: zeta_h 1.272±0.025 | q<=0.03: 1.164±0.078
-   a=0.50 L= 1024 n=  64: zeta_h 1.257±0.016 | q<=0.03: 1.319±0.044
-   a=0.50 L= 2048 n=  32: zeta_h 1.227±0.011 | q<=0.03: 1.293±0.020
-   a=1.00 L=  256 n= 256: zeta_h 1.192±0.034 | q<=0.03: nan±nan
-   a=1.00 L=  512 n= 128: zeta_h 1.380±0.027 | q<=0.03: 1.363±0.106
-   a=1.00 L= 1024 n=  64: zeta_h 1.387±0.015 | q<=0.03: 1.464±0.033
-   a=1.00 L= 2048 n=  32: zeta_h 1.353±0.010 | q<=0.03: 1.464±0.016
+   a=0.50 L=  512 n= 128: zeta_h 1.272±0.022 | q<=0.03: 1.164±0.078
+   a=0.50 L= 1024 n=  64: zeta_h 1.257±0.014 | q<=0.03: 1.319±0.045
+   a=0.50 L= 2048 n=  32: zeta_h 1.227±0.012 | q<=0.03: 1.293±0.021
+   a=1.00 L=  256 n= 256: zeta_h 1.192±0.033 | q<=0.03: nan±nan
+   a=1.00 L=  512 n= 128: zeta_h 1.380±0.026 | q<=0.03: 1.363±0.099
+   a=1.00 L= 1024 n=  64: zeta_h 1.387±0.015 | q<=0.03: 1.464±0.031
+   a=1.00 L= 2048 n=  32: zeta_h 1.353±0.009 | q<=0.03: 1.464±0.016
 == h(s) spectrum: walls, b at 45°, Ly/L = 2   h = y(s) along the arc length s, S_h ~ q^-(1+2 zeta), modes n >= 2: zeta for q <= 0.1 | q <= 0.03
-   a=1.00 L=  256 n= 256: zeta_h 1.369±0.045 | q<=0.03: nan±nan
-   a=1.00 L=  512 n= 128: zeta_h 1.180±0.021 | q<=0.03: 1.330±0.075
-   a=1.00 L= 1024 n=  64: zeta_h 1.111±0.015 | q<=0.03: 1.266±0.035
-   a=1.00 L= 2048 n=  32: zeta_h 1.081±0.013 | q<=0.03: 1.182±0.021
+   a=1.00 L=  256 n= 256: zeta_h 1.369±0.046 | q<=0.03: nan±nan
+   a=1.00 L=  512 n= 128: zeta_h 1.180±0.018 | q<=0.03: 1.330±0.076
+   a=1.00 L= 1024 n=  64: zeta_h 1.111±0.017 | q<=0.03: 1.266±0.035
+   a=1.00 L= 2048 n=  32: zeta_h 1.081±0.012 | q<=0.03: 1.182±0.021
 == h(s) spectrum: edge walls (line ⊥ b), Ly/L = 2   h = y(s) along the arc length s, S_h ~ q^-(1+2 zeta), modes n >= 2: zeta for q <= 0.1 | q <= 0.03
-   a=0.50 L=  256 n= 256: zeta_h 1.021±0.071 | q<=0.03: nan±nan
+   a=0.50 L=  256 n= 256: zeta_h 1.021±0.068 | q<=0.03: nan±nan
    a=0.50 L=  512 n= 128: zeta_h 1.036±0.034 | q<=0.03: nan±nan
-   a=0.50 L= 1024 n=  64: zeta_h 0.949±0.025 | q<=0.03: 0.720±0.084
-   a=0.50 L= 2048 n=  32: zeta_h 0.993±0.020 | q<=0.03: 0.859±0.068
-   a=1.00 L=  256 n= 256: zeta_h 0.981±0.059 | q<=0.03: nan±nan
-   a=1.00 L=  512 n= 128: zeta_h 0.907±0.027 | q<=0.03: nan±nan
-   a=1.00 L= 1024 n=  64: zeta_h 0.832±0.024 | q<=0.03: 0.594±0.090
-   a=1.00 L= 2048 n=  32: zeta_h 0.785±0.027 | q<=0.03: 0.657±0.053
+   a=0.50 L= 1024 n=  64: zeta_h 0.949±0.026 | q<=0.03: 0.720±0.086
+   a=0.50 L= 2048 n=  32: zeta_h 0.993±0.020 | q<=0.03: 0.859±0.064
+   a=1.00 L=  256 n= 256: zeta_h 0.981±0.057 | q<=0.03: nan±nan
+   a=1.00 L=  512 n= 128: zeta_h 0.907±0.030 | q<=0.03: nan±nan
+   a=1.00 L= 1024 n=  64: zeta_h 0.832±0.023 | q<=0.03: 0.594±0.085
+   a=1.00 L= 2048 n=  32: zeta_h 0.785±0.028 | q<=0.03: 0.657±0.050
+   a=1.00 L= 4096 n=  32: zeta_h 0.805±0.010 | q<=0.03: 0.712±0.034
 == length: screw walls (line ∥ b), Ly/L = 2   P ∝ L^alpha (P/L; overhangs = fraction of columns crossing the wall more than once)
    a=0.00: alpha = 1.201±0.017; local 1.19±0.04 1.26±0.07 1.19±0.10
           L=256: 1.330  L=512: 1.521  L=1024: 1.820  L=2048: 2.072
           overhangs: L=256: 0.012  L=512: 0.040  L=1024: 0.092  L=2048: 0.203
-   a=0.50: alpha = 1.441±0.015; local 1.43±0.04 1.43±0.05 1.46±0.06
+   a=0.50: alpha = 1.441±0.015; local 1.43±0.04 1.43±0.05 1.46±0.05
           L=256: 1.714  L=512: 2.302  L=1024: 3.103  L=2048: 4.260
           overhangs: L=256: 0.039  L=512: 0.108  L=1024: 0.193  L=2048: 0.292
    a=1.00: alpha = 1.451±0.014; local 1.41±0.04 1.48±0.04 1.43±0.05
           L=256: 1.920  L=512: 2.554  L=1024: 3.569  L=2048: 4.809
           overhangs: L=256: 0.034  L=512: 0.086  L=1024: 0.177  L=2048: 0.275
 == length: walls, b at 45°, Ly/L = 2   P ∝ L^alpha (P/L; overhangs = fraction of columns crossing the wall more than once)
-   a=1.00: alpha = 1.445±0.018; local 1.45±0.05 1.45±0.06 1.42±0.07
+   a=1.00: alpha = 1.445±0.018; local 1.45±0.05 1.45±0.07 1.42±0.07
           L=256: 1.425  L=512: 1.948  L=1024: 2.662  L=2048: 3.557
           overhangs: L=256: 0.047  L=512: 0.159  L=1024: 0.316  L=2048: 0.458
 == length: edge walls (line ⊥ b), Ly/L = 2   P ∝ L^alpha (P/L; overhangs = fraction of columns crossing the wall more than once)
    a=0.50: alpha = 1.044±0.005; local 1.05±0.01 1.04±0.02 1.03±0.02
           L=256: 1.153  L=512: 1.195  L=1024: 1.231  L=2048: 1.255
           overhangs: L=256: 0.002  L=512: 0.004  L=1024: 0.016  L=2048: 0.020
-   a=1.00: alpha = 1.009±0.002; local 1.02±0.01 1.00±0.01 1.00±0.01
-          L=256: 1.107  L=512: 1.122  L=1024: 1.120  L=2048: 1.122
-          overhangs: L=256: 0.000  L=512: 0.001  L=1024: 0.001  L=2048: 0.001
+   a=1.00: alpha = 1.007±0.001; local 1.02±0.01 1.00±0.01 1.00±0.01 1.01±0.01
+          L=256: 1.107  L=512: 1.122  L=1024: 1.120  L=2048: 1.122  L=4096: 1.127
+          overhangs: L=256: 0.000  L=512: 0.001  L=1024: 0.001  L=2048: 0.001  L=4096: 0.002
 == roughness density (Caballero-Giamarchi): screw walls (line ∥ b), Ly/L = 2   B(r) = slope of -2 ln chi(q, r) vs q^2 at q -> 0 (= exact <Δu^2> + B(0), u the signed height); local slope d lnB/d ln r of B - B(0) (2 zeta for zeta < 1; 2 for zeta > 1); B(32) - B(0) vs L ∝ L^(2 zeta - 2) for zeta > 1; B(0) = overhangs
    a=0.00 L=  256 n= 256: B(0) = 47.7 | slope r 2-16: 1.70  16-128: 1.12  8-32: 1.56 | B(32) - B(0) = 626.6 | max |B - Bdir| / Bdir = 4.1e-09
    a=0.00 L=  512 n= 128: B(0) = 1.86e+03 | slope r 2-16: 1.64  16-128: 1.39  16-64: 1.48 | B(32) - B(0) = 1271 | max |B - Bdir| / Bdir = 8.4e-07
@@ -127,4 +129,5 @@ runs: runs/flat_D0.04_b0_A2, runs/flat_D0.04_b45_A2, runs/flat_D0.04_b90_A2
    a=1.00 L=  512 n= 128: B(0) = 2.77 | slope r 2-16: 1.83  16-128: 1.24  16-64: 1.37 | B(32) - B(0) = 155.6 | max |B - Bdir| / Bdir = 1.4e-09
    a=1.00 L= 1024 n=  64: B(0) = 1.33 | slope r 2-16: 1.82  16-128: 1.30  32-128: 1.21 | B(32) - B(0) = 159.8 | max |B - Bdir| / Bdir = 5.1e-09
    a=1.00 L= 2048 n=  32: B(0) = 0.434 | slope r 2-16: 1.83  16-128: 1.34  64-256: 1.14 | B(32) - B(0) = 163.7 | max |B - Bdir| / Bdir = 8.3e-09
-          B(32) - B(0) ∝ L^0.11  -> zeta = 1.05 if anomalous (zeta > 1); local 0.27 0.04 0.03
+   a=1.00 L= 4096 n=  32: B(0) = 15.5 | slope r 2-16: 1.83  16-128: 1.40  128-512: 1.12 | B(32) - B(0) = 175.4 | max |B - Bdir| / Bdir = 8.0e-09
+          B(32) - B(0) ∝ L^0.10  -> zeta = 1.05 if anomalous (zeta > 1); local 0.27 0.04 0.03 0.10
