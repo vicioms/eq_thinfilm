@@ -119,11 +119,11 @@ def mode_spectra(rows, L):
                for kind in ("x", "s")}
 
 
-def mode_panel(ax, modes, sizes, references, kinds=("x", "s")):
+def mode_panel(ax, modes, sizes, references, kinds=("x", "s"), colors=COLORS, markers=MARKERS):
     """Raw spectra versus n, filled h(x) and open h(s); references: (zeta, linestyle, factor)
     lines n^-(1+2 zeta), factor > 1 times above (< 1: below) every point shown, labelled at their
     upper left (above) or lower right (below) end."""
-    for L, color, marker in zip(sizes, COLORS[-len(sizes):], MARKERS[-len(sizes):]):
+    for L, color, marker in zip(sizes, colors[-len(sizes):], markers[-len(sizes):]):
         n, S = modes[L]
         for kind in kinds:
             ax.loglog(n, S[kind], ls="none", marker=marker, color=color,

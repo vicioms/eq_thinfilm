@@ -8,7 +8,7 @@ Read [roughness_note.pdf](roughness_note.pdf). The current results cover flat is
 
 - `main.tex`, `flat_isotropic.tex`, `flat_anisotropic.tex`, `bubbles.tex`: editable LaTeX note.
 - `fig1` and `fig2`: isotropic contour, profiles, perimeter, and spectra.
-- `fig3` and `fig4`: anisotropic edge results.
+- `fig3` and `fig4`: anisotropic edge results; `edge_statistics.json` also stores slopes of the raw S(n) in fixed mode ranges (`mode_fits`).
 - `fig5` and `fig6`: anisotropic screw results.
 - `fig7` and `fig8`: isotropic bubble results.
 - `fig9` and `fig10`: anisotropic bubble results.
@@ -18,7 +18,7 @@ Read [roughness_note.pdf](roughness_note.pdf). The current results cover flat is
 - `statistics.json`, `edge_statistics.json`, `screw_statistics.json`, `diagonal_statistics.json`, `bubble_statistics.json`, `bubble_arc_width.json`: measured quantities and fitting ranges.
 - `provenance.json`: input snapshot and SHA-256 checksums.
 
-Each figure is provided as PDF and PNG. All cases use the same contour extraction, area-preserving h(x), arc-length h(s), and equal-realization spectral averaging. Sizes are 256, 512, 1024, and 2048 with 256, 128, 64, and 32 realizations, respectively. Bubbles use 1024, 2048, 4096, and 8192 with 128, 64, 32, and 16 realizations, area-preserving radius h(theta), and arc-length h(s) = |r(s) - c|. Spectral panels show the two largest sizes: the raw spectra S(n) = <|h_n|^2> at fixed mode index 2 <= n <= 45 L / 2048, equal weight per contour, with reference slopes -(1 + 2 zeta). Exponents quoted in the note are fitted to spectra averaged in common q bins (statistics json files).
+Each figure is provided as PDF and PNG. All cases use the same contour extraction, area-preserving h(x), arc-length h(s), and equal-realization spectral averaging. Sizes are 256, 512, 1024, and 2048 with 256, 128, 64, and 32 realizations, respectively. Edge walls add 4096 with 32 realizations. Bubbles use 1024, 2048, 4096, and 8192 with 128, 64, 32, and 16 realizations, area-preserving radius h(theta), and arc-length h(s) = |r(s) - c|. Spectral panels show the two largest sizes (three for edge walls): the raw spectra S(n) = <|h_n|^2> at fixed mode index 2 <= n <= 45 L / 2048, equal weight per contour, with reference slopes -(1 + 2 zeta). Exponents quoted in the note are fitted to spectra averaged in common q bins (statistics json files).
 
 The screw and 45-degree perimeter panels compare slopes 1.45 and 1.25. Their spectral panels show reference slopes for zeta = 1.45 and zeta = 1.25. Reference exponents are visual guides, not imposed fits.
 

@@ -15,6 +15,18 @@ ROOT = Path(__file__).resolve().parents[2]
 OUT = Path(__file__).resolve().parent
 DATA = ROOT / "runs/flat_D0.04_b90_A2/walls.npz"
 RNG = np.random.default_rng(20261121)
+SIZES = SIZES + (4096,)
+COLORS = COLORS + ("#6b4f9e",)
+MARKERS = MARKERS + ("v",)
+
+
+def mode_fits(rows, L):
+    """zeta from least-squares slopes of the raw S(n) = <|h_n|^2> in fixed mode ranges."""
+    n, S = mode_spectra(rows, L)
+    ranges = {"2_8": (2, 8), "first_quarter": (2, n[-1]//4), "rest": (n[-1]//4+1, n[-1])}
+    return {name: dict(n=[int(a), int(b)], **{kind: float((-np.polyfit(np.log(n[(n>=a)&(n<=b)]),
+                np.log(S[kind][(n>=a)&(n<=b)]), 1)[0]-1)/2) for kind in ("x", "s")})
+            for name, (a, b) in ranges.items()}
 
 
 def main():
@@ -37,7 +49,7 @@ def main():
         report[L] = dict(n=len(rows), meanP=float(P.mean()), stdP=float(P.std(ddof=1)),
                          meanP_ci95=np.quantile(P[draws].mean(axis=1),[.025,.975]).tolist(),
                          multivalued_fraction=float(np.mean([r["multi"] for r in rows])),
-                         fits=fits)
+                         fits=fits, mode_fits=mode_fits(rows,L) if L>=1024 else None)
 
     ids = np.flatnonzero((z["L"]==1024)&(z["aniso"]==1))
     index = int(np.flatnonzero(z["seed"][ids]==0)[0])
@@ -73,7 +85,7 @@ def main():
     ci=np.array([report[L]["meanP_ci95"] for L in SIZES])
     ax.errorbar(Ls,Pmean,yerr=np.maximum(0,np.stack((Pmean-ci[:,0],ci[:,1]-Pmean))),
                 fmt="o",c="#275c83",ms=7,capsize=3)
-    xx=np.geomspace(220,2500,100)
+    xx=np.geomspace(220,4800,100)
     ax.plot(xx,.8*xx,"--",c="black",lw=1.1)
     ax.text(1400,.8*1400*.82,r"$L_x$",ha="center",va="top")
     coefficient=1.2*max(Pmean/Ls**1.25)
@@ -86,7 +98,8 @@ def main():
     ax.yaxis.set_minor_formatter(NullFormatter())
 
     ax=axes[1]
-    mode_panel(ax,{L:mode_spectra(groups[L],L) for L in SIZES[2:]},SIZES[2:],[(.63, "--", .5), (1.25, ":", 2)])
+    mode_panel(ax,{L:mode_spectra(groups[L],L) for L in SIZES[2:]},SIZES[2:],[(.63, "--", .5), (1.25, ":", 2)],
+               colors=COLORS,markers=MARKERS)
     handles=[Line2D([],[],c=c,marker=m,ls="none",label=fr"$L_x={L}$")
              for L,c,m in zip(SIZES[2:],COLORS[2:],MARKERS[2:])]
     handles.extend([Line2D([],[],c=".25",marker="o",ls="none",label=r"$h(x)$"),

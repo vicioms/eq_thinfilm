@@ -10,7 +10,8 @@ respectively, measured between $\hat{\boldsymbol b}$ and the $x$ axis.
 
 For the edge orientation, $\hat{\boldsymbol b}$ is perpendicular to the
 mean interface direction. We use the same system sizes, aspect ratio
-and numbers of realizations as in the isotropic case.
+and numbers of realizations as in the isotropic case, and add $32$
+realizations at $L_x=4096$.
 Figure~\ref{fig:edge-profiles} shows the contour and the two height
 representations for one depinning configuration.
 
@@ -29,15 +30,28 @@ representations for one depinning configuration.
 \end{figure}
 
 The mean perimeter grows approximately as
-$\mathbb E[P]\propto L_x^{1.006}$, as shown in
+$\mathbb E[P]\propto L_x^{1.005}$, as shown in
 Fig.~\ref{fig:edge-scaling}(a).
 The ratio $\mathbb E[P]/L_x$ remains close to $1.12$ at the largest sizes.
 Figure~\ref{fig:edge-scaling}(b) shows $S(n)$, with lines of slope
 $-2.26$ (qKPZ, $\zeta=0.63$) and $-3.5$ ($\zeta=1.25$).
-At $L_x=2048$ the first quarter of the modes, $2\leq n\leq11$, gives
-$\zeta\simeq0.62$ for $h_x$ and $0.66$ for $h_s$, close to qKPZ.
-At larger $n$ the spectra are steeper, with $\zeta\simeq0.87$ and
-$0.98$.
+The lowest modes, $2\leq n\leq8$, give $\zeta\simeq0.64$, $0.64$ and
+$0.67$ for $h_x$, and $0.68$ for $h_s$, at $L_x=1024$, $2048$ and $4096$.
+These values are close to qKPZ and do not drift with $L_x$.
+At $L_x=4096$ the first quarter of the modes, $2\leq n\leq22$, gives
+$\zeta\simeq0.68$ for $h_x$ and $0.71$ for $h_s$.
+At larger $n$ the spectra are steeper, with $\zeta\simeq0.94$ and
+$1.04$.
+For $q\leq0.03$, the binned spectra give $\zeta_x\simeq0.59$, $0.63$ and
+$0.69$, and $\zeta_s\simeq0.57$, $0.64$ and $0.73$, at the same sizes.
+At $L_x=4096$, $q\leq0.015$ gives $\zeta_x\simeq0.65$ and
+$\zeta_s\simeq0.62$.
+The increase at $q\leq0.03$ therefore comes from the start of the
+crossover to steeper spectra near $q\simeq0.03$.
+The mean depinning force decreases with $L_x$.
+A fit $\mathbb E[F_d]=F_c+AL_x^{-1/\nu}$ for $256\leq L_x\leq4096$
+gives $1/\nu=0.56\pm0.08$, consistent with the qKPZ value $0.58$
+($\nu=1.733$) and below the qEW value $0.75$ ($\nu=4/3$).
 
 \begin{figure}[H]
  \centering
@@ -50,7 +64,8 @@ $0.98$.
  The black dashed and dotted lines have slopes $1$ and $1.25$,
  respectively.
  (b) Spectra $S(n)=\langle|\widehat h_n|^2\rangle$ versus the mode
- index $n$ for $L_x=1024$ and $2048$, with $2\leq n\leq45L_x/2048$.
+ index $n$ for $L_x=1024$, $2048$ and $4096$, with
+ $2\leq n\leq45L_x/2048$.
  Filled symbols represent $h_x(x)$ and open symbols represent $h_s(s)$.
  The black dashed and dotted lines have slopes $-2.26$ ($\zeta=0.63$)
  and $-3.5$ ($\zeta=1.25$), with freely chosen amplitudes.
