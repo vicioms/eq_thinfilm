@@ -66,6 +66,9 @@ We average spectra over disorder realizations in common physical $q$
 bins, first averaging modes within each contour and then giving equal
 weight to each contour. Bins are merged until every contour contributes.
 This treats the fluctuating contour length $P_i$ explicitly.
+The quoted exponents are fitted to these binned spectra.
+The figures show instead $S(n)=\langle|\widehat h_n|^2\rangle$ at fixed
+mode index $n\geq2$, again with equal weight per contour.
 
 \section{Flat interfaces}
 \label{sec:flat}
@@ -116,12 +119,12 @@ $\mathbb E[P]\propto L_x^{1.22}$.
 Figure~\ref{fig:flat-scaling}(a) compares this growth with $L_x$
 and $L_x^{1.25}$.
 For a self-affine interface, the qEW exponent
-$\zeta=1.25$ corresponds to $S(q)\propto q^{-3.5}$.
-Figure~\ref{fig:flat-scaling}(b) therefore shows $q^{3.5}S(q)$.
-The arc-length spectra for the two largest sizes nearly overlap and
-display an approximate plateau.
-The $h_x$ spectra increase with $q$ after compensation and retain
-a visible size dependence.
+$\zeta=1.25$ corresponds to $S(n)\propto n^{-3.5}$.
+Figure~\ref{fig:flat-scaling}(b) shows $S(n)$ for the two largest sizes.
+Over all the modes shown, the arc-length spectra decay as
+$n^{-(1+2\zeta)}$ with $\zeta\simeq1.15$ at $L_x=1024$ and $1.06$ at
+$L_x=2048$, more slowly than the qEW line.
+The $h_x$ spectra are flatter, with $\zeta\simeq0.95$ and $0.81$.
 
 \begin{figure}[H]
  \centering
@@ -130,11 +133,11 @@ a visible size dependence.
  (a) Mean perimeter versus $L_x$.
  Error bars give $95\%$ bootstrap intervals for the mean.
  The black dashed and dotted lines have slopes $1$ and $1.25$, respectively.
- (b) Compensated spectra $q^{3.5}S(q)$ for $L_x=1024$ and $2048$.
+ (b) Spectra $S(n)=\langle|\widehat h_n|^2\rangle$ versus the mode
+ index $n$ for $L_x=1024$ and $2048$, with $2\leq n\leq45L_x/2048$.
  Filled symbols represent $h_x(x)$ and open symbols represent $h_s(s)$.
- A plateau corresponds to a spectral exponent $1+2\zeta=3.5$.
- The horizontal dashed line is a guide to the eye.
- Each contour has equal weight in the disorder average.
- The first mode of $h_x$ is excluded by imposing $q\geq4\pi/L_x$.}
+ The black dashed line has slope $-3.5$ ($\zeta=1.25$), with a freely
+ chosen amplitude.
+ Each contour has equal weight in the disorder average.}
  \label{fig:flat-scaling}
 \end{figure}

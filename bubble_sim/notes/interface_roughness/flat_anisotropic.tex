@@ -32,9 +32,12 @@ The mean perimeter grows approximately as
 $\mathbb E[P]\propto L_x^{1.006}$, as shown in
 Fig.~\ref{fig:edge-scaling}(a).
 The ratio $\mathbb E[P]/L_x$ remains close to $1.12$ at the largest sizes.
-Figure~\ref{fig:edge-scaling}(b) shows $q^{2.26}S(q)$,
-so that a plateau corresponds to the qKPZ exponent $\zeta=0.63$.
-Both height representations display an approximate plateau at small $q$.
+Figure~\ref{fig:edge-scaling}(b) shows $S(n)$, with lines of slope
+$-2.26$ (qKPZ, $\zeta=0.63$) and $-3.5$ ($\zeta=1.25$).
+At $L_x=2048$ the first quarter of the modes, $2\leq n\leq11$, gives
+$\zeta\simeq0.62$ for $h_x$ and $0.66$ for $h_s$, close to qKPZ.
+At larger $n$ the spectra are steeper, with $\zeta\simeq0.87$ and
+$0.98$.
 
 \begin{figure}[H]
  \centering
@@ -46,12 +49,12 @@ Both height representations display an approximate plateau at small $q$.
  Error bars give $95\%$ bootstrap intervals for the mean.
  The black dashed and dotted lines have slopes $1$ and $1.25$,
  respectively.
- (b) Compensated spectra $q^{2.26}S(q)$ for $L_x=1024$ and $2048$.
+ (b) Spectra $S(n)=\langle|\widehat h_n|^2\rangle$ versus the mode
+ index $n$ for $L_x=1024$ and $2048$, with $2\leq n\leq45L_x/2048$.
  Filled symbols represent $h_x(x)$ and open symbols represent $h_s(s)$.
- The horizontal dashed line corresponds to $\zeta=0.63$ and the dotted
- line to $\zeta=1.25$, with freely chosen amplitudes.
- Each contour has equal weight in the disorder average.
- The first mode of $h_x$ is excluded by imposing $q\geq4\pi/L_x$.}
+ The black dashed and dotted lines have slopes $-2.26$ ($\zeta=0.63$)
+ and $-3.5$ ($\zeta=1.25$), with freely chosen amplitudes.
+ Each contour has equal weight in the disorder average.}
  \label{fig:edge-scaling}
 \end{figure}
 
@@ -84,8 +87,10 @@ $\mathbb E[P]\propto L_x^{1.45}$, as shown in
 Fig.~\ref{fig:screw-scaling}(a).
 The ratio $\mathbb E[P]/L_x$ increases from $1.92$ at $L_x=256$
 to $4.81$ at $L_x=2048$.
-Figure~\ref{fig:screw-scaling}(b) shows $q^{3.9}S(q)$,
-so that a plateau corresponds to $\zeta=1.45$.
+Figure~\ref{fig:screw-scaling}(b) shows $S(n)$, with lines of slope
+$-3.9$ ($\zeta=1.45$) and $-3.5$ ($\zeta=1.25$).
+Over all the modes shown, $h_s$ gives $\zeta\simeq1.46$ and $h_x$
+gives $\zeta\simeq1.06$ at $L_x=2048$.
 At $L_x=2048$ and $q\leq0.03$, the effective exponents are
 $\zeta_x\simeq1.24$ and $\zeta_s\simeq1.37$.
 These slopes depend on the fitted range and do not establish a
@@ -101,12 +106,12 @@ universality class for this faceted regime.
  Error bars give $95\%$ bootstrap intervals for the mean.
  The black dashed and dotted lines have slopes $1.45$ and $1.25$,
  respectively.
- (b) Compensated spectra $q^{3.9}S(q)$ for $L_x=1024$ and $2048$.
+ (b) Spectra $S(n)=\langle|\widehat h_n|^2\rangle$ versus the mode
+ index $n$ for $L_x=1024$ and $2048$, with $2\leq n\leq45L_x/2048$.
  Filled symbols represent $h_x(x)$ and open symbols represent $h_s(s)$.
- The horizontal dashed line corresponds to $\zeta=1.45$ and the dotted
- line to $\zeta=1.25$, with freely chosen amplitudes.
- Each contour has equal weight in the disorder average.
- The first mode of $h_x$ is excluded by imposing $q\geq4\pi/L_x$.}
+ The black dashed and dotted lines have slopes $-3.9$ ($\zeta=1.45$)
+ and $-3.5$ ($\zeta=1.25$), with freely chosen amplitudes.
+ Each contour has equal weight in the disorder average.}
  \label{fig:screw-scaling}
 \end{figure}
 
@@ -141,8 +146,11 @@ $\mathbb E[P]\propto L_x^{1.44}$, as shown in
 Fig.~\ref{fig:diagonal-scaling}(a), close to the screw case.
 The ratio $\mathbb E[P]/L_x$ increases from $1.43$ at $L_x=256$
 to $3.56$ at $L_x=2048$.
-Figure~\ref{fig:diagonal-scaling}(b) shows $q^{3.9}S(q)$,
-as for the screw orientation.
+Figure~\ref{fig:diagonal-scaling}(b) shows $S(n)$, as for the screw
+orientation.
+At $L_x=2048$, $h_s$ gives $\zeta\simeq1.26$ for $2\leq n\leq11$ and
+$0.98$ at larger $n$, while $h_x$ gives $\zeta\simeq0.52$ over all the
+modes shown.
 At $L_x=2048$ and $q\leq0.03$, the effective exponents are
 $\zeta_x\simeq0.55$ and $\zeta_s\simeq1.10$.
 The two height representations differ strongly, since $32\%$ and
@@ -161,11 +169,11 @@ universality class.
  Error bars give $95\%$ bootstrap intervals for the mean.
  The black dashed and dotted lines have slopes $1.45$ and $1.25$,
  respectively.
- (b) Compensated spectra $q^{3.9}S(q)$ for $L_x=1024$ and $2048$.
+ (b) Spectra $S(n)=\langle|\widehat h_n|^2\rangle$ versus the mode
+ index $n$ for $L_x=1024$ and $2048$, with $2\leq n\leq45L_x/2048$.
  Filled symbols represent $h_x(x)$ and open symbols represent $h_s(s)$.
- The horizontal dashed line corresponds to $\zeta=1.45$ and the dotted
- line to $\zeta=1.25$, with freely chosen amplitudes.
- Each contour has equal weight in the disorder average.
- The first mode of $h_x$ is excluded by imposing $q\geq4\pi/L_x$.}
+ The black dashed and dotted lines have slopes $-3.9$ ($\zeta=1.45$)
+ and $-3.5$ ($\zeta=1.25$), with freely chosen amplitudes.
+ Each contour has equal weight in the disorder average.}
  \label{fig:diagonal-scaling}
 \end{figure}

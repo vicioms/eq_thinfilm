@@ -9,7 +9,7 @@ from matplotlib.lines import Line2D
 from matplotlib.ticker import NullFormatter
 import numpy as np
 
-from make_figures import decode, common_bins, spectral_fit, COLORS, MARKERS
+from make_figures import decode, common_bins, spectral_fit, mode_spectra, mode_panel, COLORS, MARKERS
 
 ROOT = Path(__file__).resolve().parents[2]
 OUT = Path(__file__).resolve().parent
@@ -153,8 +153,7 @@ def profile_figure(example, name):
     plt.close(fig)
 
 
-def scaling_figure(report, spectra, name, second=None):
-    """second: optional reference exponent drawn dotted on top of the zeta = 1.25 plateau."""
+def scaling_figure(report, groups, name):
     fig, axes = plt.subplots(1, 3, figsize=(11.5, 3.8), layout="constrained")
     ax = axes[0]
     Ls = np.array(SIZES)
@@ -174,49 +173,14 @@ def scaling_figure(report, spectra, name, second=None):
     ax.xaxis.set_minor_formatter(NullFormatter())
     ax.yaxis.set_minor_formatter(NullFormatter())
 
-    ax = axes[1]
-    for L, color, marker in zip(SIZES[2:], COLORS[2:], MARKERS[2:]):
-        for kind in ("x", "s"):
-            q, values = spectra[L][kind]
-            ax.loglog(q, q**3.5*values.mean(axis=0), ls="none", marker=marker, color=color,
-                      markerfacecolor=color if kind == "x" else "none", ms=5, markeredgewidth=1)
-    q, values = spectra[SIZES[-1]]["s"]
-    anchor = np.exp(np.interp(np.log(.03), np.log(q), np.log(values.mean(axis=0))))
-    plateau = anchor*.03**3.5
-    xx = np.geomspace(.001, .15, 100)
-    ax.plot(xx, np.full_like(xx, plateau), "--", color="black", lw=1.3)
-    ax.text(.0012, plateau*1.12, r"$\zeta=1.25$", fontsize=10)
-    if second is not None:
-        ax.plot(xx, plateau*(xx/.03)**(2.5-2*second), ":", c="black", lw=1.6)
-        ax.text(.0012, plateau*(.0012/.03)**(2.5-2*second)*.85, fr"$\zeta={second:g}$", fontsize=10, va="top")
-    handles = [Line2D([], [], c=c, marker=m, ls="none", label=fr"$L={L}$")
-               for L, c, m in zip(SIZES[2:], COLORS[2:], MARKERS[2:])]
-    handles.extend([Line2D([], [], c=".25", marker="o", ls="none", label=r"$h(\theta)$"),
-                    Line2D([], [], c=".25", marker="o", mfc="none", ls="none", label=r"$h(s)$")])
-    ax.legend(handles=handles, frameon=False, fontsize=8, ncol=2, loc="upper left")
-    ax.set(xlabel=r"$q$", ylabel=r"$q^{3.5}S(q)$", title="(b) Compensated height spectra")
-    ax.set_xticks([.001, .01, .1], labels=["0.001", "0.01", "0.1"])
-    ax.xaxis.set_minor_formatter(NullFormatter())
-
-    # As the edge figure: plateau for qKPZ (zeta = 0.63), dotted zeta = 1.25.
-    ax = axes[2]
-    for L, color, marker in zip(SIZES[2:], COLORS[2:], MARKERS[2:]):
-        for kind in ("x", "s"):
-            q, values = spectra[L][kind]
-            ax.loglog(q, q**2.26*values.mean(axis=0), ls="none", marker=marker, color=color,
-                      markerfacecolor=color if kind == "x" else "none", ms=5, markeredgewidth=1)
-    q, values = spectra[SIZES[-1]]["s"]
-    anchor = np.exp(np.interp(np.log(.02), np.log(q), np.log(values.mean(axis=0))))
-    plateau = anchor*.02**2.26
-    xx = np.geomspace(.001, .15, 100)
-    ax.plot(xx, np.full_like(xx, plateau), "--", color="black", lw=1.3)
-    ax.text(.0012, plateau*.85, r"$\zeta=0.63$", fontsize=10, va="top")
-    ax.plot(xx, plateau*(xx/.02)**-1.24, ":", c="black", lw=1.6)
-    ax.text(.0012, plateau*(.0012/.02)**-1.24*.85, r"$\zeta=1.25$", fontsize=10, va="top")
-    ax.legend(handles=handles, frameon=False, fontsize=8, ncol=2, loc="upper right")
-    ax.set(xlabel=r"$q$", ylabel=r"$q^{2.26}S(q)$", title="(c) Compensated height spectra")
-    ax.set_xticks([.001, .01, .1], labels=["0.001", "0.01", "0.1"])
-    ax.xaxis.set_minor_formatter(NullFormatter())
+    # Raw spectra at fixed mode index n, modes 2 <= n <= 45 L / 2048, h(theta) and h(s) apart.
+    modes = {L: mode_spectra(groups[L], L) for L in SIZES[2:]}
+    for ax, kind, title in ((axes[1], "x", r"(b) Spectra of $h(\theta)$"), (axes[2], "s", r"(c) Spectra of $h(s)$")):
+        mode_panel(ax, modes, SIZES[2:], [(1.25, "--", 2), (.63, ":", .5)], kinds=(kind,))
+        ax.legend(handles=[Line2D([], [], c=c, marker=m, ls="none", mfc=c if kind == "x" else "none",
+                                  label=fr"$L={L}$") for L, c, m in zip(SIZES[2:], COLORS[2:], MARKERS[2:])],
+                  frameon=False, fontsize=8, loc="upper right")
+        ax.set(title=title)
     for ext in ("pdf", "png"):
         fig.savefig(OUT / f"{name}.{ext}", dpi=200)
     plt.close(fig)
@@ -228,13 +192,13 @@ def main():
     z = np.load(DATA)
     main_contour = bubbles(z)
     report = {}
-    for a, names, second in ((0, ("fig7_bubble_profiles", "fig8_bubble_scaling"), None),
-                             (1, ("fig9_bubble_anisotropic_profiles", "fig10_bubble_anisotropic_scaling"), .63)):
+    for a, names in ((0, ("fig7_bubble_profiles", "fig8_bubble_scaling")),
+                     (1, ("fig9_bubble_anisotropic_profiles", "fig10_bubble_anisotropic_scaling"))):
         groups, spectra, rep = analyse(z, main_contour, a)
         # Prespecified representative: seed zero, L=1024, no aesthetic selection.
         example = next(r for r in groups[1024] if r["seed"] == 0)
         profile_figure(example, names[0])
-        scaling_figure(rep, spectra, names[1], second)
+        scaling_figure(rep, groups, names[1])
         rep["example"] = dict(L=1024, seed=0, P=example["P"], R=example["R"],
                               multivalued_fraction=example["multi"])
         report[f"a={a}"] = rep
